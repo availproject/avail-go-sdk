@@ -17,7 +17,7 @@ This SDK is split into two main parts:
 
 - **[`src/config`](./src/config/)**: Contains the loader to read the config file when connecting to chain
 - **[`src/extrinsic`](./src/extrinsic/)**: Wrapper around GSRPC so that extrinsic can be signed with avail specific AppID extension
-- **[src/header`](./src/header/)**: Includes the custom header for avail with added extension field and its custom enum decoding 
+- **[`src/header`](./src/header/)**: Includes the custom header for avail with added extension field and its custom enum decoding 
 - **[`src/rpc`](./src/rpc/)**: Wraper around GSRPC block specific rpc calls inorder to accustom the custom header field for avail. Also contains the structures for kate related calls.
 - **[`src/sdk`](./src/sdk/)**: Contains all interfaces related to the SDK, representing the opinionated part of Avail-go-sdk.
 - **[`src/sdk/call`](./src/sdk/call/)**: Contains the kate related RPC calls
