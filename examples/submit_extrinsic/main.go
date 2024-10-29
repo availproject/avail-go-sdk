@@ -36,7 +36,11 @@ func main() {
 	if err != nil {
 		fmt.Printf("cannot create extrinsic:%v", err)
 	}
-	fmt.Println("Extrinsic created successfully for method: DataAvailability.submit_data")
+	txHash, err := ext.TxHash()
+	if err != nil {
+		fmt.Printf("cannot get extrinsic tx hash:%v", err)
+	}
+	fmt.Printf("\nExtrinsic created successfully: %v\n", txHash.Hex())
 
 	// submit extrinsic
 	fmt.Println("Submitting extrinsic ...")
@@ -45,5 +49,5 @@ func main() {
 	if err != nil {
 		fmt.Printf("cannot submit extrinsic:%v", err)
 	}
-	fmt.Printf("\nExtrinsic submitted successfully with block hash: %v\n and ext hash:%v", BlockHash.Hex(), txHash.Hex())
+	fmt.Printf("\nExtrinsic submitted successfully with block hash: %v\n and ext hash:%v\n", BlockHash.Hex(), txHash.Hex())
 }

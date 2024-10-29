@@ -1,10 +1,8 @@
 package sdk
 
 import (
-	"encoding/hex"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/availproject/avail-go-sdk/src/extrinsic"
@@ -12,8 +10,6 @@ import (
 
 	"github.com/centrifuge/go-substrate-rpc-client/v4/signature"
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"golang.org/x/crypto/blake2b"
 )
 
 func CreateExtrinsic(api *SubstrateAPI, ext_call string, keyring signature.KeyringPair, AppID int, arg ...interface{}) (extrinsic.Extrinsic, error) {
@@ -75,16 +71,7 @@ func SubmitExtrinsic(api *SubstrateAPI, ext extrinsic.Extrinsic) (types.Hash, er
 
 func SubmitExtrinsicWatch(api *SubstrateAPI, ext extrinsic.Extrinsic, final chan types.Hash, txHash chan types.Hash, WaitForInclusion WaitFor) error {
 	go func() {
-		enc, _ := EncodeToHex(ext)
-
-		cleanedHexString := strings.TrimPrefix(enc, "0x")
-		bytes, err := hex.DecodeString(cleanedHexString)
-		if err != nil {
-			log.Fatal(err)
-		}
-		hash := blake2b.Sum256(bytes)
-		ext_z := hexutil.Encode(hash[:])
-		hash, err = NewHashFromHexString(ext_z)
+		hash, err := ext.TxHash()
 		if err != nil {
 			log.Fatal(err)
 		}
