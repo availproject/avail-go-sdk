@@ -54,15 +54,16 @@ func CreateExtrinsic(api *SubstrateAPI, ext_call string, keyring signature.Keyri
 
 	err = ext.Sign(keyring, options)
 	if err != nil {
-		panic(fmt.Sprintf("cannot sign:%v", err))
+		return extrinsic.Extrinsic{}, fmt.Errorf("cannot sign:%v", err)
 	}
+
 	return ext, nil
 }
 
 func SubmitExtrinsic(api *SubstrateAPI, ext extrinsic.Extrinsic) (types.Hash, error) {
 	hash, err := rpc.SubmitExtrinsic(ext, api.Client)
 	if err != nil {
-		panic(fmt.Sprintf("cannot submit extrinsic:%v", err))
+		return types.Hash{}, fmt.Errorf("cannot submit extrinsic:%v", err)
 	}
 
 	fmt.Printf("Data submitted using APPID: %v \n", ext.Signature.AppID.Int64())
@@ -80,7 +81,7 @@ func SubmitExtrinsicWatch(api *SubstrateAPI, ext extrinsic.Extrinsic, final chan
 
 	sub, err := rpc.SubmitAndWatchExtrinsic(ext, api.Client)
 	if err != nil {
-		panic(fmt.Sprintf("cannot submit extrinsic:%v", err))
+		return fmt.Errorf("cannot submit extrinsic:%v", err)
 	}
 
 	fmt.Printf("Transaction being submitted .... ⏳Waiting for block inclusion..")
