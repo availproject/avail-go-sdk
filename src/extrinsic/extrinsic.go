@@ -2,6 +2,7 @@ package extrinsic
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -11,6 +12,8 @@ import (
 	"github.com/centrifuge/go-substrate-rpc-client/v4/signature"
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types/codec"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"golang.org/x/crypto/blake2b"
 )
 
 type SignatureOptions struct {
@@ -259,4 +262,23 @@ func (e Extrinsic) Encode(encoder scale.Encoder) error {
 	}
 
 	return nil
+}
+
+func (e *Extrinsic) TxHash() (types.Hash, error) {
+	enc, err := codec.EncodeToHex(e)
+	if err != nil {
+		return types.Hash{}, err
+	}
+	cleanedHexString := strings.TrimPrefix(enc, "0x")
+	bytes, err := hex.DecodeString(cleanedHexString)
+	if err != nil {
+		return types.Hash{}, err
+	}
+	hash := blake2b.Sum256(bytes)
+	ext_z := hexutil.Encode(hash[:])
+	hash, err = types.NewHashFromHexString(ext_z)
+	if err != nil {
+		return types.Hash{}, err
+	}
+	return hash, nil
 }

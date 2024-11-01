@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"strconv"
 
+	"github.com/availproject/avail-go-sdk/src/extrinsic"
 	"github.com/availproject/avail-go-sdk/src/sdk"
 	"github.com/availproject/avail-go-sdk/src/sdk/types"
 
@@ -464,6 +465,25 @@ func TransferAll(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.WaitFo
 			return
 		}
 		fmt.Println("Transaction submitted successfully")
+	}()
+	blockHash := <-BlockHashCh2
+	txHash := <-txHashCh2
+	return blockHash, txHash, nil
+}
+
+func SubmitExtrinsic(api *sdk.SubstrateAPI, ext extrinsic.Extrinsic, WaitForInclusion sdk.WaitFor) (types.Hash, types.Hash, error) {
+	BlockHashCh2 := make(chan types.Hash)
+	txHashCh2 := make(chan types.Hash)
+
+	go func() {
+		err := sdk.SubmitExtrinsicWatch(api, ext, BlockHashCh2, txHashCh2, WaitForInclusion)
+		if err != nil {
+			fmt.Printf("cannot submit extrinsic: %v", err)
+			close(BlockHashCh2)
+			close(txHashCh2)
+			return
+		}
+		fmt.Println("Extrinsic submitted successfully")
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2

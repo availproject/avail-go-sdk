@@ -2,6 +2,8 @@ module examples
 
 go 1.21.0
 
+replace github.com/availproject/avail-go-sdk => ../
+
 require (
 	github.com/availproject/avail-go-sdk v0.1.2
 	github.com/vedhavyas/go-subkey v1.0.4

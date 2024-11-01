@@ -15,9 +15,7 @@ import (
 	"github.com/centrifuge/go-substrate-rpc-client/v4/signature"
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types/codec"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/vedhavyas/go-subkey"
-	"golang.org/x/crypto/blake2b"
 )
 
 func ConvertMultiAddress(receiver string) (types.MultiAddress, error) {
@@ -259,15 +257,11 @@ func GetData(hash types.Hash, api *SubstrateAPI, txHash types.Hash) error {
 
 		// these values below are specific indexes only for data submission, differs with each extrinsic
 		if ext.IsSigned() && ext.Method.CallIndex.SectionIndex == 29 && ext.Method.CallIndex.MethodIndex == 1 {
-			enc, _ := EncodeToHex(ext)
-			cleanedHexString := strings.TrimPrefix(enc, "0x")
-			bytes, err := hex.DecodeString(cleanedHexString)
+			extTxHash, err := ext.TxHash()
 			if err != nil {
 				log.Fatal(err)
 			}
-			hash := blake2b.Sum256(bytes)
-			txHashDecoded := hexutil.Encode(hash[:])
-			if txHashDecoded == txHash.Hex() {
+			if extTxHash.Hex() == txHash.Hex() {
 				arg := ext.Method.Args
 				str := string(arg)
 				slice := str[1:]
