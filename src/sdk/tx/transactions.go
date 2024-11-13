@@ -44,7 +44,6 @@ func SubmitData(api *sdk.SubstrateAPI, seed string, AppID int, data string, Wait
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -66,7 +65,7 @@ func CreateApplicationKey(api *sdk.SubstrateAPI, seed string, data string, WaitF
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -149,7 +148,7 @@ func SubmitBlockLength(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -178,7 +177,7 @@ func Bond(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.WaitFor, amou
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -206,7 +205,7 @@ func BondExtra(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.WaitFor,
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -229,7 +228,7 @@ func Chill(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.WaitFor) (ty
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -262,7 +261,7 @@ func ChillOther(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.WaitFor
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -296,7 +295,7 @@ func Nominate(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.WaitFor, 
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -319,7 +318,7 @@ func Unbond(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.WaitFor, am
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
@@ -362,7 +361,7 @@ func Validate(api *sdk.SubstrateAPI, seed string, WaitForInclusion sdk.WaitFor, 
 			close(txHashCh2)
 			return
 		}
-		fmt.Println("Data submitted successfully")
+
 	}()
 	blockHash := <-BlockHashCh2
 	txHash := <-txHashCh2
