@@ -153,7 +153,7 @@ func (this *Decoder) primitives(value reflect.Value, isCompact bool) (error, boo
 			return nil, true
 		}
 		if kind == "uint32" {
-			if !this.HasAtLeastRemainingBytes(3) {
+			if !this.HasAtLeastRemainingBytes(4) {
 				return errors.New(`Decoder failed. Out of Bytes`), true
 			}
 
@@ -168,7 +168,7 @@ func (this *Decoder) primitives(value reflect.Value, isCompact bool) (error, boo
 			return nil, true
 		}
 		if kind == "uint64" {
-			if !this.HasAtLeastRemainingBytes(4) {
+			if !this.HasAtLeastRemainingBytes(8) {
 				return errors.New(`Decoder failed. Out of Bytes`), true
 			}
 
@@ -194,7 +194,7 @@ func (this *Decoder) primitives(value reflect.Value, isCompact bool) (error, boo
 			return nil, true
 		}
 		if name == "Uint128" {
-			if !this.HasAtLeastRemainingBytes(8) {
+			if !this.HasAtLeastRemainingBytes(16) {
 				return errors.New(`Decoder failed. Out of Bytes`), true
 			}
 
@@ -258,7 +258,18 @@ func (this *Decoder) primitives(value reflect.Value, isCompact bool) (error, boo
 
 func (this *Decoder) Decode(value interface{}) error {
 	valueOf := reflect.ValueOf(value)
-	return this.decodeInner(valueOf, false)
+
+	if err := this.decodeInner(valueOf, false); err != nil {
+		// If failed reset the value to zero
+		if valueOf.Kind() == reflect.Ptr {
+			elem := valueOf.Elem()
+			elem.Set(reflect.Zero(elem.Type()))
+		}
+
+		return err
+	}
+
+	return nil
 }
 
 func (this *Decoder) decodeInner(value reflect.Value, isCompact bool) error {

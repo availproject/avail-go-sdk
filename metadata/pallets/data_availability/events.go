@@ -9,7 +9,7 @@ import (
 type EventApplicationKeyCreated struct {
 	Key   []uint8
 	Owner metadata.AccountId
-	Id    uint32
+	Id    uint32 `scale:"compact"`
 }
 
 func (this EventApplicationKeyCreated) PalletIndex() uint8 {

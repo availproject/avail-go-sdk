@@ -49,6 +49,15 @@ func NewFinalizedBlock(client *Client) (Block, error) {
 	return NewBlock(client, hash)
 }
 
+func (this *Block) TransactionAll() []BlockTransaction {
+	var result = []BlockTransaction{}
+	for _, tx := range this.Block.Extrinsics {
+		result = append(result, NewBlockTransaction(this.client, &tx))
+	}
+
+	return result
+}
+
 func (this *Block) TransactionBySigner(accountId meta.AccountId) []BlockTransaction {
 	var result = []BlockTransaction{}
 	for _, tx := range this.Block.Extrinsics {
@@ -92,6 +101,17 @@ func (this *Block) TransactionByAppId(appId uint32) []BlockTransaction {
 			continue
 		}
 		result = append(result, NewBlockTransaction(this.client, &tx))
+	}
+
+	return result
+}
+
+func (this *Block) DataSubmissionAll() []DataSubmission {
+	var result = []DataSubmission{}
+	for _, tx := range this.Block.Extrinsics {
+		if res, ok := NewDataSubmission(&tx); ok {
+			result = append(result, res)
+		}
 	}
 
 	return result
@@ -157,7 +177,7 @@ func (this *Block) DataSubmissionByAppId(appId uint32) []DataSubmission {
 	return result
 }
 
-func (this *Block) Events(appId uint32) prim.Option[EventRecords] {
+func (this *Block) Events() prim.Option[EventRecords] {
 	return this.events
 }
 
@@ -179,16 +199,13 @@ type DataSubmission struct {
 }
 
 func NewDataSubmission(tx *prim.DecodedExtrinsic) (DataSubmission, bool) {
-	ok := false
-	res := DataSubmission{}
-
 	callSubmitData := daPallet.CallSubmitData{}
 	if tx.Call.PalletIndex != callSubmitData.PalletIndex() {
-		return res, ok
+		return DataSubmission{}, false
 	}
 
 	if tx.Call.CallIndex != callSubmitData.CallIndex() {
-		return res, ok
+		return DataSubmission{}, false
 	}
 
 	// Data submission cannot be done without signed being set.
@@ -196,10 +213,10 @@ func NewDataSubmission(tx *prim.DecodedExtrinsic) (DataSubmission, bool) {
 
 	decoder := prim.NewDecoder(prim.Hex.FromHex(tx.Call.Fields.Value), 0)
 	if err := decoder.Decode(&callSubmitData); err != nil {
-		return res, false
+		return DataSubmission{}, false
 	}
 
-	res = DataSubmission{
+	res := DataSubmission{
 		TxHash:   tx.TxHash,
 		TxIndex:  tx.TxIndex,
 		Data:     callSubmitData.Data,

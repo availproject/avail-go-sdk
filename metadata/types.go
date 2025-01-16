@@ -18,7 +18,11 @@ func (this Balance) ToHuman() string {
 
 	if len(stringValue) <= 18 {
 		var result = "0."
-		return result + removeTrailingZeros(stringValue) + " avail"
+		var trailing = removeTrailingZeros(stringValue)
+		if trailing == "" {
+			result += "0"
+		}
+		return result + trailing + " Avail"
 	}
 
 	var result = ""
@@ -29,7 +33,7 @@ func (this Balance) ToHuman() string {
 		}
 	}
 
-	return removeTrailingZeros(result) + " avail"
+	return removeTrailingZeros(result) + " Avail"
 }
 
 func removeTrailingZeros(s string) string {

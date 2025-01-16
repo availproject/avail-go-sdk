@@ -16,7 +16,11 @@ type SDK struct {
 
 func NewSDK(endpoint string) SDK {
 	var client = NewClient(endpoint)
-	client.InitMetadata(prim.NewNone[prim.H256]())
+
+	// Temp for testing
+	if err := client.InitMetadata(prim.NewNone[prim.H256]()); err != nil {
+		panic(err)
+	}
 	return SDK{
 		Client: client,
 		Tx:     newTransactions(client),

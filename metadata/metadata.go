@@ -33,8 +33,8 @@ func (this *Metadata) PalletCallName(palletIndex uint8, callIndex uint8) (string
 	}
 	v14 := this.Value.AsMetadataV14
 
-	if !pallet.HasEvents {
-		return "", "", errors.New("Metadata Failure. Pallet has no events")
+	if !pallet.HasCalls {
+		return "", "", errors.New("Metadata Failure. Pallet has no Calls")
 	}
 
 	callId := pallet.Calls.Type.Int64()
@@ -216,7 +216,6 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 		com := value.Def.Composite
 		for _, field := range com.Fields {
 			callId := field.Type.Int64()
-			//println("Filed Name: ", string(field.Name))
 			if typ, ok := v14.EfficientLookup[callId]; ok {
 				if err := this.decodeMetadataValue(decoder, typ, isCompact); err != nil {
 					return err
