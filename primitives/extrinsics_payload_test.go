@@ -10,7 +10,7 @@ import (
 func TestEraDecode(t *testing.T) {
 	var expected = NewEra(5, 20)
 	var encode = Encoder.Encode(expected)
-	var input = FromHex(encode)
+	var input = Hex.FromHex(encode)
 	var decoder = NewDecoder(input, 0)
 
 	var actual = Era{}
@@ -29,7 +29,7 @@ func TestExtraDecode(t *testing.T) {
 		AppId: 3,
 	}
 	var encode = Encoder.Encode(expected)
-	var input = FromHex(encode)
+	var input = Hex.FromHex(encode)
 	var decoder = NewDecoder(input, 0)
 
 	var actual = Extra{}

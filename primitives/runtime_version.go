@@ -2,6 +2,7 @@ package primitives
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 type RuntimeVersion struct {
@@ -16,32 +17,32 @@ type RuntimeVersion struct {
 	ImplName         string
 }
 
-func NewRuntimeVersionFromJson(rawJson string) RuntimeVersion {
+func NewRuntimeVersionFromJson(rawJson string) (RuntimeVersion, error) {
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
-		panic(err)
+		return RuntimeVersion{}, err
 	}
 
 	if mappedData["specVersion"] == nil {
-		panic("Header is missing specVersion")
+		return RuntimeVersion{}, errors.New("Header is missing specVersion")
 	}
 	if mappedData["transactionVersion"] == nil {
-		panic("Header is missing transactionVersion")
+		return RuntimeVersion{}, errors.New("Header is missing transactionVersion")
 	}
 	if mappedData["implVersion"] == nil {
-		panic("Header is missing implVersion")
+		return RuntimeVersion{}, errors.New("Header is missing implVersion")
 	}
 	if mappedData["authoringVersion"] == nil {
-		panic("Header is missing authoringVersion")
+		return RuntimeVersion{}, errors.New("Header is missing authoringVersion")
 	}
 	if mappedData["stateVersion"] == nil {
-		panic("Header is missing stateVersion")
+		return RuntimeVersion{}, errors.New("Header is missing stateVersion")
 	}
 	if mappedData["specName"] == nil {
-		panic("Header is missing specName")
+		return RuntimeVersion{}, errors.New("Header is missing specName")
 	}
 	if mappedData["implName"] == nil {
-		panic("Header is missing implName")
+		return RuntimeVersion{}, errors.New("Header is missing implName")
 	}
 
 	specVersion := uint32(mappedData["specVersion"].(float64))
@@ -60,5 +61,5 @@ func NewRuntimeVersionFromJson(rawJson string) RuntimeVersion {
 		StateVersion:     stateVersion,
 		SpecName:         specName,
 		ImplName:         implName,
-	}
+	}, nil
 }

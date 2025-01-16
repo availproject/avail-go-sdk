@@ -44,7 +44,7 @@ func (this *Call) Decode(decoder *Decoder) error {
 
 	// Call Data
 	dataBytes := decoder.NextBytes(decoder.RemainingLength())
-	this.Fields = AlreadyEncoded{Value: ToHex(dataBytes)}
+	this.Fields = AlreadyEncoded{Value: Hex.ToHex(dataBytes)}
 	return nil
 }
 

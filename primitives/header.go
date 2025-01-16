@@ -2,6 +2,7 @@ package primitives
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
 )
 
@@ -15,32 +16,41 @@ type Header struct {
 	StateRoot      H256
 }
 
-func NewHeaderFromJson(rawJson string) Header {
+func NewHeaderFromJson(rawJson string) (Header, error) {
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
-		panic(err)
+		return Header{}, err
 	}
 
 	if mappedData["extrinsicsRoot"] == nil {
-		panic("Header is missing extrinsicsRoot")
+		return Header{}, errors.New("Header is missing extrinsicsRoot")
 	}
 	if mappedData["number"] == nil {
-		panic("Header is missing number")
+		return Header{}, errors.New("Header is missing number")
 	}
 	if mappedData["parentHash"] == nil {
-		panic("Header is missing parentHash")
+		return Header{}, errors.New("Header is missing parentHash")
 	}
 	if mappedData["stateRoot"] == nil {
-		panic("Header is missing stateRoot")
+		return Header{}, errors.New("Header is missing stateRoot")
 	}
 
 	//
-	extrinsicsRoot := NewH256FromHexString(mappedData["extrinsicsRoot"].(string))
-	parentHash := NewH256FromHexString(mappedData["parentHash"].(string))
-	stateRoot := NewH256FromHexString(mappedData["stateRoot"].(string))
+	extrinsicsRoot, err := NewH256FromHexString(mappedData["extrinsicsRoot"].(string))
+	if err != nil {
+		return Header{}, err
+	}
+	parentHash, err := NewH256FromHexString(mappedData["parentHash"].(string))
+	if err != nil {
+		return Header{}, err
+	}
+	stateRoot, err := NewH256FromHexString(mappedData["stateRoot"].(string))
+	if err != nil {
+		return Header{}, err
+	}
 	number, err := strconv.ParseUint(mappedData["number"].(string)[2:], 16, 32)
 	if err != nil {
-		panic(err)
+		return Header{}, err
 	}
 
 	return Header{
@@ -48,5 +58,5 @@ func NewHeaderFromJson(rawJson string) Header {
 		Number:         uint32(number),
 		ParentHash:     parentHash,
 		StateRoot:      stateRoot,
-	}
+	}, nil
 }

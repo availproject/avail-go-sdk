@@ -54,11 +54,10 @@ func NewEncodedExtrinsic(payloadExtra *AlreadyEncoded, payloadCall *AlreadyEncod
 }
 
 func NewEncodedExtrinsicFromHex(hexString string) EncodedExtrinsic {
-	if len(hexString) < 2 {
-		panic("Not Possible")
-	}
-	if hexString[0] == '0' && hexString[1] == 'x' {
-		hexString = hexString[2:]
+	if len(hexString) >= 2 {
+		if hexString[0] == '0' && hexString[1] == 'x' {
+			hexString = hexString[2:]
+		}
 	}
 
 	return EncodedExtrinsic{

@@ -1,4 +1,4 @@
-package complex
+package sdk
 
 import (
 	"go-sdk/interfaces"
@@ -13,16 +13,16 @@ type BlockTransaction struct {
 }
 
 func NewBlockTransaction(client *Client, extrinsic *prim.DecodedExtrinsic) BlockTransaction {
-	names, err := client.Metadata().PalletCallName(extrinsic.Call.PalletIndex, extrinsic.Call.CallIndex)
+	palletName, callName, err := client.Metadata().PalletCallName(extrinsic.Call.PalletIndex, extrinsic.Call.CallIndex)
 	if err != nil {
-		panic(err)
+		println(err.Error())
 	}
 
 	return BlockTransaction{
 		client:     client,
 		Extrinsic:  extrinsic,
-		palletName: names[0],
-		callName:   names[1],
+		palletName: palletName,
+		callName:   callName,
 	}
 }
 

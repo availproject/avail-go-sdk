@@ -1,36 +1,42 @@
 package primitives
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+)
 
 type Block struct {
 	Extrinsics []string
 	Header     Header
 }
 
-func NewBlock(rawJson string) Block {
+func NewBlock(rawJson string) (Block, error) {
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
-		panic(err)
+		return Block{}, err
 	}
 
 	if mappedData["block"] == nil {
-		panic("Block is missing block")
+		return Block{}, errors.New("Block is missing block")
 	}
 
 	mappedData2 := mappedData["block"].(map[string]interface{})
 	if mappedData2["extrinsics"] == nil {
-		panic("Block is missing extrinsics")
+		return Block{}, errors.New("Block is missing extrinsics")
 	}
 
 	if mappedData2["header"] == nil {
-		panic("Block is missing header")
+		return Block{}, errors.New("Block is missing header")
 	}
 
-	headerJson, err2 := json.Marshal(mappedData2["header"])
-	if err2 != nil {
-		panic(err2)
+	headerJson, err := json.Marshal(mappedData2["header"])
+	if err != nil {
+		return Block{}, err
 	}
-	header := NewHeaderFromJson(string(headerJson))
+	header, err := NewHeaderFromJson(string(headerJson))
+	if err != nil {
+		return Block{}, err
+	}
 
 	extrinsicsRaw := mappedData2["extrinsics"].([]interface{})
 	extrinsics := []string{}
@@ -42,5 +48,5 @@ func NewBlock(rawJson string) Block {
 	return Block{
 		Extrinsics: extrinsics,
 		Header:     header,
-	}
+	}, nil
 }

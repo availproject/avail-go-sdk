@@ -4,14 +4,18 @@ import (
 	SUtiles "github.com/itering/scale.go/utiles"
 )
 
-func ToHex(arr []byte) string {
+type hexT struct{}
+
+var Hex hexT
+
+func (hexT) ToHex(arr []byte) string {
 	return SUtiles.BytesToHex(arr)
 }
 
-func FromHex(arr string) []byte {
+func (hexT) FromHex(arr string) []byte {
 	return SUtiles.HexToBytes(arr)
 }
 
-func ToHexWith0x(arr []byte) string {
-	return "0x" + ToHex(arr)
+func (hexT) ToHexWith0x(arr []byte) string {
+	return "0x" + Hex.ToHex(arr)
 }

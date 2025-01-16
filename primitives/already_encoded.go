@@ -17,5 +17,5 @@ func (this *AlreadyEncoded) ToHexWith0x() string {
 }
 
 func (this *AlreadyEncoded) ToBytes() []byte {
-	return FromHex(this.Value)
+	return Hex.FromHex(this.Value)
 }

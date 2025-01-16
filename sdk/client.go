@@ -1,4 +1,4 @@
-package complex
+package sdk
 
 import (
 	"bytes"
@@ -30,8 +30,11 @@ func NewClient(endpoint string) *Client {
 }
 
 func (this *Client) GetEvents(at prim.Option[prim.H256]) (EventRecords, error) {
-	eventsRaw := this.Rpc.State.GetEvents(at)
-	events, err := NewEvents(prim.FromHex(eventsRaw), this.Metadata())
+	eventsRaw, err := this.Rpc.State.GetEvents(at)
+	if err != nil {
+		return EventRecords{}, err
+	}
+	events, err := NewEvents(prim.Hex.FromHex(eventsRaw), this.Metadata())
 	if err != nil {
 		return EventRecords{}, err
 	}
@@ -45,7 +48,10 @@ func (this *Client) GetEvents(at prim.Option[prim.H256]) (EventRecords, error) {
 }
 
 func (this *Client) InitMetadata(at prim.Option[prim.H256]) error {
-	scaleMetadata := this.Rpc.State.GetMetadata(at)
+	scaleMetadata, err := this.Rpc.State.GetMetadata(at)
+	if err != nil {
+		return err
+	}
 	metadata, err := metadata.NewMetadata(scaleMetadata)
 	if err != nil {
 		return err
@@ -99,7 +105,7 @@ func (this *Client) Request(method string, params string) (string, error) {
 	}
 
 	if mappedData["result"] == nil {
-		return "", errors.New("Failed to retrieve response result.")
+		return "", nil
 	}
 
 	resultBytes, _ := json.Marshal(mappedData["result"])
@@ -115,19 +121,22 @@ func (this *Client) Request(method string, params string) (string, error) {
 	return result, nil
 }
 
-func (this *Client) Send(tx prim.EncodedExtrinsic) prim.H256 {
+func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {
 	params := "[\"" + tx.ToHexWith0x() + "\"]"
 
 	txHash, err := this.Request("author_submitExtrinsic", params)
 	if err != nil {
-		panic(err.Error())
+		return prim.H256{}, err
 	}
 
 	return prim.NewH256FromHexString(txHash)
 }
 
-func (this *Client) GetBlock(blockHash prim.Option[prim.H256]) RPCBlock {
-	primBlock := this.Rpc.Chain.GetBlock(blockHash)
+func (this *Client) GetBlock(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
+	primBlock, err := this.Rpc.Chain.GetBlock(blockHash)
+	if err != nil {
+		return RPCBlock{}, err
+	}
 	return NewRPCBlockFromPrimBlock(primBlock)
 }
 
@@ -140,13 +149,13 @@ type RPCBlock struct {
 	Extrinsics []prim.DecodedExtrinsic
 }
 
-func NewRPCBlockFromPrimBlock(primBlock prim.Block) RPCBlock {
+func NewRPCBlockFromPrimBlock(primBlock prim.Block) (RPCBlock, error) {
 	extrinsics := []prim.DecodedExtrinsic{}
 	for i := 0; i < len(primBlock.Extrinsics); i++ {
 		encoded := prim.NewEncodedExtrinsicFromHex(primBlock.Extrinsics[i])
 		decoded, err := encoded.Decode(uint32(i))
 		if err != nil {
-			panic(err)
+			return RPCBlock{}, err
 		}
 		extrinsics = append(extrinsics, decoded)
 	}
@@ -154,5 +163,5 @@ func NewRPCBlockFromPrimBlock(primBlock prim.Block) RPCBlock {
 	return RPCBlock{
 		Header:     primBlock.Header,
 		Extrinsics: extrinsics,
-	}
+	}, nil
 }

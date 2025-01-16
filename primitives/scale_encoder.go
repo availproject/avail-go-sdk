@@ -252,7 +252,7 @@ func leadingZeros(x *big.Int, totalBits int) int {
 }
 
 func (encoderT) FixedArrayTo(value []byte, dest *string) {
-	*dest = *dest + ToHex(value[:])
+	*dest = *dest + Hex.ToHex(value[:])
 }
 
 func genericEncodeTo(typeString string, value interface{}, dest *string) {

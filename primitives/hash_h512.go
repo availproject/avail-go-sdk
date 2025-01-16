@@ -1,6 +1,9 @@
 package primitives
 
 import (
+	"errors"
+	"fmt"
+
 	SUtiles "github.com/itering/scale.go/utiles"
 )
 
@@ -20,19 +23,19 @@ func (this *H512) ToRpcParam() string {
 	return "\"" + this.ToHexWith0x() + "\""
 }
 
-func NewH512FromHexString(hexString string) H512 {
+func NewH512FromHexString(hexString string) (H512, error) {
 	value := SUtiles.HexToBytes(hexString)
 	if len(value) != 64 {
-		panic("Uppps it's not 64")
+		return H512{}, errors.New(fmt.Sprintf(`H512 expected length: %v, actual length: %v.`, 64, len(value)))
 	}
 
-	return H512{Value: [64]byte(value)}
+	return H512{Value: [64]byte(value)}, nil
 }
 
-func NewH512FromByteSlice(array []byte) H512 {
+func NewH512FromByteSlice(array []byte) (H512, error) {
 	if len(array) != 64 {
-		panic("Byte Slice for H512 needs to be 64 elements long.")
+		return H512{}, errors.New(fmt.Sprintf(`H512 expected length: %v, actual length: %v.`, 64, len(array)))
 	}
 
-	return H512{Value: [64]byte(array)}
+	return H512{Value: [64]byte(array)}, nil
 }

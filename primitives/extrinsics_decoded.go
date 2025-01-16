@@ -1,6 +1,8 @@
 package primitives
 
 import (
+	"errors"
+
 	"golang.org/x/crypto/blake2b"
 )
 
@@ -21,7 +23,10 @@ type DecodedExtrinsicSigned struct {
 func NewDecodedExtrinsic(extrinsic EncodedExtrinsic, txIndex uint32) (DecodedExtrinsic, error) {
 	decodedData := extrinsic.HexToBytes()
 	txHashArray := blake2b.Sum256(decodedData)
-	txHash := NewH256FromByteSlice(txHashArray[:])
+	txHash, err := NewH256FromByteSlice(txHashArray[:])
+	if err != nil {
+		return DecodedExtrinsic{}, err
+	}
 
 	totalLength := len(decodedData)
 	signedPart := NewNone[DecodedExtrinsicSigned]()
@@ -34,7 +39,7 @@ func NewDecodedExtrinsic(extrinsic EncodedExtrinsic, txIndex uint32) (DecodedExt
 	}
 
 	if totalLength != int(txLength.Value)+decoder.Offset() {
-		panic("remainingLength is not equal to txLength + scaleDecoder.Data.Offset")
+		return DecodedExtrinsic{}, errors.New("remainingLength is not equal to txLength + scaleDecoder.Data.Offset")
 	}
 
 	// Checking if the message is signed

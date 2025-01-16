@@ -1,4 +1,4 @@
-package complex
+package sdk
 
 import (
 	meta "go-sdk/metadata"
@@ -12,17 +12,50 @@ type Block struct {
 	events prim.Option[EventRecords]
 }
 
-func NewBlock(client *Client, blockHash prim.H256) Block {
-	block := client.GetBlock(prim.NewSome(blockHash))
-	events, err := client.GetEvents(prim.NewSome(blockHash))
+func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
+	block, err := client.GetBlock(prim.NewSome(blockHash))
 	if err != nil {
-		panic(err)
+		return Block{}, nil
 	}
+
+	events, err := client.GetEvents(prim.NewSome(blockHash))
+	blockEvents := prim.NewNone[EventRecords]()
+	if err != nil {
+		println(err.Error())
+	} else {
+		blockEvents = prim.NewSome(events)
+	}
+
 	return Block{
 		client: client,
 		Block:  block,
-		events: prim.NewSome(events),
+		events: blockEvents,
+	}, nil
+}
+
+func NewBestBlock(client *Client) (Block, error) {
+	hash, err := client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+	if err != nil {
+		return Block{}, err
 	}
+	return NewBlock(client, hash)
+}
+
+func NewFinalizedBlock(client *Client) (Block, error) {
+	hash, err := client.Rpc.Chain.GetFinalizedHead()
+	if err != nil {
+		return Block{}, err
+	}
+	return NewBlock(client, hash)
+}
+
+func (this *Block) TransactionAll() []BlockTransaction {
+	var result = []BlockTransaction{}
+	for _, tx := range this.Block.Extrinsics {
+		result = append(result, NewBlockTransaction(this.client, &tx))
+	}
+
+	return result
 }
 
 func (this *Block) TransactionBySigner(accountId meta.AccountId) []BlockTransaction {
@@ -68,6 +101,17 @@ func (this *Block) TransactionByAppId(appId uint32) []BlockTransaction {
 			continue
 		}
 		result = append(result, NewBlockTransaction(this.client, &tx))
+	}
+
+	return result
+}
+
+func (this *Block) DataSubmissionAll() []DataSubmission {
+	var result = []DataSubmission{}
+	for _, tx := range this.Block.Extrinsics {
+		if res, ok := NewDataSubmission(&tx); ok {
+			result = append(result, res)
+		}
 	}
 
 	return result
@@ -133,12 +177,12 @@ func (this *Block) DataSubmissionByAppId(appId uint32) []DataSubmission {
 	return result
 }
 
-func (this *Block) Events(appId uint32) prim.Option[EventRecords] {
+func (this *Block) Events() prim.Option[EventRecords] {
 	return this.events
 }
 
 func sameSignature(tx *prim.DecodedExtrinsic, accountId meta.AccountId) bool {
-	txAccountId := tx.Signed.UnwrapOrDefault().Address.Id.UnwrapOrDefault()
+	txAccountId := tx.Signed.Unwrap().Address.Id.Unwrap()
 	if accountId.Value != txAccountId {
 		return false
 	}
@@ -155,27 +199,24 @@ type DataSubmission struct {
 }
 
 func NewDataSubmission(tx *prim.DecodedExtrinsic) (DataSubmission, bool) {
-	ok := false
-	res := DataSubmission{}
-
 	callSubmitData := daPallet.CallSubmitData{}
 	if tx.Call.PalletIndex != callSubmitData.PalletIndex() {
-		return res, ok
+		return DataSubmission{}, false
 	}
 
 	if tx.Call.CallIndex != callSubmitData.CallIndex() {
-		return res, ok
+		return DataSubmission{}, false
 	}
 
 	// Data submission cannot be done without signed being set.
-	signed := tx.Signed.UnwrapOrDefault()
+	signed := tx.Signed.Unwrap()
 
-	decoder := prim.NewDecoder(prim.FromHex(tx.Call.Fields.Value), 0)
+	decoder := prim.NewDecoder(prim.Hex.FromHex(tx.Call.Fields.Value), 0)
 	if err := decoder.Decode(&callSubmitData); err != nil {
-		return res, false
+		return DataSubmission{}, false
 	}
 
-	res = DataSubmission{
+	res := DataSubmission{
 		TxHash:   tx.TxHash,
 		TxIndex:  tx.TxIndex,
 		Data:     callSubmitData.Data,
