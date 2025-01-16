@@ -1,0 +1,93 @@
+package primitives
+
+import (
+	"github.com/itering/scale.go/utiles/uint128"
+)
+
+type Option[T any] struct {
+	value T
+	isSet bool
+}
+
+func (this Option[T]) EncodeTo(dest *string) {
+	if !this.isSet {
+		Encoder.EncodeTo(uint8(0), dest)
+		return
+	}
+	Encoder.EncodeTo(uint8(1), dest)
+	Encoder.EncodeTo(this.value, dest)
+}
+
+func (this *Option[T]) Decode(decoder *Decoder) error {
+	hasValue := uint8(0)
+	if err := decoder.Decode(&hasValue); err != nil {
+		return err
+	}
+	if hasValue == 1 {
+		this.isSet = true
+		if err := decoder.Decode(&this.value); err != nil {
+			return err
+		}
+	} else {
+		this.isSet = false
+	}
+
+	return nil
+}
+
+func (this *Option[T]) Set(value T) {
+	this.value = value
+	this.isSet = true
+}
+
+func (this Option[T]) IsSome() bool {
+	return this.isSet
+}
+
+func (this Option[T]) IsNone() bool {
+	return !this.isSet
+}
+
+func (this Option[T]) Unwrap() T {
+	if this.isSet == false {
+		panic("Option is not set.")
+	}
+	return this.value
+}
+
+func (this Option[T]) UnwrapOrDefault() T {
+	if this.isSet == false {
+		var t T
+		return t
+	}
+	return this.value
+}
+
+func (this Option[T]) Unwrap0rElse(elseValue T) T {
+	if this.isSet == false {
+		return elseValue
+	}
+	return this.value
+}
+
+func NewSome[T any](value T) Option[T] {
+	option := Option[T]{}
+	option.Set(value)
+	return option
+}
+
+func NewNone[T any]() Option[T] {
+	return Option[T]{}
+}
+
+type CompactU32 struct {
+	Value uint32 `scale:"compact"`
+}
+
+type CompactU64 struct {
+	Value uint64 `scale:"compact"`
+}
+
+type CompactU128 struct {
+	Value uint128.Uint128 `scale:"compact"`
+}

@@ -1,0 +1,2 @@
+cd primitives
+go test .
