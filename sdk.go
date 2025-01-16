@@ -4,6 +4,9 @@ import (
 	Complex "go-sdk/complex"
 	DA "go-sdk/metadata/pallets/data_availability"
 	Prim "go-sdk/primitives"
+	"math/big"
+
+	"github.com/itering/scale.go/utiles/uint128"
 )
 
 type SDK struct {
@@ -20,6 +23,7 @@ func NewSDK(endpoint string) SDK {
 	}
 }
 
+// Temp for testing
 func NewSDK2(endpoint string) SDK {
 	var client = Complex.NewClient(endpoint)
 	return SDK{
@@ -49,3 +53,12 @@ func (this *DataAvailabilityTx) SubmitData(data []byte) Complex.Transaction {
 	}
 	return Complex.NewTransaction(this.Client, call.ToPayload())
 }
+
+func OneAvail() uint128.Uint128 {
+	var res, _ = new(big.Int).SetString("1000000000000000000", 10)
+	return uint128.FromBig(res)
+}
+
+const LocalEndpoint = "http://127.0.0.1:9944"
+const TuringEndpoint = "https://turing-rpc.avail.so/rpc"
+const MainnetEndpoint = "https://mainnet-rpc.avail.so/rpc"
