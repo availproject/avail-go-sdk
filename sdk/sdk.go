@@ -1,9 +1,9 @@
-package complex
+package sdk
 
 import (
-	"math/big"
-
 	"github.com/itering/scale.go/utiles/uint128"
+
+	"math/big"
 
 	daPallet "go-sdk/metadata/pallets/data_availability"
 	prim "go-sdk/primitives"
@@ -47,9 +47,12 @@ type DataAvailabilityTx struct {
 }
 
 func (this *DataAvailabilityTx) SubmitData(data []byte) Transaction {
-	var call = daPallet.CallSubmitData{
-		Data: data,
-	}
+	call := daPallet.CallSubmitData{Data: data}
+	return NewTransaction(this.Client, call.ToPayload())
+}
+
+func (this *DataAvailabilityTx) CreateApplicationKey(key []byte) Transaction {
+	call := daPallet.CallCreateApplicationKey{Key: key}
 	return NewTransaction(this.Client, call.ToPayload())
 }
 

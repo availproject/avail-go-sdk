@@ -1,4 +1,4 @@
-package complex
+package sdk
 
 import (
 	meta "go-sdk/metadata"
@@ -12,17 +12,41 @@ type Block struct {
 	events prim.Option[EventRecords]
 }
 
-func NewBlock(client *Client, blockHash prim.H256) Block {
-	block := client.GetBlock(prim.NewSome(blockHash))
-	events, err := client.GetEvents(prim.NewSome(blockHash))
+func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
+	block, err := client.GetBlock(prim.NewSome(blockHash))
 	if err != nil {
-		panic(err)
+		return Block{}, nil
 	}
+
+	events, err := client.GetEvents(prim.NewSome(blockHash))
+	blockEvents := prim.NewNone[EventRecords]()
+	if err != nil {
+		println(err.Error())
+	} else {
+		blockEvents = prim.NewSome(events)
+	}
+
 	return Block{
 		client: client,
 		Block:  block,
-		events: prim.NewSome(events),
+		events: blockEvents,
+	}, nil
+}
+
+func NewBestBlock(client *Client) (Block, error) {
+	hash, err := client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+	if err != nil {
+		return Block{}, err
 	}
+	return NewBlock(client, hash)
+}
+
+func NewFinalizedBlock(client *Client) (Block, error) {
+	hash, err := client.Rpc.Chain.GetFinalizedHead()
+	if err != nil {
+		return Block{}, err
+	}
+	return NewBlock(client, hash)
 }
 
 func (this *Block) TransactionBySigner(accountId meta.AccountId) []BlockTransaction {

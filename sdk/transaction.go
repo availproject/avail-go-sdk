@@ -1,11 +1,11 @@
-package complex
+package sdk
 
 import (
+	"github.com/vedhavyas/go-subkey/v2"
+
 	"errors"
 	"strconv"
 	"time"
-
-	"github.com/vedhavyas/go-subkey/v2"
 
 	"go-sdk/metadata"
 	prim "go-sdk/primitives"
@@ -26,7 +26,7 @@ func NewTransaction(client *Client, payload metadata.Payload) Transaction {
 	}
 }
 
-func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOptions) prim.H256 {
+func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOptions) (prim.H256, error) {
 	return TransactionSignAndSend(this.Client, account, this.Payload, options)
 }
 
@@ -42,16 +42,28 @@ func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, option
 	return TransactionSignSendWatch(this.Client, account, this.Payload, Inclusion, 3, options)
 }
 
-func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload metadata.Payload, options TransactionOptions) prim.H256 {
-	var extra, additional = options.ToPrimitive(client, account.SS58Address(42))
-	var tx = prim.CreateSigned(payload.Call, extra, additional, account)
+func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload metadata.Payload, options TransactionOptions) (prim.H256, error) {
+	extra, additional, err := options.ToPrimitive(client, account.SS58Address(42))
+	if err != nil {
+		return prim.H256{}, err
+	}
+	tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
+	if err != nil {
+		return prim.H256{}, err
+	}
 
 	return client.Send(tx)
 }
 
 func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitFor uint8, blockTimeout uint32, options TransactionOptions) (TransactionDetails, error) {
-	var extra, additional = options.ToPrimitive(client, account.SS58Address(42))
-	var tx = prim.CreateSigned(payload.Call, extra, additional, account)
+	extra, additional, err := options.ToPrimitive(client, account.SS58Address(42))
+	if err != nil {
+		return TransactionDetails{}, err
+	}
+	tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
+	if err != nil {
+		return TransactionDetails{}, err
+	}
 
 	var retryCount = 3
 	for {
@@ -59,8 +71,14 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 			break
 		}
 
-		var txHash = client.Send(tx)
-		var maybeDetails = TransactionWatch(client, txHash, waitFor, blockTimeout)
+		txHash, err := client.Send(tx)
+		if err != nil {
+			return TransactionDetails{}, err
+		}
+		maybeDetails, err := TransactionWatch(client, txHash, waitFor, blockTimeout)
+		if err != nil {
+			return TransactionDetails{}, err
+		}
 		if maybeDetails.IsSome() {
 			return maybeDetails.Unwrap(), nil
 		}
@@ -80,10 +98,11 @@ type TransactionDetails struct {
 	Events      prim.Option[EventRecords]
 }
 
-func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTimeout uint32) prim.Option[TransactionDetails] {
+func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTimeout uint32) (prim.Option[TransactionDetails], error) {
 	shouldSleep := false
 	currentBlockHash := prim.NewNone[prim.H256]()
 	timeoutBlockNumber := prim.NewNone[uint32]()
+	var err error
 
 	if waitFor == Finalization {
 		println("Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for finalization")
@@ -101,9 +120,15 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 
 		blockHash := prim.H256{}
 		if waitFor == Finalization {
-			blockHash = client.Rpc.Chain.GetFinalizedHead()
+			blockHash, err = client.Rpc.Chain.GetFinalizedHead()
+			if err != nil {
+				return prim.NewNone[TransactionDetails](), err
+			}
 		} else {
-			blockHash = client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+			blockHash, err = client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+			if err != nil {
+				return prim.NewNone[TransactionDetails](), err
+			}
 		}
 
 		if currentBlockHash.IsSome() {
@@ -113,27 +138,33 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 		}
 		currentBlockHash = prim.NewSome(blockHash)
 
-		block := client.GetBlock(prim.NewSome(blockHash))
+		block, err := client.GetBlock(prim.NewSome(blockHash))
+		if err != nil {
+			return prim.NewNone[TransactionDetails](), err
+		}
+
 		blockNumber := block.Header.Number
 		println("New Block fetched. Hash: " + blockHash.ToHexWith0x() + ", Number: " + strconv.FormatUint(uint64(blockNumber), 10))
 
 		for _, element := range block.Extrinsics {
 			if element.TxHash.ToHexWith0x() == txHash.ToHexWith0x() {
 				// Get Events
-				events, err := client.GetEvents(prim.NewSome(blockHash))
+				blockEvents, err := client.GetEvents(prim.NewSome(blockHash))
+				events := prim.NewNone[EventRecords]()
 				if err != nil {
-					panic(err)
+					println(err.Error())
+				} else {
+					events.Set(FilterByTxIndex(blockEvents, element.TxIndex))
 				}
-				events = FilterByTxIndex(events, element.TxIndex)
 
 				details := TransactionDetails{
 					TxHash:      txHash,
 					TxIndex:     element.TxIndex,
 					BlockHash:   blockHash,
 					BlockNumber: blockNumber,
-					Events:      prim.NewSome(events),
+					Events:      events,
 				}
-				return prim.NewSome(details)
+				return prim.NewSome(details), nil
 			}
 		}
 
@@ -150,5 +181,5 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 		}
 	}
 
-	return prim.NewNone[TransactionDetails]()
+	return prim.NewNone[TransactionDetails](), nil
 }

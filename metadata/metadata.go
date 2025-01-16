@@ -26,15 +26,15 @@ func NewMetadata(rawMetadata string) (Metadata, error) {
 	return metadata, nil
 }
 
-func (this *Metadata) PalletCallName(palletIndex uint8, callIndex uint8) ([]string, error) {
+func (this *Metadata) PalletCallName(palletIndex uint8, callIndex uint8) (string, string, error) {
 	pallet := this.FindPalletMetadata(palletIndex)
 	if pallet == nil {
-		return []string{}, errors.New("Metadata Failure. Failed to find Pallet")
+		return "", "", errors.New("Metadata Failure. Failed to find Pallet")
 	}
 	v14 := this.Value.AsMetadataV14
 
 	if !pallet.HasEvents {
-		return []string{}, errors.New("Metadata Failure. Pallet has no events")
+		return "", "", errors.New("Metadata Failure. Pallet has no events")
 	}
 
 	callId := pallet.Calls.Type.Int64()
@@ -44,24 +44,23 @@ func (this *Metadata) PalletCallName(palletIndex uint8, callIndex uint8) ([]stri
 				if uint8(vars.Index) != callIndex {
 					continue
 				}
-				names := []string{string(pallet.Name), string(vars.Name)}
-				return names, nil
+				return string(pallet.Name), string(vars.Name), nil
 			}
 		}
 	}
 
-	return []string{}, errors.New(fmt.Sprintf(`Metadata Failure. Failed to find pallet and event names. Pallet Index: %v, Call Index: %v`, palletIndex, callIndex))
+	return "", "", errors.New(fmt.Sprintf(`Metadata Failure. Failed to find pallet and event names. Pallet Index: %v, Call Index: %v`, palletIndex, callIndex))
 }
 
-func (this *Metadata) PalletEventName(palletIndex uint8, eventIndex uint8) ([]string, error) {
+func (this *Metadata) PalletEventName(palletIndex uint8, eventIndex uint8) (string, string, error) {
 	pallet := this.FindPalletMetadata(palletIndex)
 	if pallet == nil {
-		return []string{}, errors.New("Metadata Failure. Failed to find Pallet")
+		return "", "", errors.New("Metadata Failure. Failed to find Pallet")
 	}
 	v14 := this.Value.AsMetadataV14
 
 	if !pallet.HasEvents {
-		return []string{}, errors.New("Metadata Failure. Pallet has no events")
+		return "", "", errors.New("Metadata Failure. Pallet has no events")
 	}
 
 	callId := pallet.Events.Type.Int64()
@@ -71,13 +70,12 @@ func (this *Metadata) PalletEventName(palletIndex uint8, eventIndex uint8) ([]st
 				if uint8(vars.Index) != eventIndex {
 					continue
 				}
-				names := []string{string(pallet.Name), string(vars.Name)}
-				return names, nil
+				return string(pallet.Name), string(vars.Name), nil
 			}
 		}
 	}
 
-	return []string{}, errors.New(fmt.Sprintf(`Metadata Failure. Failed to find pallet and event names. Pallet Index: %v, Event Index: %v`, palletIndex, eventIndex))
+	return "", "", errors.New(fmt.Sprintf(`Metadata Failure. Failed to find pallet and event names. Pallet Index: %v, Event Index: %v`, palletIndex, eventIndex))
 }
 
 func (this *Metadata) FindPalletMetadata(palletIndex uint8) *gsrpcTypes.PalletMetadataV14 {

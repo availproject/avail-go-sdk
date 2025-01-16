@@ -1,12 +1,13 @@
-package complex
+package sdk
 
 import (
+	"errors"
 	"strconv"
 )
 
-func (this *systemRPC) AccountNextIndex(accountId string) uint32 {
+func (this *systemRPC) AccountNextIndex(accountId string) (uint32, error) {
 	if len(accountId) < 1 {
-		panic("AccountId needs to have a length of > 0")
+		return uint32(0), errors.New("AccountId needs to have a length of > 0")
 	}
 
 	if accountId[0] != '"' {
@@ -22,12 +23,12 @@ func (this *systemRPC) AccountNextIndex(accountId string) uint32 {
 
 	value, err := this.client.Request("system_accountNextIndex", params.Build())
 	if err != nil {
-		panic(err)
+		return uint32(0), err
 	}
 	parsedValue, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
-		panic(err)
+		return uint32(0), err
 	}
 
-	return uint32(parsedValue)
+	return uint32(parsedValue), nil
 }

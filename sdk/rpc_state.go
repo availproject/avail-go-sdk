@@ -1,10 +1,10 @@
-package complex
+package sdk
 
 import (
 	prim "go-sdk/primitives"
 )
 
-func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) prim.RuntimeVersion {
+func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) (prim.RuntimeVersion, error) {
 	var params = &RPCParams{}
 	if blockHash.IsSome() {
 		params.AddH256(blockHash.Unwrap())
@@ -18,7 +18,7 @@ func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) prim.R
 	return prim.NewRuntimeVersionFromJson(value)
 }
 
-func (this *stateRPC) GetStorage(key string, at prim.Option[prim.H256]) string {
+func (this *stateRPC) GetStorage(key string, at prim.Option[prim.H256]) (string, error) {
 	params := RPCParams{}
 	params.Add("\"" + key + "\"")
 	if at.IsSome() {
@@ -30,10 +30,10 @@ func (this *stateRPC) GetStorage(key string, at prim.Option[prim.H256]) string {
 		panic(err)
 	}
 
-	return value
+	return value, nil
 }
 
-func (this *stateRPC) GetMetadata(at prim.Option[prim.H256]) string {
+func (this *stateRPC) GetMetadata(at prim.Option[prim.H256]) (string, error) {
 	params := RPCParams{}
 	if at.IsSome() {
 		params.AddH256(at.Unwrap())
@@ -44,10 +44,10 @@ func (this *stateRPC) GetMetadata(at prim.Option[prim.H256]) string {
 		panic(err)
 	}
 
-	return value
+	return value, nil
 }
 
-func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) string {
+func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) (string, error) {
 	params := RPCParams{}
 	params.Add("\"" + "0x26aa394eea5630e07c48ae0c9558cef780d41e5e16056765bc8461851072c9d7" + "\"")
 	if at.IsSome() {
@@ -56,8 +56,8 @@ func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) string {
 
 	value, err := this.client.Request("state_getStorage", params.Build())
 	if err != nil {
-		return ""
+		return "", err
 	}
 
-	return value
+	return value, nil
 }

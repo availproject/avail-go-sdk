@@ -1,10 +1,12 @@
 package metadata
 
 import (
-	"github.com/vedhavyas/go-subkey/v2"
-	prim "go-sdk/primitives"
-
 	"github.com/itering/scale.go/utiles/uint128"
+	"github.com/vedhavyas/go-subkey/v2"
+
+	"errors"
+
+	prim "go-sdk/primitives"
 )
 
 type Balance struct {
@@ -65,8 +67,11 @@ func NewAccountIdFromAddress(address string) (AccountId, error) {
 	if err != nil {
 		return AccountId{}, err
 	}
-	var h256 = prim.NewH256FromByteSlice(accountBytes)
-	var res = AccountId{Value: h256}
+	h256, err := prim.NewH256FromByteSlice(accountBytes)
+	if err != nil {
+		return AccountId{}, err
+	}
+	res := AccountId{Value: h256}
 	return res, nil
 }
 
@@ -189,13 +194,12 @@ func (this DispatchError) EncodeTo(dest *string) {
 	}
 }
 
-func (this *DispatchError) Decode(decoder *prim.Decoder) bool {
-	decoder.Decode(&this.VariantIndex)
+func (this *DispatchError) Decode(decoder *prim.Decoder) error {
+	*this = DispatchError{}
 
-	this.Module = prim.NewNone[ModuleError]()
-	this.Token = prim.NewNone[TokenError]()
-	this.Arithmetic = prim.NewNone[ArithmeticError]()
-	this.Transactional = prim.NewNone[TransactionalError]()
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
 
 	switch this.VariantIndex {
 	case 0:
@@ -210,25 +214,31 @@ func (this *DispatchError) Decode(decoder *prim.Decoder) bool {
 	case 6:
 	case 7:
 		var t TokenError
-		decoder.Decode(&t)
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
 		this.Token.Set(t)
 	case 8:
 		var t ArithmeticError
-		decoder.Decode(&t)
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
 		this.Arithmetic.Set(t)
 	case 9:
 		var t TransactionalError
-		decoder.Decode(&t)
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
 		this.Transactional.Set(t)
 	case 10:
 	case 11:
 	case 12:
 	case 13:
 	default:
-		panic("Unknown DispatchError Variant Index while Decoding")
+		return errors.New("Unknown DispatchError Variant Index while Decoding")
 	}
 
-	return true
+	return nil
 }
 
 // Do not add, remove or change any of the field members.

@@ -1,8 +1,9 @@
-package complex
+package sdk
 
 import (
-	prim "go-sdk/primitives"
 	"strconv"
+
+	prim "go-sdk/primitives"
 )
 
 type RPC struct {

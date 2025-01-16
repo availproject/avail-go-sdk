@@ -1,4 +1,4 @@
-package complex
+package sdk
 
 import (
 	"errors"
@@ -49,8 +49,6 @@ func (this *Events) Decode() (EventRecords, error) {
 		return EventRecords{}, nil
 	}
 
-	/* 	println("Event Count :", this.eventCount) */
-
 	decoder := prim.NewDecoder(this.eventBytes, int(this.startIdx))
 	for {
 		eventRecord, err := NewEventRecord(&decoder, uint32(position), this.metadata)
@@ -66,11 +64,8 @@ func (this *Events) Decode() (EventRecords, error) {
 		}
 	}
 
-	/* 	println("Count: ", this.eventCount) */
-
 	// Sanity Check
 	if decoder.RemainingLength() != 0 {
-		//println("ISSUE: Remaining length: ", decoder.RemainingLength())
 		return EventRecords{}, errors.New("All events were decoded but some bytes are left. This is not good.")
 	}
 
@@ -80,13 +75,6 @@ func (this *Events) Decode() (EventRecords, error) {
 type EventPhase struct {
 	VariantIndex   uint8
 	ApplyExtrinsic prim.Option[uint32]
-}
-
-func emptyEventPhase() EventPhase {
-	return EventPhase{
-		VariantIndex:   0,
-		ApplyExtrinsic: prim.NewNone[uint32](),
-	}
 }
 
 func (this *EventPhase) ToString() string {
@@ -103,23 +91,17 @@ func (this *EventPhase) ToString() string {
 }
 
 func DecodeEventPhase(decoder *prim.Decoder) (EventPhase, error) {
-
-	// Sanity check
-	if !decoder.HasAtLeastRemainingBytes(1) {
-		return EventPhase{}, errors.New("Failed to Decode Event Phase. Out of bytes")
+	var eventPhase = EventPhase{}
+	if err := decoder.Decode(&eventPhase.VariantIndex); err != nil {
+		return EventPhase{}, err
 	}
 
-	var eventPhase = emptyEventPhase()
-	decoder.Decode(&eventPhase.VariantIndex)
 	switch eventPhase.VariantIndex {
 	case 0:
-		// Sanity check
-		if !decoder.HasAtLeastRemainingBytes(4) {
-			return EventPhase{}, errors.New("Failed to Decode Event Phase. Out of bytes")
-		}
-
 		var value = uint32(0)
-		decoder.Decode(&value)
+		if err := decoder.Decode(&value); err != nil {
+			return EventPhase{}, err
+		}
 		eventPhase.ApplyExtrinsic.Set(value)
 		return eventPhase, nil
 	case 1:
@@ -179,12 +161,12 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 	}
 
 	// Decoding Pallet and Event Names
-	names, err := metadata.PalletEventName(eventRecord.PalletIndex, eventRecord.EventIndex)
+	palletName, eventName, err := metadata.PalletEventName(eventRecord.PalletIndex, eventRecord.EventIndex)
 	if err != nil {
 		return EventRecord{}, err
 	}
-	eventRecord.PalletName = names[0]
-	eventRecord.EventName = names[1]
+	eventRecord.PalletName = palletName
+	eventRecord.EventName = eventName
 
 	// println(fmt.Sprintf(`Decoding %v, %v %v`, eventRecord.PalletName, eventRecord.EventName, eventRecord.Phase.ToString()))
 
@@ -219,7 +201,15 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 	return eventRecord, nil
 }
 
-func FindFirst[T interfaces.EventT](eventRecords EventRecords, target T) prim.Option[T] {
+func EventFindFirst[T interfaces.EventT](eventRecords EventRecords, target T) prim.Option[T] {
+	event, err := EventFindFirstChecked(eventRecords, target)
+	if err != nil {
+		return prim.NewNone[T]()
+	}
+	return event
+}
+
+func EventFindFirstChecked[T interfaces.EventT](eventRecords EventRecords, target T) (prim.Option[T], error) {
 	for _, elem := range eventRecords {
 		if elem.PalletIndex != target.PalletIndex() {
 			continue
@@ -230,16 +220,25 @@ func FindFirst[T interfaces.EventT](eventRecords EventRecords, target T) prim.Op
 
 		var t T
 		var decoder = prim.NewDecoder(elem.AllBytes[elem.EventFieldsStartIndex:elem.EventFieldsEndIndex], 0)
-		if decoder.Decode(&t) != nil {
-			panic("Failed to Decode in Events.FindFirst")
+		if err := decoder.Decode(&t); err != nil {
+			return prim.NewNone[T](), err
 		}
-		return prim.NewSome(t)
+
+		return prim.NewSome(t), nil
 	}
 
-	return prim.NewNone[T]()
+	return prim.NewNone[T](), nil
 }
 
-func FindAll[T interfaces.EventT](eventRecords EventRecords, target T) []T {
+func EventFindAll[T interfaces.EventT](eventRecords EventRecords, target T) []T {
+	events, err := EventFindAllChecked(eventRecords, target)
+	if err != nil {
+		return []T{}
+	}
+	return events
+}
+
+func EventFindAllChecked[T interfaces.EventT](eventRecords EventRecords, target T) ([]T, error) {
 	var t T
 	var result = []T{}
 	for _, elem := range eventRecords {
@@ -251,22 +250,33 @@ func FindAll[T interfaces.EventT](eventRecords EventRecords, target T) []T {
 		}
 
 		var decoder = prim.NewDecoder(elem.AllBytes[elem.EventFieldsStartIndex:elem.EventFieldsEndIndex], 0)
-		if decoder.Decode(&t) != nil {
-			panic("Failed to Decode in Events.FindAll")
+		if err := decoder.Decode(&t); err != nil {
+			return []T{}, err
 		}
 		result = append(result, t)
 	}
 
-	return result
+	return result, nil
 }
 
-func FindLast[T interfaces.EventT](eventRecords EventRecords, target T) prim.Option[T] {
-	var result = FindAll(eventRecords, target)
-	if len(result) == 0 {
+func EventFindLast[T interfaces.EventT](eventRecords EventRecords, target T) prim.Option[T] {
+	event, err := EventFindLastChecked(eventRecords, target)
+	if err != nil {
 		return prim.NewNone[T]()
 	}
+	return event
+}
 
-	return prim.NewSome(result[len(result)-1])
+func EventFindLastChecked[T interfaces.EventT](eventRecords EventRecords, target T) (prim.Option[T], error) {
+	result, err := EventFindAllChecked(eventRecords, target)
+	if err != nil {
+		return prim.NewNone[T](), err
+	}
+	if len(result) == 0 {
+		return prim.NewNone[T](), nil
+	}
+
+	return prim.NewSome(result[len(result)-1]), nil
 }
 
 func FilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecords {
@@ -277,6 +287,19 @@ func FilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecords {
 		}
 		var elemTxIndex = elem.Phase.ApplyExtrinsic.Unwrap()
 		if elemTxIndex != txIndex {
+			continue
+		}
+
+		result = append(result, elem)
+	}
+
+	return result
+}
+
+func FilterSystemEvents(eventRecords EventRecords, txIndex uint32) EventRecords {
+	var result = EventRecords{}
+	for _, elem := range eventRecords {
+		if elem.Phase.ApplyExtrinsic.IsSome() {
 			continue
 		}
 
