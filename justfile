@@ -1,7 +1,7 @@
 run:
     go run .
 build:
-    go build .
+    go build -o /dev/null
 check:
     just build
 fmt:

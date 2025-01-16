@@ -16,7 +16,7 @@ type Metadata struct {
 }
 
 func NewMetadata(rawMetadata string) (Metadata, error) {
-	scaleMetadata := primitives.FromHex(rawMetadata)
+	scaleMetadata := primitives.Hex.FromHex(rawMetadata)
 
 	metadata := Metadata{}
 	if err := gsrpcScale.NewDecoder(bytes.NewReader(scaleMetadata)).Decode(&metadata.Value); err != nil {

@@ -48,14 +48,11 @@ func (this Option[T]) IsNone() bool {
 	return !this.isSet
 }
 
+// This function does not panic when no value is set.
+//
+// If Set, returns set value.
+// If Not Set, returns default value.
 func (this Option[T]) Unwrap() T {
-	if this.isSet == false {
-		panic("Option is not set.")
-	}
-	return this.value
-}
-
-func (this Option[T]) UnwrapOrDefault() T {
 	if this.isSet == false {
 		var t T
 		return t
@@ -63,6 +60,10 @@ func (this Option[T]) UnwrapOrDefault() T {
 	return this.value
 }
 
+// This function does not panic when no value is set.
+//
+// If Set, returns set value.
+// If Not Set, returns value specified as parameter.
 func (this Option[T]) Unwrap0rElse(elseValue T) T {
 	if this.isSet == false {
 		return elseValue

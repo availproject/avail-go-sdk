@@ -138,7 +138,7 @@ func (this *Block) Events(appId uint32) prim.Option[EventRecords] {
 }
 
 func sameSignature(tx *prim.DecodedExtrinsic, accountId meta.AccountId) bool {
-	txAccountId := tx.Signed.UnwrapOrDefault().Address.Id.UnwrapOrDefault()
+	txAccountId := tx.Signed.Unwrap().Address.Id.Unwrap()
 	if accountId.Value != txAccountId {
 		return false
 	}
@@ -168,9 +168,9 @@ func NewDataSubmission(tx *prim.DecodedExtrinsic) (DataSubmission, bool) {
 	}
 
 	// Data submission cannot be done without signed being set.
-	signed := tx.Signed.UnwrapOrDefault()
+	signed := tx.Signed.Unwrap()
 
-	decoder := prim.NewDecoder(prim.FromHex(tx.Call.Fields.Value), 0)
+	decoder := prim.NewDecoder(prim.Hex.FromHex(tx.Call.Fields.Value), 0)
 	if err := decoder.Decode(&callSubmitData); err != nil {
 		return res, false
 	}

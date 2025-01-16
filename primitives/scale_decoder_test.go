@@ -16,7 +16,7 @@ func TestDecoderBool(t *testing.T) {
 	testParameters["0x01"] = true
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = false
 		decoder.Decode(&actual)
 		if actual != expected {
@@ -39,7 +39,7 @@ func TestDecoderUint8(t *testing.T) {
 	testParameters["0xff"] = 255
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint8(0)
 		decoder.Decode(&actual)
 		if actual != expected {
@@ -62,7 +62,7 @@ func TestDecoderUint16(t *testing.T) {
 	testParameters["0xffff"] = 65535
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint16(0)
 		decoder.Decode(&actual)
 		if actual != expected {
@@ -85,7 +85,7 @@ func TestDecoderUint32(t *testing.T) {
 	testParameters["0xffffffff"] = 4294967295
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint32(0)
 		decoder.Decode(&actual)
 		if actual != expected {
@@ -108,7 +108,7 @@ func TestDecoderUint64(t *testing.T) {
 	testParameters["0xffffffffffffffff"] = 18446744073709551615
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint64(0)
 		decoder.Decode(&actual)
 		if actual != expected {
@@ -133,7 +133,7 @@ func TestDecoderUint128(t *testing.T) {
 	testParameters["0x00000000000000000100000000000000"] = uint128.FromBig(res8)
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint128.Uint128{}
 		decoder.Decode(&actual)
 		if actual != expected {
@@ -156,7 +156,7 @@ func TestDecoderCompactU32(t *testing.T) {
 	testParameters["0x03ffffffff"] = 4294967295
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = CompactU32{}
 		decoder.Decode(&actual)
 		if actual.Value != expected {
@@ -179,7 +179,7 @@ func TestDecoderCompactU64(t *testing.T) {
 	testParameters["0x13ffffffffffffffff"] = 18446744073709551615
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = CompactU64{}
 		decoder.Decode(&actual)
 		if actual.Value != expected {
@@ -204,7 +204,7 @@ func TestDecoderCompactUint128(t *testing.T) {
 	testParameters["0x17000000000000000001"] = uint128.FromBig(res8)
 
 	for key, expected := range testParameters {
-		var decoder = NewDecoder(FromHex(key), 0)
+		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = CompactU128{}
 		decoder.Decode(&actual)
 		if actual.Value != expected {
@@ -219,7 +219,7 @@ func TestDecoderArray(t *testing.T) {
 		var expected = [5]byte{0, 1, 2, 3, 4}
 		var input = "0x0001020304"
 		var actual = [5]byte{}
-		var decoder = NewDecoder(FromHex(input), 0)
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
 		decoder.Decode(&actual)
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Array Failure. Input %v, Output %v, Expected Output %v`, input, actual, expected)
@@ -238,7 +238,7 @@ func TestDecoderArray(t *testing.T) {
 		var el2 = el
 		var expected = [2]DummyStruct{el, el2}
 		var actual = [2]DummyStruct{}
-		var decoder = NewDecoder(FromHex(input), 0)
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
 		decoder.Decode(&actual)
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Array Failure. Input %v, Output %v, Expected Output %v`, input, actual, expected)
@@ -252,7 +252,7 @@ func TestDecoderSlice(t *testing.T) {
 		var input = "0x140001020304"
 		var expected = []byte{0, 1, 2, 3, 4}
 		var actual = []byte{}
-		var decoder = NewDecoder(FromHex(input), 0)
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
 		decoder.Decode(&actual)
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Slice Failure. Input %v, Output %v, Expected Output %v`, input, actual, expected)
@@ -271,7 +271,7 @@ func TestDecoderSlice(t *testing.T) {
 		var el2 = el
 		var expected = []DummyStruct{el, el2}
 		var actual = []DummyStruct{}
-		var decoder = NewDecoder(FromHex(input), 0)
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
 		decoder.Decode(&actual)
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Slice Failure. Input %v, Output %v, Expected Output %v`, input, actual, expected)
@@ -289,7 +289,7 @@ func TestDecoderStructures(t *testing.T) {
 			Compact:   15,
 		}
 		var actual = DummyStruct{}
-		var decoder = NewDecoder(FromHex(input), 0)
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
 		decoder.Decode(&actual)
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Structure. Output %v, Expected Output %v`, actual, expected)
@@ -303,7 +303,7 @@ func TestDecoderStructures(t *testing.T) {
 		}
 		var input = Encoder.Encode(&expected)
 		var actual = DummyStruct2{}
-		var decoder = NewDecoder(FromHex(input), 0)
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
 		decoder.Decode(&actual)
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Structure. Output %v, Expected Output %v`, actual, expected)

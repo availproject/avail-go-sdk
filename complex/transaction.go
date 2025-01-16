@@ -1,6 +1,7 @@
 package complex
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
@@ -9,6 +10,9 @@ import (
 	"go-sdk/metadata"
 	prim "go-sdk/primitives"
 )
+
+const Finalization = uint8(0)
+const Inclusion = uint8(1)
 
 type Transaction struct {
 	Client  *Client
@@ -26,16 +30,16 @@ func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOpti
 	return TransactionSignAndSend(this.Client, account, this.Payload, options)
 }
 
-func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitForFin bool, options TransactionOptions) TransactionDetails {
-	return TransactionSignSendWatch(this.Client, account, this.Payload, waitForFin, options)
+func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, blockTimeout uint32, options TransactionOptions) (TransactionDetails, error) {
+	return TransactionSignSendWatch(this.Client, account, this.Payload, waitFor, blockTimeout, options)
 }
 
-func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) TransactionDetails {
-	return TransactionSignSendWatch(this.Client, account, this.Payload, true, options)
+func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
+	return TransactionSignSendWatch(this.Client, account, this.Payload, Finalization, 5, options)
 }
 
-func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) TransactionDetails {
-	return TransactionSignSendWatch(this.Client, account, this.Payload, false, options)
+func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
+	return TransactionSignSendWatch(this.Client, account, this.Payload, Inclusion, 3, options)
 }
 
 func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload metadata.Payload, options TransactionOptions) prim.H256 {
@@ -45,25 +49,26 @@ func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload meta
 	return client.Send(tx)
 }
 
-func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitForFin bool, options TransactionOptions) TransactionDetails {
+func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitFor uint8, blockTimeout uint32, options TransactionOptions) (TransactionDetails, error) {
 	var extra, additional = options.ToPrimitive(client, account.SS58Address(42))
 	var tx = prim.CreateSigned(payload.Call, extra, additional, account)
 
-	var retryCount = 2
+	var retryCount = 3
 	for {
-		var txHash = client.Send(tx)
-		var maybeDetails = TransactionWatch(client, txHash, waitForFin)
-		if maybeDetails.IsSome() {
-			return maybeDetails.Unwrap()
-		}
-
-		retryCount -= 1
 		if retryCount == 0 {
 			break
 		}
+
+		var txHash = client.Send(tx)
+		var maybeDetails = TransactionWatch(client, txHash, waitFor, blockTimeout)
+		if maybeDetails.IsSome() {
+			return maybeDetails.Unwrap(), nil
+		}
+
+		retryCount -= 1
 	}
 
-	panic("Something went wrong :(")
+	return TransactionDetails{}, errors.New("Failed to submit transaction. Tried 3 times.")
 }
 
 type TransactionDetails struct {
@@ -75,16 +80,12 @@ type TransactionDetails struct {
 	Events      prim.Option[EventRecords]
 }
 
-func TransactionWatch(client *Client, txHash prim.H256, waitForFin bool) prim.Option[TransactionDetails] {
+func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTimeout uint32) prim.Option[TransactionDetails] {
 	shouldSleep := false
 	currentBlockHash := prim.NewNone[prim.H256]()
 	timeoutBlockNumber := prim.NewNone[uint32]()
-	bTimeout := uint32(3)
-	if waitForFin {
-		bTimeout = uint32(5)
-	}
 
-	if waitForFin {
+	if waitFor == Finalization {
 		println("Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for finalization")
 	} else {
 		println("Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for inclusion")
@@ -99,7 +100,7 @@ func TransactionWatch(client *Client, txHash prim.H256, waitForFin bool) prim.Op
 		}
 
 		blockHash := prim.H256{}
-		if waitForFin {
+		if waitFor == Finalization {
 			blockHash = client.Rpc.Chain.GetFinalizedHead()
 		} else {
 			blockHash = client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
@@ -137,8 +138,8 @@ func TransactionWatch(client *Client, txHash prim.H256, waitForFin bool) prim.Op
 		}
 
 		if timeoutBlockNumber.IsNone() {
-			timeoutBlockNumber = prim.NewSome(blockNumber + bTimeout)
-			println("Current Block Number: " + strconv.FormatUint(uint64(blockNumber), 10) + ", Timeout Block Number: " + strconv.FormatUint(uint64(blockNumber+bTimeout+1), 10))
+			timeoutBlockNumber = prim.NewSome(blockNumber + blockTimeout)
+			println("Current Block Number: " + strconv.FormatUint(uint64(blockNumber), 10) + ", Timeout Block Number: " + strconv.FormatUint(uint64(blockNumber+blockTimeout+1), 10))
 		}
 
 		if timeoutBlockNumber.IsSome() {

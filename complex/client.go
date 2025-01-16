@@ -31,7 +31,7 @@ func NewClient(endpoint string) *Client {
 
 func (this *Client) GetEvents(at prim.Option[prim.H256]) (EventRecords, error) {
 	eventsRaw := this.Rpc.State.GetEvents(at)
-	events, err := NewEvents(prim.FromHex(eventsRaw), this.Metadata())
+	events, err := NewEvents(prim.Hex.FromHex(eventsRaw), this.Metadata())
 	if err != nil {
 		return EventRecords{}, err
 	}
