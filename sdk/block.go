@@ -18,7 +18,7 @@ func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
 		return Block{}, nil
 	}
 
-	events, err := client.GetEvents(prim.NewSome(blockHash))
+	events, err := client.EventsAt(prim.NewSome(blockHash))
 	blockEvents := prim.NewNone[EventRecords]()
 	if err != nil {
 		println(err.Error())

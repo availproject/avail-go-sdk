@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"encoding/json"
 	prim "go-sdk/primitives"
 )
 
@@ -12,7 +13,7 @@ func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) (prim.
 
 	var value, err = this.client.Request("state_getRuntimeVersion", params.Build())
 	if err != nil {
-		panic(err)
+		return prim.RuntimeVersion{}, err
 	}
 
 	return prim.NewRuntimeVersionFromJson(value)
@@ -27,10 +28,30 @@ func (this *stateRPC) GetStorage(key string, at prim.Option[prim.H256]) (string,
 
 	value, err := this.client.Request("state_getStorage", params.Build())
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	return value, nil
+}
+
+func (this *stateRPC) GetKeys(key string, at prim.Option[prim.H256]) ([]string, error) {
+	params := RPCParams{}
+	params.Add("\"" + key + "\"")
+	if at.IsSome() {
+		params.AddH256(at.Unwrap())
+	}
+
+	value, err := this.client.Request("state_getKeys", params.Build())
+	if err != nil {
+		return nil, err
+	}
+
+	res := []string{}
+	if err := json.Unmarshal([]byte(value), &res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (this *stateRPC) GetMetadata(at prim.Option[prim.H256]) (string, error) {
@@ -41,7 +62,7 @@ func (this *stateRPC) GetMetadata(at prim.Option[prim.H256]) (string, error) {
 
 	value, err := this.client.Request("state_getMetadata", params.Build())
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	return value, nil

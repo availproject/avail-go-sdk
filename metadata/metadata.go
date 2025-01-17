@@ -349,3 +349,9 @@ func DecodePrimitive(decoder *primitives.Decoder, value *gsrpcTypes.Si1TypeDefPr
 
 	return errors.New(fmt.Sprintf(`Metadata failure. Unknown primitive type: %v`, value.Si0TypeDefPrimitive))
 }
+
+// Template T and V, TV.
+type StorageEntry[T any, V any] struct {
+	Key   T
+	Value V
+}

@@ -66,6 +66,10 @@ func (this AccountId) ToHuman() string {
 	return this.ToSS58()
 }
 
+func (this AccountId) ToString() string {
+	return this.Value.ToHex()
+}
+
 func NewAccountIdFromAddress(address string) (AccountId, error) {
 	var _, accountBytes, err = subkey.SS58Decode(address)
 	if err != nil {
