@@ -3,8 +3,7 @@ package main
 import (
 	// "go-sdk/examples"
 
-	"go-sdk/metadata"
-	daPallet "go-sdk/metadata/pallets/data_availability"
+	stakPal "go-sdk/metadata/pallets/staking"
 	"go-sdk/primitives"
 	SDK "go-sdk/sdk"
 	/*
@@ -21,17 +20,55 @@ func main() {
 		panic(err)
 	}
 
-	acc, err := metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
-	if err != nil {
-		panic(err)
+	{
+		storage := stakPal.StorageActiveEra{}
+		value, err := storage.Fetch(&storageAt)
+		if err != nil {
+			panic(err)
+		}
+		println(value.Unwrap().Index)
+		println(value.Unwrap().Start.Unwrap())
 	}
 
-	storage := daPallet.StorageAccount{}
-	value, err := storage.Fetch(&storageAt, acc)
-	if err != nil {
-		panic(err)
+	{
+		storage := stakPal.StorageBonded{}
+		value, err := storage.FetchAll(&storageAt)
+		if err != nil {
+			panic(err)
+		}
+		println(value[0].Key.ToHuman())
+		println(value[0].Value.ToHuman())
 	}
-	println(value.IsSome())
+
+	{
+		storage := stakPal.StorageBondedEras{}
+		value, err := storage.Fetch(&storageAt)
+		if err != nil {
+			panic(err)
+		}
+		println(value[0].Tup1)
+		println(value[0].Tup2)
+		println(len(value))
+	}
+
+	{
+		storage := stakPal.StorageCanceledSlashPayout{}
+		value, err := storage.Fetch(&storageAt)
+		if err != nil {
+			panic(err)
+		}
+		println(value.ToHuman())
+	}
+
+	{
+		storage := stakPal.StorageChillThreshold{}
+		value, err := storage.Fetch(&storageAt)
+		if err != nil {
+			panic(err)
+		}
+		println(value.IsSome())
+	}
+
 	/*
 		 	println(primitives.Hex.ToHex(value.Key))
 			println(value.Value.AppId)

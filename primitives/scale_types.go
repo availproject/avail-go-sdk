@@ -64,7 +64,7 @@ func (this Option[T]) Unwrap() T {
 //
 // If Set, returns set value.
 // If Not Set, returns value specified as parameter.
-func (this Option[T]) Unwrap0rElse(elseValue T) T {
+func (this Option[T]) UnwrapOr(elseValue T) T {
 	if this.isSet == false {
 		return elseValue
 	}

@@ -33,3 +33,16 @@ func DecodeBlake2_128Concat(data []byte) []byte {
 	}
 	return data[16:] // Return the original key bytes
 }
+
+func Twox64Concat(data []byte) []byte {
+	return xxhash.New64Concat(data).Sum(nil)
+}
+
+func DecodeTwox64Concat(data []byte) []byte {
+	if len(data) < 8 {
+		return nil
+	}
+
+	// Extract the remaining part as the original key
+	return data[8:]
+}

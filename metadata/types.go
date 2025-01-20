@@ -28,7 +28,7 @@ func (this Balance) ToHuman() string {
 	var result = ""
 	for i := 0; i < len(stringValue); i++ {
 		result = string(stringValue[len(stringValue)-i-1]) + result
-		if i == 18 {
+		if i == 17 {
 			result = "." + result
 		}
 	}
@@ -93,8 +93,8 @@ type DispatchInfo struct {
 
 // Do not add, remove or change any of the field members.
 type Weight struct {
-	RefTime   uint64
-	ProofSize uint64
+	RefTime   uint64 `scale:"compact"`
+	ProofSize uint64 `scale:"compact"`
 }
 
 // Do not add, remove or change any of the field members.
@@ -319,4 +319,19 @@ func (this TransactionalError) ToString() string {
 	default:
 		panic("Unknown TransactionalError Variant Index")
 	}
+}
+
+// Do not add, remove or change any of the field members.
+type AccountData struct {
+	Free     Balance
+	Reserved Balance
+	Frozen   Balance
+	Flags    uint128.Uint128
+}
+
+// Do not add, remove or change any of the field members.
+type PerDispatchClassU32 struct {
+	Normal      uint32
+	Operational uint32
+	Mandatory   uint32
 }
