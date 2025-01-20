@@ -3,6 +3,7 @@ package main
 import (
 	// "go-sdk/examples"
 
+	"go-sdk/metadata"
 	daPallet "go-sdk/metadata/pallets/data_availability"
 	"go-sdk/primitives"
 	SDK "go-sdk/sdk"
@@ -20,12 +21,17 @@ func main() {
 		panic(err)
 	}
 
-	storage := daPallet.StorageAppKeys{}
-	value, err := storage.FetchKeys(&storageAt)
+	acc, err := metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
 	if err != nil {
 		panic(err)
 	}
-	println(len(value))
+
+	storage := daPallet.StorageAccount{}
+	value, err := storage.Fetch(&storageAt, acc)
+	if err != nil {
+		panic(err)
+	}
+	println(value.IsSome())
 	/*
 		 	println(primitives.Hex.ToHex(value.Key))
 			println(value.Value.AppId)
