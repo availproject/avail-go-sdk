@@ -34,7 +34,7 @@ func (this *StorageAccount) Fetch(blockStorage interfaces.BlockStorageT, key Sto
 }
 
 func (this *StorageAccount) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageAccountEntry, error) {
-	return GenericFetchKeys[StorageAccount, StorageAccountKey](blockStorage, this)
+	return GenericMapKeysFetch[StorageAccount, StorageAccountKey](blockStorage, this)
 }
 
 //
@@ -65,7 +65,7 @@ func (this *StorageBlockHash) Fetch(blockStorage interfaces.BlockStorageT, key S
 }
 
 func (this *StorageBlockHash) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageBlockHashEntry, error) {
-	return GenericFetchKeys[StorageBlockHash, StorageBlockHashKey](blockStorage, this)
+	return GenericMapKeysFetch[StorageBlockHash, StorageBlockHashKey](blockStorage, this)
 }
 
 //

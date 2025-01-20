@@ -21,38 +21,7 @@ func main() {
 	}
 
 	{
-		storage := stakPal.StorageActiveEra{}
-		value, err := storage.Fetch(&storageAt)
-		if err != nil {
-			panic(err)
-		}
-		println(value.Unwrap().Index)
-		println(value.Unwrap().Start.Unwrap())
-	}
-
-	{
-		storage := stakPal.StorageBonded{}
-		value, err := storage.FetchAll(&storageAt)
-		if err != nil {
-			panic(err)
-		}
-		println(value[0].Key.ToHuman())
-		println(value[0].Value.ToHuman())
-	}
-
-	{
-		storage := stakPal.StorageBondedEras{}
-		value, err := storage.Fetch(&storageAt)
-		if err != nil {
-			panic(err)
-		}
-		println(value[0].Tup1)
-		println(value[0].Tup2)
-		println(len(value))
-	}
-
-	{
-		storage := stakPal.StorageCanceledSlashPayout{}
+		storage := stakPal.StorageMinimumActiveStake{}
 		value, err := storage.Fetch(&storageAt)
 		if err != nil {
 			panic(err)
@@ -61,12 +30,12 @@ func main() {
 	}
 
 	{
-		storage := stakPal.StorageChillThreshold{}
+		storage := stakPal.StorageMinimumValidatorCount{}
 		value, err := storage.Fetch(&storageAt)
 		if err != nil {
 			panic(err)
 		}
-		println(value.IsSome())
+		println(value)
 	}
 
 	/*

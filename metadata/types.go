@@ -1,6 +1,8 @@
 package metadata
 
 import (
+	"strings"
+
 	"github.com/itering/scale.go/utiles/uint128"
 	"github.com/vedhavyas/go-subkey/v2"
 
@@ -33,7 +35,12 @@ func (this Balance) ToHuman() string {
 		}
 	}
 
-	return removeTrailingZeros(result) + " Avail"
+	result = removeTrailingZeros(result)
+	if strings.HasSuffix(result, ".") {
+		result += "0"
+	}
+
+	return result + " Avail"
 }
 
 func removeTrailingZeros(s string) string {
@@ -334,4 +341,9 @@ type PerDispatchClassU32 struct {
 	Normal      uint32
 	Operational uint32
 	Mandatory   uint32
+}
+
+// TODO Needs ToHuman() method
+type Perbill struct {
+	Value uint32 `scale:"compact"`
 }

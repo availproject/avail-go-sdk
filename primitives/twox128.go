@@ -39,7 +39,7 @@ func Twox64Concat(data []byte) []byte {
 }
 
 func DecodeTwox64Concat(data []byte) []byte {
-	if len(data) < 8 {
+	if len(data) <= 8 {
 		return nil
 	}
 

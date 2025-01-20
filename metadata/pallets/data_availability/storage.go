@@ -56,5 +56,5 @@ func (this *StorageAppKeys) Fetch(blockStorage interfaces.BlockStorageT, key Sto
 }
 
 func (this *StorageAppKeys) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageAppKeysEntry, error) {
-	return GenericFetchKeys[StorageAppKeys, StorageAppKeysKey](blockStorage, this)
+	return GenericMapKeysFetch[StorageAppKeys, StorageAppKeysKey](blockStorage, this)
 }

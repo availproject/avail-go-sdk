@@ -70,7 +70,7 @@ func (this *StorageLocks) Fetch(blockStorage interfaces.BlockStorageT, key Stora
 }
 
 func (this *StorageLocks) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageLocksEntry, error) {
-	return GenericFetchKeys[StorageLocks, StorageLocksKey](blockStorage, this)
+	return GenericMapKeysFetch[StorageLocks, StorageLocksKey](blockStorage, this)
 }
 
 type BalanceLock struct {
