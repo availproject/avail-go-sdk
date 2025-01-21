@@ -1,7 +1,7 @@
 package system
 
 import (
-	meta "github.com/availproject/avail-go-sdk/metadata"
+	meta "github.com/nmvalera/avail-go-sdk/metadata"
 )
 
 // Do not add, remove or change any of the field members.

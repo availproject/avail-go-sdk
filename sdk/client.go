@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/availproject/avail-go-sdk/metadata"
-	meta "github.com/availproject/avail-go-sdk/metadata"
-	prim "github.com/availproject/avail-go-sdk/primitives"
+	"github.com/nmvalera/avail-go-sdk/metadata"
+	meta "github.com/nmvalera/avail-go-sdk/metadata"
+	prim "github.com/nmvalera/avail-go-sdk/primitives"
 )
 
 type Client struct {

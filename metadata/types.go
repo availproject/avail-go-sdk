@@ -6,7 +6,7 @@ import (
 
 	"errors"
 
-	prim "github.com/availproject/avail-go-sdk/primitives"
+	prim "github.com/nmvalera/avail-go-sdk/primitives"
 )
 
 type Balance struct {

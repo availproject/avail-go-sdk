@@ -3,8 +3,8 @@ package examples
 import (
 	"fmt"
 
-	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
-	SDK "github.com/availproject/avail-go-sdk/sdk"
+	daPallet "github.com/nmvalera/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/nmvalera/avail-go-sdk/sdk"
 )
 
 func run_events() {

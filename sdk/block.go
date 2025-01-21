@@ -1,9 +1,9 @@
 package sdk
 
 import (
-	meta "github.com/availproject/avail-go-sdk/metadata"
-	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
-	prim "github.com/availproject/avail-go-sdk/primitives"
+	meta "github.com/nmvalera/avail-go-sdk/metadata"
+	daPallet "github.com/nmvalera/avail-go-sdk/metadata/pallets/data_availability"
+	prim "github.com/nmvalera/avail-go-sdk/primitives"
 )
 
 type Block struct {

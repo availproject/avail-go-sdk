@@ -1,8 +1,8 @@
 package sdk
 
 import (
-	"github.com/availproject/avail-go-sdk/interfaces"
-	prim "github.com/availproject/avail-go-sdk/primitives"
+	"github.com/nmvalera/avail-go-sdk/interfaces"
+	prim "github.com/nmvalera/avail-go-sdk/primitives"
 )
 
 type BlockTransaction struct {

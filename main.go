@@ -1,6 +1,6 @@
 package main
 
-import examples "github.com/availproject/avail-go-sdk/examples"
+import examples "github.com/nmvalera/avail-go-sdk/examples"
 
 func main() {
 	examples.Run()

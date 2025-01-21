@@ -3,9 +3,9 @@ package examples
 import (
 	"fmt"
 
-	metadata "github.com/availproject/avail-go-sdk/metadata"
-	balancesPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
-	SDK "github.com/availproject/avail-go-sdk/sdk"
+	metadata "github.com/nmvalera/avail-go-sdk/metadata"
+	balancesPallet "github.com/nmvalera/avail-go-sdk/metadata/pallets/balances"
+	SDK "github.com/nmvalera/avail-go-sdk/sdk"
 )
 
 func run_block() {

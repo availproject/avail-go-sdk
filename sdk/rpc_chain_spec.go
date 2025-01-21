@@ -1,7 +1,7 @@
 package sdk
 
 import (
-	prim "github.com/availproject/avail-go-sdk/primitives"
+	prim "github.com/nmvalera/avail-go-sdk/primitives"
 )
 
 func (this *chainSpecRPC) V1GenesisHash() (prim.H256, error) {

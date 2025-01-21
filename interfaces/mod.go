@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	primitives "github.com/availproject/avail-go-sdk/primitives"
+	primitives "github.com/nmvalera/avail-go-sdk/primitives"
 )
 
 type CallDataT interface {

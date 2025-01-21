@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	metadata "github.com/availproject/avail-go-sdk/metadata"
-	prim "github.com/availproject/avail-go-sdk/primitives"
+	metadata "github.com/nmvalera/avail-go-sdk/metadata"
+	prim "github.com/nmvalera/avail-go-sdk/primitives"
 )
 
 const Finalization = uint8(0)
