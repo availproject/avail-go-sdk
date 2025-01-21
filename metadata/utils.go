@@ -151,11 +151,7 @@ func storageDoubleMapKeyDecode[K1 any, K2 any, S StorageDoubleMapT](storageKey s
 
 func GenericFetchDefault[V any, S StorageT](blockStorage interfaces.BlockStorageT, storage S) (V, error) {
 	val, err := GenericFetch[V, S](blockStorage, storage)
-	if err != nil {
-		var t V
-		return t, err
-	}
-	return val.Unwrap(), nil
+	return val.Unwrap(), err
 }
 
 func GenericFetch[V any, S StorageT](blockStorage interfaces.BlockStorageT, storage S) (prim.Option[V], error) {

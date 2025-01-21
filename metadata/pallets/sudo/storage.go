@@ -18,13 +18,5 @@ func (this *StorageKey) StorageName() string {
 }
 
 func (this *StorageKey) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageKeyValue], error) {
-	val, err := GenericFetch[StorageKeyValue](blockStorage, this)
-	if err != nil {
-		return prim.NewNone[StorageKeyValue](), err
-	}
-	if val.IsNone() {
-		return prim.NewNone[StorageKeyValue](), nil
-	}
-
-	return val, nil
+	return GenericFetch[StorageKeyValue](blockStorage, this)
 }

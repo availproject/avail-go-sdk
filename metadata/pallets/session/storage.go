@@ -38,11 +38,7 @@ func (this *StorageDisabledValidators) StorageName() string {
 
 func (this *StorageDisabledValidators) Fetch(blockStorage interfaces.BlockStorageT) (StorageDisabledValidatorsValue, error) {
 	val, err := GenericFetch[StorageDisabledValidatorsValue](blockStorage, this)
-	if err != nil {
-		return StorageDisabledValidatorsValue{}, err
-	}
-
-	return val.UnwrapOr(StorageDisabledValidatorsValue{}), nil
+	return val.UnwrapOr(StorageDisabledValidatorsValue{}), err
 }
 
 //
@@ -143,11 +139,7 @@ func (this *StorageQueuedKeys) StorageName() string {
 
 func (this *StorageQueuedKeys) Fetch(blockStorage interfaces.BlockStorageT) (StorageQueuedKeysValue, error) {
 	val, err := GenericFetch[StorageQueuedKeysValue](blockStorage, this)
-	if err != nil {
-		return StorageQueuedKeysValue{}, err
-	}
-
-	return val.UnwrapOr(StorageQueuedKeysValue{}), nil
+	return val.UnwrapOr(StorageQueuedKeysValue{}), err
 }
 
 //
@@ -167,9 +159,5 @@ func (this *StorageValidators) StorageName() string {
 
 func (this *StorageValidators) Fetch(blockStorage interfaces.BlockStorageT) (StorageValidatorsValue, error) {
 	val, err := GenericFetch[StorageValidatorsValue](blockStorage, this)
-	if err != nil {
-		return StorageValidatorsValue{}, err
-	}
-
-	return val.UnwrapOr(StorageValidatorsValue{}), nil
+	return val.UnwrapOr(StorageValidatorsValue{}), err
 }

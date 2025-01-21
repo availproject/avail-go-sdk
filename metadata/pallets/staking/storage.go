@@ -70,15 +70,7 @@ func (this *StorageBondedEras) StorageName() string {
 
 func (this *StorageBondedEras) Fetch(blockStorage interfaces.BlockStorageT) (BondedErasValue, error) {
 	val, err := GenericFetch[BondedErasValue](blockStorage, this)
-	if err != nil {
-		return nil, err
-	}
-
-	if val.IsNone() {
-		return BondedErasValue{}, nil
-	}
-
-	return val.Unwrap(), nil
+	return val.UnwrapOr(BondedErasValue{}), err
 }
 
 //
@@ -147,11 +139,7 @@ func (this *StorageClaimedRewards) MapKey2Hasher() uint8 {
 
 func (this *StorageClaimedRewards) Fetch(blockStorage interfaces.BlockStorageT, key1 StorageClaimedRewardsKey1, key2 StorageClaimedRewardsKey2) (StorageClaimedRewardsEntry, error) {
 	val, err := GenericDoubleMapFetch[StorageClaimedRewardsValue](blockStorage, key1, key2, this)
-	if err != nil {
-		return StorageClaimedRewardsEntry{}, err
-	}
-
-	return val.Unwrap(), nil
+	return val.Unwrap(), err
 }
 
 func (this *StorageClaimedRewards) FetchAll(blockStorage interfaces.BlockStorageT, key StorageClaimedRewardsKey1) ([]StorageClaimedRewardsEntry, error) {
@@ -301,11 +289,7 @@ func (this *StorageErasStakers) MapKey2Hasher() uint8 {
 
 func (this *StorageErasStakers) Fetch(blockStorage interfaces.BlockStorageT, key1 StorageErasStakersKey1, key2 StorageErasStakersKey2) (StorageErasStakersEntry, error) {
 	val, err := GenericDoubleMapFetch[StorageErasStakers](blockStorage, key1, key2, this)
-	if err != nil {
-		return StorageErasStakersEntry{}, err
-	}
-
-	return val.Unwrap(), nil
+	return val.Unwrap(), err
 }
 
 func (this *StorageErasStakers) FetchAll(blockStorage interfaces.BlockStorageT, key StorageErasStakersKey1) ([]StorageErasStakersEntry, error) {
@@ -335,15 +319,7 @@ func (this *StorageErasStartSessionIndex) MapKeyHasher() uint8 {
 }
 
 func (this *StorageErasStartSessionIndex) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasStartSessionIndexKey) (prim.Option[StorageErasStartSessionIndexEntry], error) {
-	val, err := GenericMapFetch[StorageErasStartSessionIndexValue](blockStorage, key, this)
-	if err != nil {
-		return prim.NewNone[StorageErasStartSessionIndexEntry](), err
-	}
-	if val.IsNone() {
-		return prim.NewNone[StorageErasStartSessionIndexEntry](), nil
-	}
-
-	return prim.NewSome(val.Unwrap()), nil
+	return GenericMapFetch[StorageErasStartSessionIndexValue](blockStorage, key, this)
 
 }
 
@@ -375,11 +351,7 @@ func (this *StorageErasTotalStake) MapKeyHasher() uint8 {
 
 func (this *StorageErasTotalStake) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasTotalStakeKey) (StorageErasTotalStakeEntry, error) {
 	val, err := GenericMapFetch[StorageErasTotalStakeValue](blockStorage, key, this)
-	if err != nil {
-		return StorageErasTotalStakeEntry{}, err
-	}
-
-	return val.Unwrap(), nil
+	return val.Unwrap(), err
 
 }
 
@@ -474,11 +446,7 @@ func (this *StorageInvulnerables) StorageName() string {
 
 func (this *StorageInvulnerables) Fetch(blockStorage interfaces.BlockStorageT) (StorageInvulnerablesValue, error) {
 	val, err := GenericFetch[StorageInvulnerablesValue](blockStorage, this)
-	if err != nil {
-		return StorageInvulnerablesValue{}, err
-	}
-
-	return val.Unwrap(), nil
+	return val.UnwrapOr(StorageInvulnerablesValue{}), err
 }
 
 //
@@ -739,14 +707,8 @@ func (this *StorageOffendingValidators) StorageName() string {
 }
 
 func (this *StorageOffendingValidators) Fetch(blockStorage interfaces.BlockStorageT) (StorageOffendingValidatorsValue, error) {
-	val, err := GenericFetchDefault[StorageOffendingValidatorsValue](blockStorage, this)
-	if err != nil {
-		return nil, err
-	}
-	if val == nil {
-		val = StorageOffendingValidatorsValue{}
-	}
-	return val, nil
+	val, err := GenericFetch[StorageOffendingValidatorsValue](blockStorage, this)
+	return val.UnwrapOr(StorageOffendingValidatorsValue{}), err
 }
 
 //
@@ -897,16 +859,7 @@ func (this *StorageUnappliedSlashes) MapKeyHasher() uint8 {
 
 func (this *StorageUnappliedSlashes) Fetch(blockStorage interfaces.BlockStorageT, key StorageUnappliedSlashesKey) (StorageUnappliedSlashesEntry, error) {
 	val, err := GenericMapFetch[StorageUnappliedSlashesValue](blockStorage, key, this)
-	if err != nil {
-		return StorageUnappliedSlashesEntry{}, nil
-	}
-
-	// TODO StorageUnappliedSlashesValue should be empty array and not nil
-	if val.IsNone() {
-		return StorageUnappliedSlashesEntry{}, nil
-	}
-
-	return val.Unwrap(), nil
+	return val.UnwrapOr(StorageUnappliedSlashesEntry{}), err
 
 }
 
@@ -994,11 +947,7 @@ func (this *StorageValidators) MapKeyHasher() uint8 {
 
 func (this *StorageValidators) Fetch(blockStorage interfaces.BlockStorageT, key StorageValidatorsKey) (StorageValidatorsEntry, error) {
 	val, err := GenericMapFetch[StorageValidatorsValue](blockStorage, key, this)
-	if err != nil {
-		return StorageValidatorsEntry{}, err
-	}
-
-	return val.Unwrap(), nil
+	return val.Unwrap(), err
 
 }
 

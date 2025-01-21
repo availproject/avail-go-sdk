@@ -87,12 +87,7 @@ func (this *StorageBlockWeight) StorageName() string {
 }
 
 func (this *StorageBlockWeight) Fetch(blockStorage interfaces.BlockStorageT) (StorageBlockWeight, error) {
-	val, err := GenericFetch[StorageBlockWeight](blockStorage, this)
-	if err != nil {
-		return StorageBlockWeight{}, err
-	}
-
-	return val.Unwrap(), nil
+	return GenericFetchDefault[StorageBlockWeight](blockStorage, this)
 }
 
 //
@@ -116,13 +111,10 @@ func (this *StorageDynamicBlockLength) StorageName() string {
 
 func (this *StorageDynamicBlockLength) Fetch(blockStorage interfaces.BlockStorageT) (StorageDynamicBlockLength, error) {
 	val, err := GenericFetch[StorageDynamicBlockLength](blockStorage, this)
-	if err != nil {
-		return StorageDynamicBlockLength{}, err
-	}
 
 	// TODO Fallback might not be correct.
 	// Fallback: 0x00003c0000005000000050000104010480
-	return val.Unwrap(), nil
+	return val.Unwrap(), err
 }
 
 //
@@ -141,12 +133,7 @@ func (this *StorageEventCount) StorageName() string {
 }
 
 func (this *StorageEventCount) Fetch(blockStorage interfaces.BlockStorageT) (StorageEventCountValue, error) {
-	val, err := GenericFetch[StorageEventCountValue](blockStorage, this)
-	if err != nil {
-		return 0, err
-	}
-
-	return val.Unwrap(), nil
+	return GenericFetchDefault[StorageEventCountValue](blockStorage, this)
 }
 
 //
@@ -165,12 +152,7 @@ func (this *StorageExtrinsicCount) StorageName() string {
 }
 
 func (this *StorageExtrinsicCount) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageExtrinsicCountValue], error) {
-	val, err := GenericFetch[StorageExtrinsicCountValue](blockStorage, this)
-	if err != nil {
-		return prim.NewNone[StorageExtrinsicCountValue](), err
-	}
-
-	return val, nil
+	return GenericFetch[StorageExtrinsicCountValue](blockStorage, this)
 }
 
 //
@@ -189,11 +171,7 @@ func (this *StorageNumber) StorageName() string {
 }
 
 func (this *StorageNumber) Fetch(blockStorage interfaces.BlockStorageT) (StorageNumberValue, error) {
-	val, err := GenericFetch[StorageNumberValue](blockStorage, this)
-	if err != nil {
-		return 0, err
-	}
-	return val.Unwrap(), nil
+	return GenericFetchDefault[StorageNumberValue](blockStorage, this)
 }
 
 //
@@ -212,9 +190,5 @@ func (this *StorageParentHash) StorageName() string {
 }
 
 func (this *StorageParentHash) Fetch(blockStorage interfaces.BlockStorageT) (StorageParentHashValue, error) {
-	val, err := GenericFetch[StorageParentHashValue](blockStorage, this)
-	if err != nil {
-		return StorageParentHashValue{}, err
-	}
-	return val.Unwrap(), nil
+	return GenericFetchDefault[StorageParentHashValue](blockStorage, this)
 }

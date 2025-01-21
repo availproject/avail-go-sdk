@@ -16,6 +16,10 @@ type Balance struct {
 	Value uint128.Uint128
 }
 
+func (this Balance) String() string {
+	return this.ToHuman()
+}
+
 func (this Balance) ToString() string {
 	return this.ToHuman()
 }
@@ -114,6 +118,10 @@ type DispatchClass struct {
 	VariantIndex uint8
 }
 
+func (this DispatchClass) ToHuman() string {
+	return this.ToString()
+}
+
 func (this DispatchClass) ToString() string {
 	switch this.VariantIndex {
 	case 0:
@@ -157,6 +165,10 @@ type DispatchError struct {
 	Token         prim.Option[TokenError]
 	Arithmetic    prim.Option[ArithmeticError]
 	Transactional prim.Option[TransactionalError]
+}
+
+func (this DispatchError) ToHuman() string {
+	return this.ToString()
 }
 
 func (this DispatchError) ToString() string {
@@ -274,6 +286,10 @@ type TokenError struct {
 	VariantIndex uint8
 }
 
+func (this TokenError) ToHuman() string {
+	return this.ToString()
+}
+
 func (this TokenError) ToString() string {
 	switch this.VariantIndex {
 	case 0:
@@ -304,6 +320,10 @@ func (this TokenError) ToString() string {
 // Do not add, remove or change any of the field members.
 type ArithmeticError struct {
 	VariantIndex uint8
+}
+
+func (this ArithmeticError) ToHuman() string {
+	return this.ToString()
 }
 
 func (this ArithmeticError) ToString() string {
@@ -398,6 +418,10 @@ type RewardDestination struct {
 	Account      prim.Option[AccountId]
 }
 
+func (this RewardDestination) ToHuman() string {
+	return this.ToString()
+}
+
 func (this RewardDestination) ToString() string {
 	switch this.VariantIndex {
 	case 0:
@@ -458,4 +482,163 @@ type SessionKeys struct {
 	Grandpa            prim.H256
 	ImOnline           prim.H256
 	AuthorityDiscovery prim.H256
+}
+
+type CommissionClaimPermission struct {
+	VariantIndex uint8
+	Account      prim.Option[AccountId]
+}
+
+func (this CommissionClaimPermission) ToHuman() string {
+	return this.ToString()
+}
+
+func (this CommissionClaimPermission) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Permissionless"
+	case 1:
+		return "Account"
+	default:
+		panic("Unknown CommissionClaimPermission Variant Index")
+	}
+}
+
+func (this *CommissionClaimPermission) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+
+	if this.Account.IsSome() {
+		prim.Encoder.EncodeTo(this.Account.Unwrap(), dest)
+	}
+}
+
+func (this *CommissionClaimPermission) Decode(decoder *prim.Decoder) error {
+	*this = CommissionClaimPermission{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+	case 1:
+		var t AccountId
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
+		this.Account.Set(t)
+	default:
+		return errors.New("Unknown RewardDestination Variant Index while Decoding")
+	}
+
+	return nil
+}
+
+type PoolRoles struct {
+	Depositor AccountId
+	Root      prim.Option[AccountId]
+	Nominator prim.Option[AccountId]
+	Bouncer   prim.Option[AccountId]
+}
+
+type PoolState struct {
+	VariantIndex uint8
+}
+
+func (this PoolState) ToHuman() string {
+	return this.ToString()
+}
+
+func (this PoolState) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Open"
+	case 1:
+		return "Blocked"
+	case 2:
+		return "Destroying"
+	default:
+		panic("Unknown PoolState Variant Index")
+	}
+}
+
+func (this *PoolState) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+}
+
+func (this *PoolState) Decode(decoder *prim.Decoder) error {
+	*this = PoolState{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+	case 1:
+	case 2:
+	default:
+		return errors.New("Unknown PoolState Variant Index while Decoding")
+	}
+
+	return nil
+}
+
+type PoolCommission struct {
+	Current         prim.Option[Tuple2[Perbill, AccountId]]
+	Max             prim.Option[Perbill]
+	ChangeRate      prim.Option[PoolCommissionChangeRate]
+	ThrottleFrom    prim.Option[uint32]
+	ClaimPermission prim.Option[CommissionClaimPermission]
+}
+
+type PoolCommissionChangeRate struct {
+	MaxIncrease Perbill
+	MinDelay    uint32
+}
+
+type PoolClaimPermission struct {
+	VariantIndex uint8
+}
+
+func (this PoolClaimPermission) ToHuman() string {
+	return this.ToString()
+}
+
+func (this PoolClaimPermission) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Permissioned"
+	case 1:
+		return "PermissionlessCompound"
+	case 2:
+		return "PermissionlessWithdraw"
+	case 3:
+		return "PermissionlessAll"
+	default:
+		panic("Unknown PoolState Variant Index")
+	}
+}
+
+func (this *PoolClaimPermission) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+}
+
+func (this *PoolClaimPermission) Decode(decoder *prim.Decoder) error {
+	*this = PoolClaimPermission{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	default:
+		return errors.New("Unknown PoolClaimPermission Variant Index while Decoding")
+	}
+
+	return nil
 }

@@ -3,7 +3,7 @@ package main
 import (
 	// "go-sdk/examples"
 
-	sesPall "go-sdk/metadata/pallets/session"
+	npmPool "go-sdk/metadata/pallets/nomination_pools"
 	"go-sdk/primitives"
 	SDK "go-sdk/sdk"
 	/*
@@ -13,7 +13,7 @@ import (
 	*/)
 
 func main() {
-	sdk := SDK.NewClient(SDK.LocalEndpoint)
+	sdk := SDK.NewClient(SDK.TuringEndpoint)
 
 	storageAt, err := sdk.StorageAt(primitives.NewNone[primitives.H256]())
 	if err != nil {
@@ -21,11 +21,11 @@ func main() {
 	}
 
 	{
-		storage := sesPall.StorageValidators{}
+		storage := npmPool.StorageTotalValueLocked{}
 		value, err := storage.Fetch(&storageAt)
 		if err != nil {
 			panic(err)
 		}
-		println(value[0].ToHuman())
+		println(value.String())
 	}
 }

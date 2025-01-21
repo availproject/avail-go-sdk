@@ -19,11 +19,7 @@ func (this *StorageMembers) StorageName() string {
 
 func (this *StorageMembers) Fetch(blockStorage interfaces.BlockStorageT) (StorageMembersValue, error) {
 	val, err := GenericFetch[StorageMembersValue](blockStorage, this)
-	if err != nil {
-		return nil, err
-	}
-
-	return val.UnwrapOr(StorageMembersValue{}), nil
+	return val.UnwrapOr(StorageMembersValue{}), err
 }
 
 //
@@ -61,13 +57,7 @@ func (this *StorageProposalCount) StorageName() string {
 }
 
 func (this *StorageProposalCount) Fetch(blockStorage interfaces.BlockStorageT) (StorageProposalCountValue, error) {
-	val, err := GenericFetch[StorageProposalCountValue](blockStorage, this)
-	if err != nil {
-		return 0, err
-	}
-
-	// 0 is default
-	return val.Unwrap(), nil
+	return GenericFetchDefault[StorageProposalCountValue](blockStorage, this)
 }
 
 //
@@ -86,10 +76,5 @@ func (this *StorageProposals) StorageName() string {
 }
 
 func (this *StorageProposals) Fetch(blockStorage interfaces.BlockStorageT) (StorageProposalsValue, error) {
-	val, err := GenericFetch[StorageProposalsValue](blockStorage, this)
-	if err != nil {
-		return nil, err
-	}
-
-	return val.UnwrapOr(StorageProposalsValue{}), nil
+	return GenericFetchDefault[StorageProposalsValue](blockStorage, this)
 }
