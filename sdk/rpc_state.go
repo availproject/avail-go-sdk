@@ -11,7 +11,7 @@ func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) (prim.
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	var value, err = this.client.Request("state_getRuntimeVersion", params.Build())
+	value, err := this.client.Request("state_getRuntimeVersion", params.Build())
 	if err != nil {
 		return prim.RuntimeVersion{}, err
 	}
@@ -26,12 +26,7 @@ func (this *stateRPC) GetStorage(key string, at prim.Option[prim.H256]) (string,
 		params.AddH256(at.Unwrap())
 	}
 
-	value, err := this.client.Request("state_getStorage", params.Build())
-	if err != nil {
-		return "", err
-	}
-
-	return value, nil
+	return this.client.Request("state_getStorage", params.Build())
 }
 
 func (this *stateRPC) GetKeys(key string, at prim.Option[prim.H256]) ([]string, error) {
@@ -60,12 +55,7 @@ func (this *stateRPC) GetMetadata(at prim.Option[prim.H256]) (string, error) {
 		params.AddH256(at.Unwrap())
 	}
 
-	value, err := this.client.Request("state_getMetadata", params.Build())
-	if err != nil {
-		return "", err
-	}
-
-	return value, nil
+	return this.client.Request("state_getMetadata", params.Build())
 }
 
 func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) (string, error) {
@@ -75,10 +65,5 @@ func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) (string, error) {
 		params.AddH256(at.Unwrap())
 	}
 
-	value, err := this.client.Request("state_getStorage", params.Build())
-	if err != nil {
-		return "", err
-	}
-
-	return value, nil
+	return this.client.Request("state_getStorage", params.Build())
 }
