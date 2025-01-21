@@ -452,3 +452,10 @@ type ValidatorPrefs struct {
 	Commission Perbill `scale:"compact"`
 	Blocked    bool
 }
+
+type SessionKeys struct {
+	Babe               prim.H256
+	Grandpa            prim.H256
+	ImOnline           prim.H256
+	AuthorityDiscovery prim.H256
+}

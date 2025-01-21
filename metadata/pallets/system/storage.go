@@ -18,7 +18,7 @@ type StorageAccount struct {
 }
 
 func (this *StorageAccount) PalletName() string {
-	return "System"
+	return PalletName
 }
 
 func (this *StorageAccount) StorageName() string {
@@ -49,7 +49,7 @@ type StorageBlockHash struct {
 }
 
 func (this *StorageBlockHash) PalletName() string {
-	return "System"
+	return PalletName
 }
 
 func (this *StorageBlockHash) StorageName() string {

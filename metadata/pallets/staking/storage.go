@@ -34,7 +34,7 @@ type StorageBondedEntry = StorageEntry[StorageBondedKey, StorageBondedValue]
 type StorageBonded struct{}
 
 func (this *StorageBonded) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageBonded) StorageName() string {
@@ -57,12 +57,7 @@ func (this *StorageBonded) FetchAll(blockStorage interfaces.BlockStorageT) ([]St
 //
 //
 
-type BondedEra struct {
-	Tup0 uint32
-	Tup1 uint32
-}
-
-type BondedErasValue = []BondedEra
+type BondedErasValue = []Tuple2[uint32, uint32]
 type StorageBondedEras struct{}
 
 func (this *StorageBondedEras) PalletName() string {
@@ -248,16 +243,11 @@ type StorageErasRewardPointsEntry = StorageEntry[StorageErasRewardPointsKey, Sto
 
 type StorageErasRewardPoints struct {
 	Total      uint32
-	Individual []EraRewardPointsIndividual
-}
-
-type EraRewardPointsIndividual struct {
-	Tup0 AccountId
-	Tup1 uint32
+	Individual []Tuple2[AccountId, uint32]
 }
 
 func (this *StorageErasRewardPoints) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageErasRewardPoints) StorageName() string {
@@ -333,7 +323,7 @@ type StorageErasStartSessionIndexEntry = StorageEntry[StorageErasStartSessionInd
 type StorageErasStartSessionIndex struct{}
 
 func (this *StorageErasStartSessionIndex) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageErasStartSessionIndex) StorageName() string {
@@ -372,7 +362,7 @@ type StorageErasTotalStakeEntry = StorageEntry[StorageErasTotalStakeKey, Storage
 type StorageErasTotalStake struct{}
 
 func (this *StorageErasTotalStake) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageErasTotalStake) StorageName() string {
@@ -447,7 +437,7 @@ type StorageErasValidatorRewardEntry = StorageEntry[StorageErasValidatorRewardKe
 type StorageErasValidatorReward struct{}
 
 func (this *StorageErasValidatorReward) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageErasValidatorReward) StorageName() string {
@@ -512,7 +502,7 @@ type UnlockChunk struct {
 }
 
 func (this *StorageLedger) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageLedger) StorageName() string {
@@ -713,7 +703,7 @@ type StorageNominators struct {
 }
 
 func (this *StorageNominators) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageNominators) StorageName() string {
@@ -737,11 +727,8 @@ func (this *StorageNominators) FetchAll(blockStorage interfaces.BlockStorageT) (
 //
 //
 
-type StorageOffendingValidatorsValue = []StorageOffendingValidators
-type StorageOffendingValidators struct {
-	Tup0 uint32
-	Tup1 bool
-}
+type StorageOffendingValidatorsValue = []Tuple2[uint32, bool]
+type StorageOffendingValidators struct{}
 
 func (this *StorageOffendingValidators) PalletName() string {
 	return PalletName
@@ -773,7 +760,7 @@ type StoragePayeeEntry = StorageEntry[StoragePayeeKey, StoragePayeeValue]
 type StoragePayee struct{}
 
 func (this *StoragePayee) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StoragePayee) StorageName() string {
@@ -827,7 +814,7 @@ type StorageSlashingSpans struct {
 }
 
 func (this *StorageSlashingSpans) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageSlashingSpans) StorageName() string {
@@ -851,10 +838,7 @@ func (this *StorageSlashingSpans) FetchAll(blockStorage interfaces.BlockStorageT
 //
 //
 
-type StorageSpanSlashKey struct {
-	Tup0 AccountId
-	Tup1 uint32
-}
+type StorageSpanSlashKey = Tuple2[AccountId, uint32]
 type StorageSpanSlashEntry = StorageEntry[StorageSpanSlashKey, StorageSpanSlash]
 
 type StorageSpanSlash struct {
@@ -863,7 +847,7 @@ type StorageSpanSlash struct {
 }
 
 func (this *StorageSpanSlash) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageSpanSlash) StorageName() string {
@@ -894,18 +878,13 @@ type StorageUnappliedSlashesEntry = StorageEntry[StorageUnappliedSlashesKey, Sto
 type StorageUnappliedSlashes struct {
 	Validator AccountId
 	Own       Balance
-	Others    []UnappliedSlashesOther
+	Others    []Tuple2[AccountId, Balance]
 	Reporters []AccountId
 	Payout    Balance
 }
 
-type UnappliedSlashesOther struct {
-	Tup0 AccountId
-	Tup1 Balance
-}
-
 func (this *StorageUnappliedSlashes) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageUnappliedSlashes) StorageName() string {
@@ -960,11 +939,9 @@ func (this *StorageValidatorCount) Fetch(blockStorage interfaces.BlockStorageT) 
 
 type StorageValidatorSlashInEraKey1 = uint32
 type StorageValidatorSlashInEraKey2 = AccountId
-type StorageValidatorSlashInEraEntry = StorageEntryDoubleMap[StorageValidatorSlashInEraKey1, StorageValidatorSlashInEraKey2, StorageValidatorSlashInEra]
-type StorageValidatorSlashInEra struct {
-	Tup0 Perbill
-	Tup1 Balance
-}
+type StorageValidatorSlashInEraValue = Tuple2[Perbill, Balance]
+type StorageValidatorSlashInEraEntry = StorageEntryDoubleMap[StorageValidatorSlashInEraKey1, StorageValidatorSlashInEraKey2, StorageValidatorSlashInEraValue]
+type StorageValidatorSlashInEra struct{}
 
 func (this *StorageValidatorSlashInEra) PalletName() string {
 	return PalletName
@@ -983,11 +960,11 @@ func (this *StorageValidatorSlashInEra) MapKey2Hasher() uint8 {
 }
 
 func (this *StorageValidatorSlashInEra) Fetch(blockStorage interfaces.BlockStorageT, key1 StorageValidatorSlashInEraKey1, key2 StorageValidatorSlashInEraKey2) (prim.Option[StorageValidatorSlashInEraEntry], error) {
-	return GenericDoubleMapFetch[StorageValidatorSlashInEra](blockStorage, key1, key2, this)
+	return GenericDoubleMapFetch[StorageValidatorSlashInEraValue](blockStorage, key1, key2, this)
 }
 
 func (this *StorageValidatorSlashInEra) FetchAll(blockStorage interfaces.BlockStorageT, key StorageValidatorSlashInEraKey1) ([]StorageValidatorSlashInEraEntry, error) {
-	return GenericDoubleMapKeysFetch[StorageValidatorSlashInEra, StorageValidatorSlashInEraKey1, StorageValidatorSlashInEraKey2](blockStorage, key, this)
+	return GenericDoubleMapKeysFetch[StorageValidatorSlashInEraValue, StorageValidatorSlashInEraKey1, StorageValidatorSlashInEraKey2](blockStorage, key, this)
 }
 
 //
@@ -1004,7 +981,7 @@ type StorageValidators struct {
 }
 
 func (this *StorageValidators) PalletName() string {
-	return "Staking"
+	return PalletName
 }
 
 func (this *StorageValidators) StorageName() string {

@@ -314,3 +314,8 @@ type StorageEntryDoubleMap[K1 any, K2 any, V any] struct {
 	Key2  K2
 	Value V
 }
+
+type Tuple2[T0 any, T1 any] struct {
+	T0 T0
+	T1 T1
+}
