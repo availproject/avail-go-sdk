@@ -14,3 +14,8 @@ type EventT interface {
 	EventIndex() uint8
 	EventName() string
 }
+
+type BlockStorageT interface {
+	Fetch(storageEntryKey string) (string, error)
+	FetchKeys(key string) ([]string, error)
+}

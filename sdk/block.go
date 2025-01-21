@@ -13,12 +13,12 @@ type Block struct {
 }
 
 func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
-	block, err := client.GetBlock(prim.NewSome(blockHash))
+	block, err := client.BlockAt(prim.NewSome(blockHash))
 	if err != nil {
 		return Block{}, nil
 	}
 
-	events, err := client.GetEvents(prim.NewSome(blockHash))
+	events, err := client.EventsAt(prim.NewSome(blockHash))
 	blockEvents := prim.NewNone[EventRecords]()
 	if err != nil {
 		println(err.Error())

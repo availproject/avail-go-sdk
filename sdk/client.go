@@ -29,7 +29,7 @@ func NewClient(endpoint string) *Client {
 	return client
 }
 
-func (this *Client) GetEvents(at prim.Option[prim.H256]) (EventRecords, error) {
+func (this *Client) EventsAt(at prim.Option[prim.H256]) (EventRecords, error) {
 	eventsRaw, err := this.Rpc.State.GetEvents(at)
 	if err != nil {
 		return EventRecords{}, err
@@ -45,6 +45,21 @@ func (this *Client) GetEvents(at prim.Option[prim.H256]) (EventRecords, error) {
 	}
 
 	return eventRecord, nil
+}
+
+func (this *Client) StorageAt(at prim.Option[prim.H256]) (BlockStorage, error) {
+	if at.IsNone() {
+		hash, err := this.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+		if err != nil {
+			return BlockStorage{}, err
+		}
+		at.Set(hash)
+	}
+
+	return BlockStorage{
+		client: this,
+		at:     at.Unwrap(),
+	}, nil
 }
 
 func (this *Client) InitMetadata(at prim.Option[prim.H256]) error {
@@ -132,7 +147,7 @@ func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {
 	return prim.NewH256FromHexString(txHash)
 }
 
-func (this *Client) GetBlock(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
+func (this *Client) BlockAt(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
 	primBlock, err := this.Rpc.Chain.GetBlock(blockHash)
 	if err != nil {
 		return RPCBlock{}, err

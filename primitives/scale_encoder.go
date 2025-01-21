@@ -151,6 +151,10 @@ func (encoderT) primitives(value reflect.Value, dest *string, isCompact bool) bo
 			genericEncodeTo("u64", value.Interface(), dest)
 			return true
 		}
+		if kind == reflect.String {
+			genericEncodeTo("string", value.Interface(), dest)
+			return true
+		}
 		if name == "Uint128" {
 			genericEncodeTo("u128", value.Interface().(uint128.Uint128).String(), dest)
 			return true

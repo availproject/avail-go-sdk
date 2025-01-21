@@ -58,7 +58,7 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	}
 
 	extra := prim.Extra{}
-	extra.AppId = this.AppId.Unwrap0rElse(uint32(0))
+	extra.AppId = this.AppId.UnwrapOr(uint32(0))
 	extra.Tip = uint128.FromBig(big.NewInt(0))
 	if this.Nonce.IsNone() {
 		extra.Nonce, err = client.Rpc.System.AccountNextIndex(accountAddress)

@@ -1,6 +1,8 @@
 package main
 
-import "go-sdk/examples"
+import (
+	"go-sdk/examples"
+)
 
 func main() {
 	examples.Run()

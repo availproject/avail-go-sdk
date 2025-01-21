@@ -3,7 +3,7 @@ authors = ["Avail"]
 language = "en"
 multilingual = false
 src = "src"
-title = "Avail Rust SDK Examples"
+title = "Avail Go SDK Examples"
 
 [output.markdown]
 [output.html]

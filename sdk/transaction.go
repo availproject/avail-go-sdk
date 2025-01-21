@@ -138,7 +138,7 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 		}
 		currentBlockHash = prim.NewSome(blockHash)
 
-		block, err := client.GetBlock(prim.NewSome(blockHash))
+		block, err := client.BlockAt(prim.NewSome(blockHash))
 		if err != nil {
 			return prim.NewNone[TransactionDetails](), err
 		}
@@ -149,7 +149,7 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 		for _, element := range block.Extrinsics {
 			if element.TxHash.ToHexWith0x() == txHash.ToHexWith0x() {
 				// Get Events
-				blockEvents, err := client.GetEvents(prim.NewSome(blockHash))
+				blockEvents, err := client.EventsAt(prim.NewSome(blockHash))
 				events := prim.NewNone[EventRecords]()
 				if err != nil {
 					println(err.Error())

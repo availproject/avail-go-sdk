@@ -79,7 +79,7 @@ func (this *Decoder) callMethod(value reflect.Value) error {
 	return res.(error)
 }
 
-func (this *Decoder) structureFields(value reflect.Value) error {
+func (this *Decoder) structureFields(value reflect.Value, isCompact bool) error {
 	valueType := value.Type()
 
 	for i := 0; i < valueType.NumField(); i++ {
@@ -93,9 +93,11 @@ func (this *Decoder) structureFields(value reflect.Value) error {
 			continue
 		}
 
-		isCompact := scaleTag == "compact"
+		filedIsCompact := isCompact || scaleTag == "compact"
+
 		fieldValue := value.Field(i)
-		if err := this.decodeInner(fieldValue.Addr(), isCompact); err != nil {
+
+		if err := this.decodeInner(fieldValue.Addr(), filedIsCompact); err != nil {
 			return err
 		}
 	}
@@ -296,7 +298,7 @@ func (this *Decoder) decodeInner(value reflect.Value, isCompact bool) error {
 	case reflect.Array:
 		return this.array(pointee)
 	case reflect.Struct:
-		return this.structureFields(pointee)
+		return this.structureFields(pointee, isCompact)
 	default:
 		elemKind := pointee.Kind()
 		elemName := pointee.Type().Name()
