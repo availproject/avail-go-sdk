@@ -93,13 +93,11 @@ func (this *Decoder) structureFields(value reflect.Value, isCompact bool) error 
 			continue
 		}
 
-		if !isCompact {
-			isCompact = scaleTag == "compact"
-		}
+		filedIsCompact := isCompact || scaleTag == "compact"
 
 		fieldValue := value.Field(i)
 
-		if err := this.decodeInner(fieldValue.Addr(), isCompact); err != nil {
+		if err := this.decodeInner(fieldValue.Addr(), filedIsCompact); err != nil {
 			return err
 		}
 	}

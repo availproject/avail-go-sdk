@@ -3,7 +3,7 @@ package main
 import (
 	// "go-sdk/examples"
 
-	stakPal "go-sdk/metadata/pallets/staking"
+	"go-sdk/metadata"
 	"go-sdk/primitives"
 	SDK "go-sdk/sdk"
 	/*
@@ -20,23 +20,11 @@ func main() {
 		panic(err)
 	}
 
-	{
-		storage := stakPal.StorageMinimumActiveStake{}
-		value, err := storage.Fetch(&storageAt)
-		if err != nil {
-			panic(err)
-		}
-		println(value.ToHuman())
-	}
+	println(&storageAt)
 
-	{
-		storage := stakPal.StorageMinimumValidatorCount{}
-		value, err := storage.Fetch(&storageAt)
-		if err != nil {
-			panic(err)
-		}
-		println(value)
-	}
+	val := metadata.Perbill{}
+	val.Value = 10_00_000
+	println(val.ToHuman())
 
 	/*
 		 	println(primitives.Hex.ToHex(value.Key))

@@ -344,7 +344,7 @@ func (this *StorageErasStartSessionIndex) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageErasStartSessionIndex) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasRewardPointsKey) (prim.Option[StorageErasStartSessionIndexEntry], error) {
+func (this *StorageErasStartSessionIndex) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasStartSessionIndexKey) (prim.Option[StorageErasStartSessionIndexEntry], error) {
 	val, err := GenericMapFetch[StorageErasStartSessionIndexValue](blockStorage, key, this)
 	if err != nil {
 		return prim.NewNone[StorageErasStartSessionIndexEntry](), err
@@ -383,7 +383,7 @@ func (this *StorageErasTotalStake) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageErasTotalStake) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasRewardPointsKey) (StorageErasTotalStakeEntry, error) {
+func (this *StorageErasTotalStake) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasTotalStakeKey) (StorageErasTotalStakeEntry, error) {
 	val, err := GenericMapFetch[StorageErasTotalStakeValue](blockStorage, key, this)
 	if err != nil {
 		return StorageErasTotalStakeEntry{}, err
@@ -403,11 +403,9 @@ func (this *StorageErasTotalStake) FetchAll(blockStorage interfaces.BlockStorage
 
 type StorageErasValidatorPrefsKey1 = uint32
 type StorageErasValidatorPrefsKey2 = AccountId
-type StorageErasValidatorPrefsEntry = StorageEntryDoubleMap[StorageErasValidatorPrefsKey1, StorageErasValidatorPrefsKey2, StorageErasValidatorPrefs]
-type StorageErasValidatorPrefs struct {
-	Commission Perbill
-	Blocked    bool
-}
+type StorageErasValidatorPrefsValue = ValidatorPrefs
+type StorageErasValidatorPrefsEntry = StorageEntryDoubleMap[StorageErasValidatorPrefsKey1, StorageErasValidatorPrefsKey2, StorageErasValidatorPrefsValue]
+type StorageErasValidatorPrefs struct{}
 
 func (this *StorageErasValidatorPrefs) PalletName() string {
 	return PalletName
@@ -425,8 +423,8 @@ func (this *StorageErasValidatorPrefs) MapKey2Hasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageErasValidatorPrefs) Fetch(blockStorage interfaces.BlockStorageT, key1 StorageErasStakersKey1, key2 StorageErasStakersKey2) (StorageErasValidatorPrefsEntry, error) {
-	val, err := GenericDoubleMapFetch[StorageErasValidatorPrefs](blockStorage, key1, key2, this)
+func (this *StorageErasValidatorPrefs) Fetch(blockStorage interfaces.BlockStorageT, key1 StorageErasValidatorPrefsKey1, key2 StorageErasValidatorPrefsKey2) (StorageErasValidatorPrefsEntry, error) {
+	val, err := GenericDoubleMapFetch[StorageErasValidatorPrefsValue](blockStorage, key1, key2, this)
 	if err != nil {
 		return StorageErasValidatorPrefsEntry{}, err
 	}
@@ -434,8 +432,8 @@ func (this *StorageErasValidatorPrefs) Fetch(blockStorage interfaces.BlockStorag
 	return val.Unwrap(), nil
 }
 
-func (this *StorageErasValidatorPrefs) FetchAll(blockStorage interfaces.BlockStorageT, key StorageErasStakersKey1) ([]StorageErasValidatorPrefsEntry, error) {
-	return GenericDoubleMapKeysFetch[StorageErasValidatorPrefs, StorageErasValidatorPrefsKey1, StorageErasValidatorPrefsKey2](blockStorage, key, this)
+func (this *StorageErasValidatorPrefs) FetchAll(blockStorage interfaces.BlockStorageT, key StorageErasValidatorPrefsKey1) ([]StorageErasValidatorPrefsEntry, error) {
+	return GenericDoubleMapKeysFetch[StorageErasValidatorPrefsValue, StorageErasValidatorPrefsKey1, StorageErasValidatorPrefsKey2](blockStorage, key, this)
 }
 
 //
@@ -460,7 +458,7 @@ func (this *StorageErasValidatorReward) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageErasValidatorReward) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasRewardPointsKey) (prim.Option[StorageErasValidatorRewardEntry], error) {
+func (this *StorageErasValidatorReward) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasValidatorRewardKey) (prim.Option[StorageErasValidatorRewardEntry], error) {
 	return GenericMapFetch[StorageErasValidatorRewardValue](blockStorage, key, this)
 
 }
@@ -665,4 +663,368 @@ func (this *StorageMinimumValidatorCount) StorageName() string {
 
 func (this *StorageMinimumValidatorCount) Fetch(blockStorage interfaces.BlockStorageT) (StorageMinimumValidatorCountValue, error) {
 	return GenericFetchDefault[StorageMinimumValidatorCountValue](blockStorage, this)
+}
+
+//
+//
+//
+
+type StorageNominatorSlashInEraKey1 = uint32
+type StorageNominatorSlashInEraKey2 = AccountId
+type StorageNominatorSlashInEraValue = Balance
+type StorageNominatorSlashInEraEntry = StorageEntryDoubleMap[StorageNominatorSlashInEraKey1, StorageNominatorSlashInEraKey2, StorageNominatorSlashInEraValue]
+type StorageNominatorSlashInEra struct{}
+
+func (this *StorageNominatorSlashInEra) PalletName() string {
+	return PalletName
+}
+
+func (this *StorageNominatorSlashInEra) StorageName() string {
+	return "NominatorSlashInEra"
+}
+
+func (this *StorageNominatorSlashInEra) MapKey1Hasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageNominatorSlashInEra) MapKey2Hasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageNominatorSlashInEra) Fetch(blockStorage interfaces.BlockStorageT, key1 StorageNominatorSlashInEraKey1, key2 StorageNominatorSlashInEraKey2) (prim.Option[StorageNominatorSlashInEraEntry], error) {
+	return GenericDoubleMapFetch[StorageNominatorSlashInEraValue](blockStorage, key1, key2, this)
+}
+
+func (this *StorageNominatorSlashInEra) FetchAll(blockStorage interfaces.BlockStorageT, key StorageNominatorSlashInEraKey1) ([]StorageNominatorSlashInEraEntry, error) {
+	return GenericDoubleMapKeysFetch[StorageNominatorSlashInEraValue, StorageNominatorSlashInEraKey1, StorageNominatorSlashInEraKey2](blockStorage, key, this)
+}
+
+//
+//
+//
+
+type StorageNominatorsKey = AccountId
+type StorageNominatorsEntry = StorageEntry[StorageNominatorsKey, StorageNominators]
+
+type StorageNominators struct {
+	Targets     []AccountId
+	SubmittedIn uint32
+	Suppressed  bool
+}
+
+func (this *StorageNominators) PalletName() string {
+	return "Staking"
+}
+
+func (this *StorageNominators) StorageName() string {
+	return "Nominators"
+}
+
+func (this *StorageNominators) MapKeyHasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageNominators) Fetch(blockStorage interfaces.BlockStorageT, key StorageNominatorsKey) (prim.Option[StorageNominatorsEntry], error) {
+	return GenericMapFetch[StorageNominators](blockStorage, key, this)
+
+}
+
+func (this *StorageNominators) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageNominatorsEntry, error) {
+	return GenericMapKeysFetch[StorageNominators, StorageNominatorsKey](blockStorage, this)
+}
+
+//
+//
+//
+
+type StorageOffendingValidatorsValue = []StorageOffendingValidators
+type StorageOffendingValidators struct {
+	Tup0 uint32
+	Tup1 bool
+}
+
+func (this *StorageOffendingValidators) PalletName() string {
+	return PalletName
+}
+
+func (this *StorageOffendingValidators) StorageName() string {
+	return "OffendingValidators"
+}
+
+func (this *StorageOffendingValidators) Fetch(blockStorage interfaces.BlockStorageT) (StorageOffendingValidatorsValue, error) {
+	val, err := GenericFetchDefault[StorageOffendingValidatorsValue](blockStorage, this)
+	if err != nil {
+		return nil, err
+	}
+	if val == nil {
+		val = StorageOffendingValidatorsValue{}
+	}
+	return val, nil
+}
+
+//
+//
+//
+
+type StoragePayeeKey = AccountId
+type StoragePayeeValue = RewardDestination
+type StoragePayeeEntry = StorageEntry[StoragePayeeKey, StoragePayeeValue]
+
+type StoragePayee struct{}
+
+func (this *StoragePayee) PalletName() string {
+	return "Staking"
+}
+
+func (this *StoragePayee) StorageName() string {
+	return "Payee"
+}
+
+func (this *StoragePayee) MapKeyHasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StoragePayee) Fetch(blockStorage interfaces.BlockStorageT, key StoragePayeeKey) (prim.Option[StoragePayeeEntry], error) {
+	return GenericMapFetch[StoragePayeeValue](blockStorage, key, this)
+
+}
+
+func (this *StoragePayee) FetchAll(blockStorage interfaces.BlockStorageT) ([]StoragePayeeEntry, error) {
+	return GenericMapKeysFetch[StoragePayeeValue, StoragePayeeKey](blockStorage, this)
+}
+
+//
+//
+//
+
+type StorageSlashRewardFractionValue = Perbill
+type StorageSlashRewardFraction struct{}
+
+func (this *StorageSlashRewardFraction) PalletName() string {
+	return PalletName
+}
+
+func (this *StorageSlashRewardFraction) StorageName() string {
+	return "SlashRewardFraction "
+}
+
+func (this *StorageSlashRewardFraction) Fetch(blockStorage interfaces.BlockStorageT) (StorageSlashRewardFractionValue, error) {
+	return GenericFetchDefault[StorageSlashRewardFractionValue](blockStorage, this)
+}
+
+//
+//
+//
+
+type StorageSlashingSpansKey = AccountId
+type StorageSlashingSpansEntry = StorageEntry[StoragePayeeKey, StorageSlashingSpans]
+
+type StorageSlashingSpans struct {
+	SpanIndex        uint32
+	LastStart        uint32
+	LastNonZeroSlash uint32
+	Prior            []uint32
+}
+
+func (this *StorageSlashingSpans) PalletName() string {
+	return "Staking"
+}
+
+func (this *StorageSlashingSpans) StorageName() string {
+	return "SlashingSpans"
+}
+
+func (this *StorageSlashingSpans) MapKeyHasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageSlashingSpans) Fetch(blockStorage interfaces.BlockStorageT, key StorageSlashingSpansKey) (prim.Option[StorageSlashingSpansEntry], error) {
+	return GenericMapFetch[StorageSlashingSpans](blockStorage, key, this)
+
+}
+
+func (this *StorageSlashingSpans) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageSlashingSpansEntry, error) {
+	return GenericMapKeysFetch[StorageSlashingSpans, StorageSlashingSpansKey](blockStorage, this)
+}
+
+//
+//
+//
+
+type StorageSpanSlashKey struct {
+	Tup0 AccountId
+	Tup1 uint32
+}
+type StorageSpanSlashEntry = StorageEntry[StorageSpanSlashKey, StorageSpanSlash]
+
+type StorageSpanSlash struct {
+	Slashed Balance
+	PaidOut Balance
+}
+
+func (this *StorageSpanSlash) PalletName() string {
+	return "Staking"
+}
+
+func (this *StorageSpanSlash) StorageName() string {
+	return "SpanSlash"
+}
+
+func (this *StorageSpanSlash) MapKeyHasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageSpanSlash) Fetch(blockStorage interfaces.BlockStorageT, key StorageSpanSlashKey) (prim.Option[StorageSpanSlashEntry], error) {
+	return GenericMapFetch[StorageSpanSlash](blockStorage, key, this)
+
+}
+
+func (this *StorageSpanSlash) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageSpanSlashEntry, error) {
+	return GenericMapKeysFetch[StorageSpanSlash, StorageSpanSlashKey](blockStorage, this)
+}
+
+//
+//
+//
+
+type StorageUnappliedSlashesKey = uint32
+type StorageUnappliedSlashesValue = []StorageUnappliedSlashes
+type StorageUnappliedSlashesEntry = StorageEntry[StorageUnappliedSlashesKey, StorageUnappliedSlashesValue]
+
+type StorageUnappliedSlashes struct {
+	Validator AccountId
+	Own       Balance
+	Others    []UnappliedSlashesOther
+	Reporters []AccountId
+	Payout    Balance
+}
+
+type UnappliedSlashesOther struct {
+	Tup0 AccountId
+	Tup1 Balance
+}
+
+func (this *StorageUnappliedSlashes) PalletName() string {
+	return "Staking"
+}
+
+func (this *StorageUnappliedSlashes) StorageName() string {
+	return "UnappliedSlashes"
+}
+
+func (this *StorageUnappliedSlashes) MapKeyHasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageUnappliedSlashes) Fetch(blockStorage interfaces.BlockStorageT, key StorageUnappliedSlashesKey) (StorageUnappliedSlashesEntry, error) {
+	val, err := GenericMapFetch[StorageUnappliedSlashesValue](blockStorage, key, this)
+	if err != nil {
+		return StorageUnappliedSlashesEntry{}, nil
+	}
+
+	// TODO StorageUnappliedSlashesValue should be empty array and not nil
+	if val.IsNone() {
+		return StorageUnappliedSlashesEntry{}, nil
+	}
+
+	return val.Unwrap(), nil
+
+}
+
+func (this *StorageUnappliedSlashes) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageUnappliedSlashesEntry, error) {
+	return GenericMapKeysFetch[StorageUnappliedSlashesValue, StorageUnappliedSlashesKey](blockStorage, this)
+}
+
+//
+//
+//
+
+type StorageValidatorCountValue = uint32
+type StorageValidatorCount struct{}
+
+func (this *StorageValidatorCount) PalletName() string {
+	return PalletName
+}
+
+func (this *StorageValidatorCount) StorageName() string {
+	return "ValidatorCount"
+}
+
+func (this *StorageValidatorCount) Fetch(blockStorage interfaces.BlockStorageT) (StorageValidatorCountValue, error) {
+	return GenericFetchDefault[StorageValidatorCountValue](blockStorage, this)
+}
+
+//
+//
+//
+
+type StorageValidatorSlashInEraKey1 = uint32
+type StorageValidatorSlashInEraKey2 = AccountId
+type StorageValidatorSlashInEraEntry = StorageEntryDoubleMap[StorageValidatorSlashInEraKey1, StorageValidatorSlashInEraKey2, StorageValidatorSlashInEra]
+type StorageValidatorSlashInEra struct {
+	Tup0 Perbill
+	Tup1 Balance
+}
+
+func (this *StorageValidatorSlashInEra) PalletName() string {
+	return PalletName
+}
+
+func (this *StorageValidatorSlashInEra) StorageName() string {
+	return "ValidatorSlashInEra"
+}
+
+func (this *StorageValidatorSlashInEra) MapKey1Hasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageValidatorSlashInEra) MapKey2Hasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageValidatorSlashInEra) Fetch(blockStorage interfaces.BlockStorageT, key1 StorageValidatorSlashInEraKey1, key2 StorageValidatorSlashInEraKey2) (prim.Option[StorageValidatorSlashInEraEntry], error) {
+	return GenericDoubleMapFetch[StorageValidatorSlashInEra](blockStorage, key1, key2, this)
+}
+
+func (this *StorageValidatorSlashInEra) FetchAll(blockStorage interfaces.BlockStorageT, key StorageValidatorSlashInEraKey1) ([]StorageValidatorSlashInEraEntry, error) {
+	return GenericDoubleMapKeysFetch[StorageValidatorSlashInEra, StorageValidatorSlashInEraKey1, StorageValidatorSlashInEraKey2](blockStorage, key, this)
+}
+
+//
+//
+//
+
+type StorageValidatorsKey = AccountId
+type StorageValidatorsValue = ValidatorPrefs
+type StorageValidatorsEntry = StorageEntry[StorageValidatorsKey, StorageValidatorsValue]
+
+type StorageValidators struct {
+	Slashed Balance
+	PaidOut Balance
+}
+
+func (this *StorageValidators) PalletName() string {
+	return "Staking"
+}
+
+func (this *StorageValidators) StorageName() string {
+	return "Validators"
+}
+
+func (this *StorageValidators) MapKeyHasher() uint8 {
+	return Twox64ConcatHasher
+}
+
+func (this *StorageValidators) Fetch(blockStorage interfaces.BlockStorageT, key StorageValidatorsKey) (StorageValidatorsEntry, error) {
+	val, err := GenericMapFetch[StorageValidatorsValue](blockStorage, key, this)
+	if err != nil {
+		return StorageValidatorsEntry{}, err
+	}
+
+	return val.Unwrap(), nil
+
+}
+
+func (this *StorageValidators) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageValidatorsEntry, error) {
+	return GenericMapKeysFetch[StorageValidatorsValue, StorageValidatorsKey](blockStorage, this)
 }

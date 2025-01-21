@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/itering/scale.go/utiles/uint128"
@@ -13,6 +14,10 @@ import (
 
 type Balance struct {
 	Value uint128.Uint128
+}
+
+func (this Balance) ToString() string {
+	return this.ToHuman()
 }
 
 func (this Balance) ToHuman() string {
@@ -222,7 +227,9 @@ func (this *DispatchError) Decode(decoder *prim.Decoder) error {
 	case 2:
 	case 3:
 		var t ModuleError
-		decoder.Decode(&t)
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
 		this.Module.Set(t)
 	case 4:
 	case 5:
@@ -343,7 +350,105 @@ type PerDispatchClassU32 struct {
 	Mandatory   uint32
 }
 
-// TODO Needs ToHuman() method
 type Perbill struct {
-	Value uint32 `scale:"compact"`
+	Value uint32
+}
+
+func (this Perbill) ToString() string {
+	return this.ToHuman()
+}
+
+func (this Perbill) ToHuman() string {
+	stringValue := strconv.FormatUint(uint64(this.Value), 10)
+
+	if len(stringValue) <= 7 {
+		addZeros := 7 - len(stringValue)
+
+		var result = "0."
+		for i := 0; i < addZeros; i++ {
+			result += "0"
+		}
+
+		var trailing = removeTrailingZeros(stringValue)
+		if trailing == "" {
+			result = "0.0"
+			trailing = ""
+		}
+		return result + trailing + "%"
+	}
+
+	var result = ""
+	for i := 0; i < len(stringValue); i++ {
+		result = string(stringValue[len(stringValue)-i-1]) + result
+		if i == 6 {
+			result = "." + result
+		}
+	}
+
+	result = removeTrailingZeros(result)
+	if strings.HasSuffix(result, ".") {
+		result += "0"
+	}
+
+	return result + "%"
+}
+
+type RewardDestination struct {
+	VariantIndex uint8
+	Account      prim.Option[AccountId]
+}
+
+func (this RewardDestination) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Staked"
+	case 1:
+		return "Stash"
+	case 2:
+		return "Controller"
+	case 3:
+		return "Account"
+	case 4:
+		return "None"
+	default:
+		panic("Unknown RewardDestination Variant Index")
+	}
+}
+
+func (this *RewardDestination) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+
+	if this.Account.IsSome() {
+		prim.Encoder.EncodeTo(this.Account.Unwrap(), dest)
+	}
+}
+
+func (this *RewardDestination) Decode(decoder *prim.Decoder) error {
+	*this = RewardDestination{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+		var t AccountId
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
+		this.Account.Set(t)
+	case 4:
+	default:
+		return errors.New("Unknown RewardDestination Variant Index while Decoding")
+	}
+
+	return nil
+}
+
+type ValidatorPrefs struct {
+	Commission Perbill `scale:"compact"`
+	Blocked    bool
 }
