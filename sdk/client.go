@@ -147,7 +147,7 @@ func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {
 	return prim.NewH256FromHexString(txHash)
 }
 
-func (this *Client) GetBlock(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
+func (this *Client) BlockAt(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
 	primBlock, err := this.Rpc.Chain.GetBlock(blockHash)
 	if err != nil {
 		return RPCBlock{}, err

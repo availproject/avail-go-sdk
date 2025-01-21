@@ -138,7 +138,7 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 		}
 		currentBlockHash = prim.NewSome(blockHash)
 
-		block, err := client.GetBlock(prim.NewSome(blockHash))
+		block, err := client.BlockAt(prim.NewSome(blockHash))
 		if err != nil {
 			return prim.NewNone[TransactionDetails](), err
 		}

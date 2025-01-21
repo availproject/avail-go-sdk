@@ -13,7 +13,7 @@ type Block struct {
 }
 
 func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
-	block, err := client.GetBlock(prim.NewSome(blockHash))
+	block, err := client.BlockAt(prim.NewSome(blockHash))
 	if err != nil {
 		return Block{}, nil
 	}
