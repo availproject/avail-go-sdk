@@ -3,9 +3,10 @@ package sdk
 import (
 	"errors"
 	"fmt"
-	"go-sdk/interfaces"
-	meta "go-sdk/metadata"
-	prim "go-sdk/primitives"
+
+	interfaces "github.com/availproject/avail-go-sdk/interfaces"
+	meta "github.com/availproject/avail-go-sdk/metadata"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type Events struct {

@@ -1,7 +1,7 @@
 package examples
 
 import (
-	SDK "go-sdk/sdk"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
 func run_account_nonce() {

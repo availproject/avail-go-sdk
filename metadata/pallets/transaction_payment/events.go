@@ -1,7 +1,7 @@
 package transaction_payment
 
 import (
-	meta "go-sdk/metadata"
+	meta "github.com/availproject/avail-go-sdk/metadata"
 
 	"github.com/itering/scale.go/utiles/uint128"
 )

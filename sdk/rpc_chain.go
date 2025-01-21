@@ -1,7 +1,7 @@
 package sdk
 
 import (
-	prim "go-sdk/primitives"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 func (this *chainRPC) GetBlock(blockHash prim.Option[prim.H256]) (prim.Block, error) {

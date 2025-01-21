@@ -5,7 +5,7 @@ import (
 
 	"math/big"
 
-	prim "go-sdk/primitives"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type TransactionOptions struct {

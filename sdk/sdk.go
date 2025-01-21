@@ -5,8 +5,8 @@ import (
 
 	"math/big"
 
-	daPallet "go-sdk/metadata/pallets/data_availability"
-	prim "go-sdk/primitives"
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type SDK struct {

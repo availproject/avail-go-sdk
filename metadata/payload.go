@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"go-sdk/primitives"
+	primitives "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type Payload struct {

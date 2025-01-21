@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"go-sdk/primitives"
+
+	primitives "github.com/availproject/avail-go-sdk/primitives"
 
 	gsrpcScale "github.com/centrifuge/go-substrate-rpc-client/v4/scale"
 	gsrpcTypes "github.com/centrifuge/go-substrate-rpc-client/v4/types"

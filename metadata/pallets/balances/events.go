@@ -1,7 +1,7 @@
 package balances
 
 import (
-	"go-sdk/metadata"
+	metadata "github.com/availproject/avail-go-sdk/metadata"
 )
 
 // Do not add, remove or change any of the field members.

@@ -1,8 +1,8 @@
 package data_availability
 
 import (
-	"go-sdk/metadata"
-	prim "go-sdk/primitives"
+	metadata "github.com/availproject/avail-go-sdk/metadata"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 // Do not add, remove or change any of the field members.

@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go-sdk/metadata"
 	"io"
 	"net/http"
 
-	meta "go-sdk/metadata"
-	prim "go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/metadata"
+	meta "github.com/availproject/avail-go-sdk/metadata"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type Client struct {
