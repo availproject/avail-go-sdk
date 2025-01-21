@@ -3,7 +3,7 @@ package main
 import (
 	// "go-sdk/examples"
 
-	npmPool "go-sdk/metadata/pallets/nomination_pools"
+	npmPool "go-sdk/metadata/pallets/identity"
 	"go-sdk/primitives"
 	SDK "go-sdk/sdk"
 	/*
@@ -21,11 +21,13 @@ func main() {
 	}
 
 	{
-		storage := npmPool.StorageTotalValueLocked{}
-		value, err := storage.Fetch(&storageAt)
+
+		storage := npmPool.StorageIdentityOf{}
+		value, err := storage.FetchAll(&storageAt)
 		if err != nil {
 			panic(err)
 		}
-		println(value.String())
+		println(value[1].Key.ToHuman())
+		println(value[1].Value.T0.Info.Display.ToString())
 	}
 }
