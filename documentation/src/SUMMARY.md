@@ -6,4 +6,5 @@
 - [Data Submission](./data_submission.md)
 - [Events](./events.md)
 - [Storage](./storage.md)
+- [Batch](./batch.md)
 
