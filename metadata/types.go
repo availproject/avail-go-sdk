@@ -507,7 +507,7 @@ func (this CommissionClaimPermission) ToString() string {
 	case 0:
 		return "Permissionless"
 	case 1:
-		return "Account"
+		return fmt.Sprintf("Account: %v", this.Account.Unwrap().ToHuman())
 	default:
 		panic("Unknown CommissionClaimPermission Variant Index")
 	}
@@ -1294,6 +1294,109 @@ func (this *DispatchResult) Decode(decoder *prim.Decoder) error {
 		this.Err.Set(t)
 	default:
 		return errors.New("Unknown DispatchResult Variant Index while Decoding")
+	}
+
+	return nil
+}
+
+type PoolBondExtra struct {
+	VariantIndex uint8
+	FreeBalance  prim.Option[Balance]
+}
+
+func (this PoolBondExtra) ToHuman() string {
+	return this.ToString()
+}
+
+func (this PoolBondExtra) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return fmt.Sprintf("Free Balance: %v", this.FreeBalance.Unwrap().ToHuman())
+	case 1:
+		return "Rewards"
+	default:
+		panic("Unknown PoolBondExtra Variant Index")
+	}
+}
+
+func (this *PoolBondExtra) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+
+	if this.FreeBalance.IsSome() {
+		prim.Encoder.EncodeTo(this.FreeBalance.Unwrap(), dest)
+	}
+}
+
+func (this *PoolBondExtra) Decode(decoder *prim.Decoder) error {
+	*this = PoolBondExtra{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+		var t Balance
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
+		this.FreeBalance.Set(t)
+	case 1:
+	default:
+		return errors.New("Unknown PoolBondExtra Variant Index while Decoding")
+	}
+
+	return nil
+}
+
+type PoolRoleConfig struct {
+	VariantIndex uint8
+	Set          prim.Option[AccountId]
+}
+
+func (this PoolRoleConfig) ToHuman() string {
+	return this.ToString()
+}
+
+func (this PoolRoleConfig) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Noop"
+	case 1:
+		return fmt.Sprintf("Set: %v", this.Set.Unwrap().ToHuman())
+	case 2:
+		return "Remove"
+	default:
+		panic("Unknown PoolRoleConfig Variant Index")
+	}
+}
+
+func (this *PoolRoleConfig) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+
+	if this.Set.IsSome() {
+		prim.Encoder.EncodeTo(this.Set.Unwrap(), dest)
+	}
+}
+
+func (this *PoolRoleConfig) Decode(decoder *prim.Decoder) error {
+	*this = PoolRoleConfig{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+	case 1:
+		var t AccountId
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
+		this.Set.Set(t)
+	case 2:
+	default:
+		return errors.New("Unknown PoolRoleConfig Variant Index while Decoding")
 	}
 
 	return nil
