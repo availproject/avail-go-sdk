@@ -61,15 +61,16 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 	if err != nil {
 		return TransactionDetails{}, err
 	}
-	tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
-	if err != nil {
-		return TransactionDetails{}, err
-	}
 
 	var retryCount = 3
 	for {
 		if retryCount == 0 {
 			break
+		}
+
+		tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
+		if err != nil {
+			return TransactionDetails{}, err
 		}
 
 		txHash, err := client.Send(tx)
@@ -83,6 +84,8 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 		if maybeDetails.IsSome() {
 			return maybeDetails.Unwrap(), nil
 		}
+
+		RegenerateEra(client, &extra, &additional)
 
 		retryCount -= 1
 	}

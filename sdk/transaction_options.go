@@ -72,3 +72,19 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 
 	return extra, additional, nil
 }
+
+func RegenerateEra(client *Client, extra *prim.Extra, additional *prim.Additional) error {
+	forkHash, err := client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+	if err != nil {
+		return err
+	}
+	header, err := client.Rpc.Chain.GetHeader(prim.NewSome(forkHash))
+	if err != nil {
+		return err
+	}
+
+	additional.ForkHash = forkHash
+	extra.Era = prim.NewEra(32, uint64(header.Number))
+
+	return nil
+}
