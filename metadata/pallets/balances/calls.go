@@ -8,7 +8,13 @@ import (
 	"github.com/itering/scale.go/utiles/uint128"
 )
 
-// Do not add, remove or change any of the field members.
+// Transfer some liquid free balance to another account.
+//
+// `transfer_allow_death` will set the `FreeBalance` of the sender and receiver.
+// If the sender's account is below the existential deposit as a result
+// of the transfer, the account will be reaped.
+//
+// The dispatch origin for this call must be `Signed` by the transactor.
 type CallTransferAlowDeath struct {
 	Dest  prim.MultiAddress
 	Value uint128.Uint128 `scale:"compact"`
@@ -53,7 +59,8 @@ func (this *CallTransferAlowDeath) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bo
 	return true
 }
 
-// Do not add, remove or change any of the field members.
+// Exactly as `TransferAlowDeath`, except the origin must be root and the source account
+// may be specified.
 type CallForceTransfer struct {
 	Source prim.MultiAddress
 	Dest   prim.MultiAddress
@@ -98,7 +105,8 @@ func (this *CallForceTransfer) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
 	return true
 }
 
-// Do not add, remove or change any of the field members.
+// Same as the `TransferAlowDeath` call, but with a check that the transfer will not
+// kill the origin account.
 type CallTransferKeepAlive struct {
 	Dest  prim.MultiAddress
 	Value uint128.Uint128 `scale:"compact"`
@@ -132,7 +140,11 @@ func (this *CallTransferKeepAlive) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bo
 	return Decode(this, tx)
 }
 
-// Do not add, remove or change any of the field members.
+// Transfer the entire transferable balance from the caller account.
+//
+// NOTE: This function only attempts to transfer _transferable_ balances. This means that
+// any locked, reserved, or existential deposits (when `keep_alive` is `true`), will not be
+// transferred by this function.
 type CallTransferAll struct {
 	Dest      prim.MultiAddress
 	KeepAlive bool

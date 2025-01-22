@@ -35,7 +35,6 @@ func Decode[T CallT](this T, tx *prim.DecodedExtrinsic) bool {
 
 	var decoder = prim.NewDecoder(tx.Call.Fields.ToBytes(), 0)
 	if err := decoder.Decode(this); err != nil {
-		panic(err)
 		return false
 	}
 	return true
