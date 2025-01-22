@@ -54,12 +54,9 @@ func run_storage() {
 		if err != nil {
 			panic(err)
 		}
-		if val.IsSome() {
-			val := val.Unwrap()
-			println("Account Key: ", val.Key.ToHuman())
-			println("Account Nonce: ", val.Value.Nonce)
-			println("Account Free Balance: ", val.Value.AccountData.Free.ToHuman())
-		}
+		println("Account Key: ", val.Key.ToHuman())
+		println("Account Nonce: ", val.Value.Nonce)
+		println("Account Free Balance: ", val.Value.AccountData.Free.ToHuman())
 	}
 
 	// Fetch All Map Storage
