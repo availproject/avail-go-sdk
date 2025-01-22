@@ -6,7 +6,7 @@ import (
 	"github.com/itering/scale.go/utiles/uint128"
 )
 
-// Do not add, remove or change any of the field members.
+// A transaction fee `actual_fee`, of which `tip` was added to the minimum inclusion fee, has been paid by `who`.
 type EventTransactionFeePaid struct {
 	Who       meta.AccountId
 	ActualFee uint128.Uint128

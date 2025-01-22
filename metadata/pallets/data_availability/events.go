@@ -5,7 +5,7 @@ import (
 	prim "go-sdk/primitives"
 )
 
-// Do not add, remove or change any of the field members.
+// A new application key was created.
 type EventApplicationKeyCreated struct {
 	Key   []uint8
 	Owner metadata.AccountId
@@ -28,7 +28,7 @@ func (this EventApplicationKeyCreated) EventName() string {
 	return "ApplicationKeyCreated"
 }
 
-// Do not add, remove or change any of the field members.
+// New Data was submitted.
 type EventDataSubmitted struct {
 	Who      metadata.AccountId
 	DataHash prim.H256

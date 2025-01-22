@@ -4,7 +4,7 @@ import (
 	meta "go-sdk/metadata"
 )
 
-// Do not add, remove or change any of the field members.
+// An extrinsic completed successfully.
 type EventExtrinsicSuccess struct {
 	DispatchInfo meta.DispatchInfo
 }
@@ -25,7 +25,7 @@ func (this EventExtrinsicSuccess) EventName() string {
 	return "ExtrinsicSuccess"
 }
 
-// Do not add, remove or change any of the field members.
+// An extrinsic failed.
 type EventExtrinsicFailed struct {
 	DispatchInfo meta.DispatchInfo
 }

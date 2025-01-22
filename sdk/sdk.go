@@ -5,7 +5,9 @@ import (
 
 	"math/big"
 
+	"go-sdk/metadata"
 	daPallet "go-sdk/metadata/pallets/data_availability"
+	utPallet "go-sdk/metadata/pallets/utility"
 	prim "go-sdk/primitives"
 )
 
@@ -37,17 +39,25 @@ func NewSDK2(endpoint string) SDK {
 }
 
 type Transactions struct {
+	Client           *Client
 	DataAvailability DataAvailabilityTx
+	Utility          UtilityTx
 }
 
 func newTransactions(client *Client) Transactions {
 	return Transactions{
+		Client:           client,
 		DataAvailability: DataAvailabilityTx{Client: client},
+		Utility:          UtilityTx{Client: client},
 	}
 }
 
 type DataAvailabilityTx struct {
 	Client *Client
+}
+
+func (this *Transactions) NewTransaction(payload metadata.Payload) Transaction {
+	return NewTransaction(this.Client, payload)
 }
 
 func (this *DataAvailabilityTx) SubmitData(data []byte) Transaction {
@@ -57,6 +67,15 @@ func (this *DataAvailabilityTx) SubmitData(data []byte) Transaction {
 
 func (this *DataAvailabilityTx) CreateApplicationKey(key []byte) Transaction {
 	call := daPallet.CallCreateApplicationKey{Key: key}
+	return NewTransaction(this.Client, call.ToPayload())
+}
+
+type UtilityTx struct {
+	Client *Client
+}
+
+func (this *UtilityTx) Batch(calls []prim.Call) Transaction {
+	call := utPallet.CallBatch{Calls: calls}
 	return NewTransaction(this.Client, call.ToPayload())
 }
 

@@ -1239,3 +1239,53 @@ func (this *IdentityData) Decode(decoder *prim.Decoder) error {
 
 	return nil
 }
+
+type DispatchResult struct {
+	VariantIndex uint8
+	Err          prim.Option[DispatchError]
+}
+
+func (this DispatchResult) ToHuman() string {
+	return this.ToString()
+}
+
+func (this DispatchResult) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Ok"
+	case 1:
+		return "Err"
+	default:
+		panic("Unknown DispatchResult Variant Index")
+	}
+}
+
+func (this *DispatchResult) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+
+	if this.Err.IsSome() {
+		prim.Encoder.EncodeTo(this.Err.Unwrap(), dest)
+	}
+}
+
+func (this *DispatchResult) Decode(decoder *prim.Decoder) error {
+	*this = DispatchResult{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+	case 1:
+		var t DispatchError
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
+		this.Err.Set(t)
+	default:
+		return errors.New("Unknown DispatchResult Variant Index while Decoding")
+	}
+
+	return nil
+}

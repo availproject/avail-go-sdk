@@ -2,6 +2,7 @@ package data_availability
 
 import (
 	"go-sdk/metadata"
+	. "go-sdk/metadata/pallets"
 	prim "go-sdk/primitives"
 )
 
@@ -26,28 +27,16 @@ func (this CallCreateApplicationKey) CallName() string {
 	return "create_application_key"
 }
 
-func (this *CallCreateApplicationKey) ToPayload() metadata.Payload {
-	var call = prim.Call{
-		PalletIndex: this.PalletIndex(),
-		CallIndex:   this.CallIndex(),
-		Fields:      prim.AlreadyEncoded{Value: prim.Encoder.Encode(this)},
-	}
+func (this *CallCreateApplicationKey) ToCall() prim.Call {
+	return ToCall(this)
+}
 
-	return metadata.NewPayload(call, this.PalletName(), this.CallName())
+func (this *CallCreateApplicationKey) ToPayload() metadata.Payload {
+	return ToPayload(this)
 }
 
 func (this *CallCreateApplicationKey) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	if this.PalletIndex() != tx.Call.PalletIndex {
-		return false
-	}
-
-	if this.CallIndex() != tx.Call.CallIndex {
-		return false
-	}
-
-	var decoder = prim.NewDecoder(tx.Call.Fields.ToBytes(), 0)
-	decoder.Decode(this)
-	return true
+	return Decode(this, tx)
 }
 
 // Do not add, remove or change any of the field members.
@@ -71,26 +60,14 @@ func (this CallSubmitData) CallName() string {
 	return "submit_data"
 }
 
-func (this *CallSubmitData) ToPayload() metadata.Payload {
-	var call = prim.Call{
-		PalletIndex: this.PalletIndex(),
-		CallIndex:   this.CallIndex(),
-		Fields:      prim.AlreadyEncoded{Value: prim.Encoder.Encode(this)},
-	}
+func (this *CallSubmitData) ToCall() prim.Call {
+	return ToCall(this)
+}
 
-	return metadata.NewPayload(call, this.PalletName(), this.CallName())
+func (this *CallSubmitData) ToPayload() metadata.Payload {
+	return ToPayload(this)
 }
 
 func (this *CallSubmitData) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	if this.PalletIndex() != tx.Call.PalletIndex {
-		return false
-	}
-
-	if this.CallIndex() != tx.Call.CallIndex {
-		return false
-	}
-
-	var decoder = prim.NewDecoder(tx.Call.Fields.ToBytes(), 0)
-	decoder.Decode(this)
-	return true
+	return Decode(this, tx)
 }

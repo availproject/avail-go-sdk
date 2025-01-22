@@ -2,6 +2,7 @@ package balances
 
 import (
 	"go-sdk/metadata"
+	. "go-sdk/metadata/pallets"
 	prim "go-sdk/primitives"
 
 	"github.com/itering/scale.go/utiles/uint128"
@@ -10,7 +11,7 @@ import (
 // Do not add, remove or change any of the field members.
 type CallTransferAlowDeath struct {
 	Dest  prim.MultiAddress
-	Value uint128.Uint128
+	Value uint128.Uint128 `scale:"compact"`
 }
 
 func (this CallTransferAlowDeath) PalletIndex() uint8 {
@@ -29,14 +30,12 @@ func (this CallTransferAlowDeath) CallName() string {
 	return "transfer_allow_death"
 }
 
-func (this *CallTransferAlowDeath) ToPayload() metadata.Payload {
-	var call = prim.Call{
-		PalletIndex: this.PalletIndex(),
-		CallIndex:   this.CallIndex(),
-		Fields:      prim.AlreadyEncoded{Value: prim.Encoder.Encode(this)},
-	}
+func (this *CallTransferAlowDeath) ToCall() prim.Call {
+	return ToCall(this)
+}
 
-	return metadata.NewPayload(call, this.PalletName(), this.CallName())
+func (this *CallTransferAlowDeath) ToPayload() metadata.Payload {
+	return ToPayload(this)
 }
 
 func (this *CallTransferAlowDeath) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
@@ -58,7 +57,7 @@ func (this *CallTransferAlowDeath) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bo
 type CallForceTransfer struct {
 	Source prim.MultiAddress
 	Dest   prim.MultiAddress
-	Value  uint128.Uint128
+	Value  uint128.Uint128 `scale:"compact"`
 }
 
 func (this CallForceTransfer) PalletIndex() uint8 {
@@ -77,14 +76,12 @@ func (this CallForceTransfer) CallName() string {
 	return "force_transfer"
 }
 
-func (this *CallForceTransfer) ToPayload() metadata.Payload {
-	var call = prim.Call{
-		PalletIndex: this.PalletIndex(),
-		CallIndex:   this.CallIndex(),
-		Fields:      prim.AlreadyEncoded{Value: prim.Encoder.Encode(this)},
-	}
+func (this *CallForceTransfer) ToCall() prim.Call {
+	return ToCall(this)
+}
 
-	return metadata.NewPayload(call, this.PalletName(), this.CallName())
+func (this *CallForceTransfer) ToPayload() metadata.Payload {
+	return ToPayload(this)
 }
 
 func (this *CallForceTransfer) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
@@ -104,7 +101,7 @@ func (this *CallForceTransfer) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
 // Do not add, remove or change any of the field members.
 type CallTransferKeepAlive struct {
 	Dest  prim.MultiAddress
-	Value uint128.Uint128
+	Value uint128.Uint128 `scale:"compact"`
 }
 
 func (this CallTransferKeepAlive) PalletIndex() uint8 {
@@ -123,28 +120,16 @@ func (this CallTransferKeepAlive) CallName() string {
 	return "transfer_keep_alive"
 }
 
-func (this *CallTransferKeepAlive) ToPayload() metadata.Payload {
-	var call = prim.Call{
-		PalletIndex: this.PalletIndex(),
-		CallIndex:   this.CallIndex(),
-		Fields:      prim.AlreadyEncoded{Value: prim.Encoder.Encode(this)},
-	}
+func (this *CallTransferKeepAlive) ToCall() prim.Call {
+	return ToCall(this)
+}
 
-	return metadata.NewPayload(call, this.PalletName(), this.CallName())
+func (this *CallTransferKeepAlive) ToPayload() metadata.Payload {
+	return ToPayload(this)
 }
 
 func (this *CallTransferKeepAlive) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	if this.PalletIndex() != tx.Call.PalletIndex {
-		return false
-	}
-
-	if this.CallIndex() != tx.Call.CallIndex {
-		return false
-	}
-
-	var decoder = prim.NewDecoder(tx.Call.Fields.ToBytes(), 0)
-	decoder.Decode(this)
-	return true
+	return Decode(this, tx)
 }
 
 // Do not add, remove or change any of the field members.
@@ -169,14 +154,12 @@ func (this CallTransferAll) CallName() string {
 	return "transfer_all"
 }
 
-func (this *CallTransferAll) ToPayload() metadata.Payload {
-	var call = prim.Call{
-		PalletIndex: this.PalletIndex(),
-		CallIndex:   this.CallIndex(),
-		Fields:      prim.AlreadyEncoded{Value: prim.Encoder.Encode(this)},
-	}
+func (this *CallTransferAll) ToCall() prim.Call {
+	return ToCall(this)
+}
 
-	return metadata.NewPayload(call, this.PalletName(), this.CallName())
+func (this *CallTransferAll) ToPayload() metadata.Payload {
+	return ToPayload(this)
 }
 
 func (this *CallTransferAll) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {

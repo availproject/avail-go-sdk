@@ -19,6 +19,14 @@ func (this H256) ToHexWith0x() string {
 	return "0x" + this.ToHex()
 }
 
+func (this H256) ToHuman() string {
+	return this.ToHexWith0x()
+}
+
+func (this H256) ToString() string {
+	return this.ToHexWith0x()
+}
+
 func (this H256) ToRpcParam() string {
 	return "\"" + this.ToHexWith0x() + "\""
 }
