@@ -29,8 +29,9 @@ func (this *StorageAccount) MapKeyHasher() uint8 {
 	return Blake2_128ConcatHasher
 }
 
-func (this *StorageAccount) Fetch(blockStorage interfaces.BlockStorageT, key StorageAccountKey) (prim.Option[StorageAccountEntry], error) {
-	return GenericMapFetch[StorageAccount](blockStorage, key, this)
+func (this *StorageAccount) Fetch(blockStorage interfaces.BlockStorageT, key StorageAccountKey) (StorageAccountEntry, error) {
+	val, err := GenericMapFetch[StorageAccount](blockStorage, key, this)
+	return val.Unwrap(), err
 }
 
 func (this *StorageAccount) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageAccountEntry, error) {

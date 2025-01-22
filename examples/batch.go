@@ -39,7 +39,7 @@ func run_batch() {
 		if err != nil {
 			panic(err)
 		}
-		tx := sdk.Tx.Balances.TransferKeepAlive(destCharlie, SDK.OneAvail())
+		tx := sdk.Tx.Balances.TransferKeepAlive(destCharlie.ToMultiAddress(), SDK.OneAvail())
 		callsToExecute = append(callsToExecute, tx.Payload.Call)
 	}
 
@@ -150,7 +150,7 @@ func run_batch() {
 		if err != nil {
 			panic(err)
 		}
-		tx := sdk.Tx.Balances.TransferKeepAlive(destEve, SDK.OneAvail().Mul(uint128.From64(uint64(1_000_000_000))))
+		tx := sdk.Tx.Balances.TransferKeepAlive(destEve.ToMultiAddress(), SDK.OneAvail().Mul(uint128.From64(uint64(1_000_000_000))))
 		callsToExecute = append(callsToExecute, tx.Payload.Call)
 	}
 
@@ -160,7 +160,7 @@ func run_batch() {
 		if err != nil {
 			panic(err)
 		}
-		tx := sdk.Tx.Balances.TransferKeepAlive(destDave, SDK.OneAvail())
+		tx := sdk.Tx.Balances.TransferKeepAlive(destDave.ToMultiAddress(), SDK.OneAvail())
 		callsToExecute = append(callsToExecute, tx.Payload.Call)
 	}
 
