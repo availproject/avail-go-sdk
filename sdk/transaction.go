@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go-sdk/metadata"
+	syPallet "go-sdk/metadata/pallets/system"
 	prim "go-sdk/primitives"
 )
 
@@ -182,4 +183,22 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 	}
 
 	return prim.NewNone[TransactionDetails](), nil
+}
+
+func (this *TransactionDetails) IsSuccessful() (bool, error) {
+	if this.Events.IsNone() {
+		return false, errors.New("No events were decoded.")
+	}
+	events := this.Events.Unwrap()
+
+	maybeFound, err := EventFindFirstChecked(events, syPallet.EventExtrinsicFailed{})
+	if err != nil {
+		return false, err
+	}
+
+	if maybeFound.IsNone() {
+		return true, nil
+	}
+
+	return false, nil
 }

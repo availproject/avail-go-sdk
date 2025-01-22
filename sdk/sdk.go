@@ -6,6 +6,7 @@ import (
 	"math/big"
 
 	"go-sdk/metadata"
+	baPallet "go-sdk/metadata/pallets/balances"
 	daPallet "go-sdk/metadata/pallets/data_availability"
 	utPallet "go-sdk/metadata/pallets/utility"
 	prim "go-sdk/primitives"
@@ -39,44 +40,80 @@ func NewSDK2(endpoint string) SDK {
 }
 
 type Transactions struct {
-	Client           *Client
+	client           *Client
 	DataAvailability DataAvailabilityTx
 	Utility          UtilityTx
+	Balances         BalancesTx
 }
 
 func newTransactions(client *Client) Transactions {
 	return Transactions{
-		Client:           client,
-		DataAvailability: DataAvailabilityTx{Client: client},
-		Utility:          UtilityTx{Client: client},
+		client:           client,
+		DataAvailability: DataAvailabilityTx{client: client},
+		Utility:          UtilityTx{client: client},
+		Balances:         BalancesTx{client: client},
 	}
 }
 
 type DataAvailabilityTx struct {
-	Client *Client
+	client *Client
 }
 
 func (this *Transactions) NewTransaction(payload metadata.Payload) Transaction {
-	return NewTransaction(this.Client, payload)
+	return NewTransaction(this.client, payload)
 }
 
 func (this *DataAvailabilityTx) SubmitData(data []byte) Transaction {
 	call := daPallet.CallSubmitData{Data: data}
-	return NewTransaction(this.Client, call.ToPayload())
+	return NewTransaction(this.client, call.ToPayload())
 }
 
 func (this *DataAvailabilityTx) CreateApplicationKey(key []byte) Transaction {
 	call := daPallet.CallCreateApplicationKey{Key: key}
-	return NewTransaction(this.Client, call.ToPayload())
+	return NewTransaction(this.client, call.ToPayload())
 }
 
 type UtilityTx struct {
-	Client *Client
+	client *Client
 }
 
 func (this *UtilityTx) Batch(calls []prim.Call) Transaction {
 	call := utPallet.CallBatch{Calls: calls}
-	return NewTransaction(this.Client, call.ToPayload())
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+func (this *UtilityTx) BatchAll(calls []prim.Call) Transaction {
+	call := utPallet.CallBatchAll{Calls: calls}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+func (this *UtilityTx) ForceBatch(calls []prim.Call) Transaction {
+	call := utPallet.CallForceBatch{Calls: calls}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+func (this *UtilityTx) AsDerivate(index uint16, call prim.Call) Transaction {
+	c := utPallet.CallAsDerivate{Index: index, Call: call}
+	return NewTransaction(this.client, c.ToPayload())
+}
+
+type BalancesTx struct {
+	client *Client
+}
+
+func (this *BalancesTx) TransferAllowDeath(dest metadata.AccountId, amount uint128.Uint128) Transaction {
+	call := baPallet.CallTransferAlowDeath{Dest: dest.ToMultiAddress(), Value: amount}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+func (this *BalancesTx) ForceTransfer(dest metadata.AccountId, amount uint128.Uint128) Transaction {
+	call := baPallet.CallForceTransfer{Dest: dest.ToMultiAddress(), Value: amount}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+func (this *BalancesTx) TransferKeepAlive(dest metadata.AccountId, amount uint128.Uint128) Transaction {
+	call := baPallet.CallTransferKeepAlive{Dest: dest.ToMultiAddress(), Value: amount}
+	return NewTransaction(this.client, call.ToPayload())
 }
 
 func OneAvail() uint128.Uint128 {

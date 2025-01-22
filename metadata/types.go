@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -84,6 +85,10 @@ func (this AccountId) ToHuman() string {
 
 func (this AccountId) ToString() string {
 	return this.Value.ToHex()
+}
+
+func (this AccountId) ToMultiAddress() prim.MultiAddress {
+	return prim.NewMultiAddressId(this.Value)
 }
 
 func NewAccountIdFromAddress(address string) (AccountId, error) {
@@ -180,7 +185,7 @@ func (this DispatchError) ToString() string {
 	case 2:
 		return "BadOrigin"
 	case 3:
-		return "Module"
+		return fmt.Sprintf("Module. Index %v", this.Module.Unwrap().Index)
 	case 4:
 		return "ConsumerRemaining"
 	case 5:
@@ -188,11 +193,11 @@ func (this DispatchError) ToString() string {
 	case 6:
 		return "TooManyConsumers"
 	case 7:
-		return "Token"
+		return fmt.Sprintf("Token. %v", this.Token.Unwrap().ToHuman())
 	case 8:
-		return "Arithmetic"
+		return fmt.Sprintf("Arithmetic. %v", this.Arithmetic.Unwrap().ToHuman())
 	case 9:
-		return "Transactional"
+		return fmt.Sprintf("Transactional. %v", this.Transactional.Unwrap().ToString())
 	case 10:
 		return "Exhausted"
 	case 11:
@@ -342,6 +347,10 @@ func (this ArithmeticError) ToString() string {
 // Do not add, remove or change any of the field members.
 type TransactionalError struct {
 	VariantIndex uint8
+}
+
+func (this TransactionalError) ToHuman() string {
+	return this.ToString()
 }
 
 func (this TransactionalError) ToString() string {

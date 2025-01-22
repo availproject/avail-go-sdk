@@ -27,7 +27,8 @@ func (this EventExtrinsicSuccess) EventName() string {
 
 // An extrinsic failed.
 type EventExtrinsicFailed struct {
-	DispatchInfo meta.DispatchInfo
+	DispatchError meta.DispatchError
+	DispatchInfo  meta.DispatchInfo
 }
 
 func (this EventExtrinsicFailed) PalletIndex() uint8 {
