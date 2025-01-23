@@ -6,7 +6,9 @@ import (
 	"go-sdk/metadata"
 	baPallet "go-sdk/metadata/pallets/balances"
 	daPallet "go-sdk/metadata/pallets/data_availability"
+	npPallet "go-sdk/metadata/pallets/nomination_pools"
 	stPallet "go-sdk/metadata/pallets/staking"
+	syPallet "go-sdk/metadata/pallets/system"
 	utPallet "go-sdk/metadata/pallets/utility"
 	prim "go-sdk/primitives"
 )
@@ -290,5 +292,332 @@ func (this *StakingTx) PayoutStakersByPage(validatorStash metadata.AccountId, er
 // This will waive the transaction fee if the `payee` is successfully migrated.
 func (this *StakingTx) UpdatePayee(controller metadata.AccountId) Transaction {
 	call := stPallet.CallUpdatePayee{Controller: controller}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+type NominationPoolsTx struct {
+	client *Client
+}
+
+// Stake funds with a pool. The amount to bond is transferred from the member to the
+// pools account and immediately increases the pools bond.
+//
+// # Note
+//
+//   - An account can only be a member of a single pool.
+//   - An account cannot join the same pool multiple times.
+//   - This call will *not* dust the member account, so the member must have at least
+//     `existential deposit + amount` in their account.
+//   - Only a pool with [`PoolState::Open`] can be joined
+func (this *NominationPoolsTx) Join(amount metadata.Balance, poolId uint32) Transaction {
+	call := npPallet.CallJoin{Amount: amount, PoolId: poolId}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Bond `extra` more funds from `origin` into the pool to which they already belong.
+//
+// Additional funds can come from either the free balance of the account, of from the
+// accumulated rewards, see [`BondExtra`].
+//
+// Bonding extra funds implies an automatic payout of all pending rewards as well.
+// See `bond_extra_other` to bond pending rewards of `other` members.
+func (this *NominationPoolsTx) BondExtra(extra metadata.PoolBondExtra) Transaction {
+	call := npPallet.CallBondExtra{Extra: extra}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// A bonded member can use this to claim their payout based on the rewards that the pool
+// has accumulated since their last claimed payout (OR since joining if this is their first
+// time claiming rewards). The payout will be transferred to the member's account.
+//
+// The member will earn rewards pro rata based on the members stake vs the sum of the
+// members in the pools stake. Rewards do not "expire".
+//
+// See `claim_payout_other` to caim rewards on bahalf of some `other` pool member.
+func (this *NominationPoolsTx) ClaimPayout() Transaction {
+	call := npPallet.CallClaimPayout{}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Unbond up to `unbonding_points` of the `member_account`'s funds from the pool. It
+// implicitly collects the rewards one last time, since not doing so would mean some
+// rewards would be forfeited.
+//
+// Under certain conditions, this call can be dispatched permissionlessly (i.e. by any
+// account).
+//
+// # Conditions for a permissionless dispatch.
+//
+//   - The pool is blocked and the caller is either the root or bouncer. This is refereed to
+//     as a kick.
+//   - The pool is destroying and the member is not the depositor.
+//   - The pool is destroying, the member is the depositor and no other members are in the
+//     pool.
+//
+// ## Conditions for permissioned dispatch (i.e. the caller is also the
+// `member_account`):
+//
+//   - The caller is not the depositor.
+//   - The caller is the depositor, the pool is destroying and no other members are in the
+//     pool.
+//
+// # Note
+//
+// If there are too many unlocking chunks to unbond with the pool account,
+// [`Call::pool_withdraw_unbonded`] can be called to try and minimize unlocking chunks.
+// The [`StakingInterface::unbond`] will implicitly call [`Call::pool_withdraw_unbonded`]
+// to try to free chunks if necessary (ie. if unbound was called and no unlocking chunks
+// are available). However, it may not be possible to release the current unlocking chunks,
+// in which case, the result of this call will likely be the `NoMoreChunks` error from the
+// staking system.
+func (this *NominationPoolsTx) Unbond(memberAccount prim.MultiAddress, unbondingPoints uint128.Uint128) Transaction {
+	call := npPallet.CallUnbond{MemberAccount: memberAccount, UnbondingPoints: unbondingPoints}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Call `withdraw_unbonded` for the pools account. This call can be made by any account.
+//
+// This is useful if there are too many unlocking chunks to call `unbond`, and some
+// can be cleared by withdrawing. In the case there are too many unlocking chunks, the user
+// would probably see an error like `NoMoreChunks` emitted from the staking system when
+// they attempt to unbond.
+func (this *NominationPoolsTx) PoolWithdrawUnbonded(poolId uint32, numSlashingSpans uint32) Transaction {
+	call := npPallet.CallPoolWithdrawUnbonded{PoolId: poolId, NumSlashingSpans: numSlashingSpans}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Withdraw unbonded funds from `member_account`. If no bonded funds can be unbonded, an
+// error is returned.
+//
+// Under certain conditions, this call can be dispatched permissionlessly (i.e. by any
+// account).
+//
+// # Conditions for a permissionless dispatch
+//
+// * The pool is in destroy mode and the target is not the depositor.
+// * The target is the depositor and they are the only member in the sub pools.
+// * The pool is blocked and the caller is either the root or bouncer.
+//
+// # Conditions for permissioned dispatch
+//
+// * The caller is the target and they are not the depositor.
+//
+// # Note
+//
+// If the target is the depositor, the pool will be destroyed.
+func (this *NominationPoolsTx) WithdrawUnbonded(memberAccount prim.MultiAddress, numSlashingSpans uint32) Transaction {
+	call := npPallet.CallWithdrawUnbonded{MemberAccount: memberAccount, NumSlashingSpans: numSlashingSpans}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Create a new delegation pool.
+//
+// # Arguments
+//
+//   - `amount` - The amount of funds to delegate to the pool. This also acts of a sort of
+//     deposit since the pools creator cannot fully unbond funds until the pool is being
+//     destroyed.
+//   - `index` - A disambiguation index for creating the account. Likely only useful when
+//     creating multiple pools in the same extrinsic.
+//   - `root` - The account to set as [`PoolRoles::root`].
+//   - `nominator` - The account to set as the [`PoolRoles::nominator`].
+//   - `bouncer` - The account to set as the [`PoolRoles::bouncer`].
+//
+// # Note
+//
+// In addition to `amount`, the caller will transfer the existential deposit; so the caller
+// needs at have at least `amount + existential_deposit` transferable.
+func (this *NominationPoolsTx) Create(amount metadata.Balance, root prim.MultiAddress, nominator prim.MultiAddress, bouncer prim.MultiAddress) Transaction {
+	call := npPallet.CallCreate{Amount: amount, Root: root, Nominator: nominator, Bouncer: bouncer}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Create a new delegation pool with a previously used pool id
+//
+// # Arguments
+//
+// same as `create` with the inclusion of
+// * `pool_id` - `A valid PoolId.
+func (this *NominationPoolsTx) CreateWithPoolId(amount metadata.Balance, root prim.MultiAddress, nominator prim.MultiAddress, bouncer prim.MultiAddress, poolId uint32) Transaction {
+	call := npPallet.CallCreateWithPoolId{Amount: amount, Root: root, Nominator: nominator, Bouncer: bouncer, PoolId: poolId}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Nominate on behalf of the pool.
+//
+// The dispatch origin of this call must be signed by the pool nominator or the pool
+// root role.
+//
+// This directly forward the call to the staking pallet, on behalf of the pool bonded
+// account.
+func (this *NominationPoolsTx) Nominate(poolId uint32, validators []metadata.AccountId) Transaction {
+	call := npPallet.CallNominate{PoolId: poolId, Validators: validators}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Set a new state for the pool.
+//
+// If a pool is already in the `Destroying` state, then under no condition can its state
+// change again.
+//
+// The dispatch origin of this call must be either:
+//
+//  1. signed by the bouncer, or the root role of the pool,
+//  2. if the pool conditions to be open are NOT met (as described by `ok_to_be_open`), and
+//     then the state of the pool can be permissionlessly changed to `Destroying`.
+func (this *NominationPoolsTx) SetState(poolId uint32, state metadata.PoolState) Transaction {
+	call := npPallet.CallSetState{PoolId: poolId, State: state}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Set a new metadata for the pool.
+//
+// The dispatch origin of this call must be signed by the bouncer, or the root role of the
+// pool.
+func (this *NominationPoolsTx) SetMetadata(poolId uint32, metadata []byte) Transaction {
+	call := npPallet.CallSetMetadata{PoolId: poolId, Metadata: metadata}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Update the roles of the pool.
+//
+// The root is the only entity that can change any of the roles, including itself,
+// excluding the depositor, who can never change.
+//
+// It emits an event, notifying UIs of the role change. This event is quite relevant to
+// most pool members and they should be informed of changes to pool roles.
+func (this *NominationPoolsTx) UpdateRoles(poolId uint32, newRoot metadata.PoolRoleConfig, newNominator metadata.PoolRoleConfig, newBouncer metadata.PoolRoleConfig) Transaction {
+	call := npPallet.CallUpdateRoles{PoolId: poolId, NewRoot: newRoot, NewNominator: newNominator, NewBouncer: newBouncer}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Chill on behalf of the pool.
+//
+// The dispatch origin of this call must be signed by the pool nominator or the pool
+// root role, same as [`Pallet::nominate`].
+//
+// This directly forward the call to the staking pallet, on behalf of the pool bonded
+// account.
+func (this *NominationPoolsTx) Chill(poolId uint32) Transaction {
+	call := npPallet.CallChill{PoolId: poolId}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// `origin` bonds funds from `extra` for some pool member `member` into their respective
+// pools.
+//
+// `origin` can bond extra funds from free balance or pending rewards when `origin ==
+// other`.
+//
+// In the case of `origin != other`, `origin` can only bond extra pending rewards of
+// `other` members assuming set_claim_permission for the given member is
+// `PermissionlessAll` or `PermissionlessCompound`.
+func (this *NominationPoolsTx) BondExtraOther(member prim.MultiAddress, extra metadata.PoolBondExtra) Transaction {
+	call := npPallet.CallBondExtraOther{Member: member, Extra: extra}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Allows a pool member to set a claim permission to allow or disallow permissionless
+// bonding and withdrawing.
+//
+// By default, this is `Permissioned`, which implies only the pool member themselves can
+// claim their pending rewards. If a pool member wishes so, they can set this to
+// `PermissionlessAll` to allow any account to claim their rewards and bond extra to the
+// pool.
+//
+// # Arguments
+//
+// * `origin` - Member of a pool.
+// * `actor` - Account to claim reward. // improve this
+func (this *NominationPoolsTx) SetClaimPermission(permission metadata.PoolClaimPermission) Transaction {
+	call := npPallet.CallSetClaimPermission{Permission: permission}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// `origin` can claim payouts on some pool member `other`'s behalf.
+//
+// Pool member `other` must have a `PermissionlessAll` or `PermissionlessWithdraw` in order
+// for this call to be successful.
+func (this *NominationPoolsTx) ClaimPayoutOther(other metadata.AccountId) Transaction {
+	call := npPallet.CallClaimPayoutOther{Other: other}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Set the commission of a pool.
+//
+// Both a commission percentage and a commission payee must be provided in the `current`
+// tuple. Where a `current` of `None` is provided, any current commission will be removed.
+//
+// - If a `None` is supplied to `new_commission`, existing commission will be removed.
+func (this *NominationPoolsTx) SetCommission(poolId uint32, newCommission prim.Option[metadata.Tuple2[metadata.Perbill, metadata.AccountId]]) Transaction {
+	call := npPallet.CallSetCommission{PoolId: poolId, NewCommission: newCommission}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Set the maximum commission of a pool.
+//
+//   - Initial max can be set to any `Perbill`, and only smaller values thereafter.
+//   - Current commission will be lowered in the event it is higher than a new max
+//     commission.
+func (this *NominationPoolsTx) SetCommissionMax(poolId uint32, maxCommission metadata.Perbill) Transaction {
+	call := npPallet.CallSetCommissionMax{PoolId: poolId, MaxCommission: maxCommission}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Set the commission change rate for a pool.
+//
+// Initial change rate is not bounded, whereas subsequent updates can only be more
+// restrictive than the current.
+func (this *NominationPoolsTx) SetCommissionChangeRate(poolId uint32, changeRate metadata.PoolCommissionChangeRate) Transaction {
+	call := npPallet.CallSetCommissionChangeRate{PoolId: poolId, ChangeRate: changeRate}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Claim pending commission.
+//
+// The dispatch origin of this call must be signed by the `root` role of the pool. Pending
+// commission is paid out and added to total claimed commission`. Total pending commission
+// is reset to zero. the current.
+func (this *NominationPoolsTx) ClaimCommission(poolId uint32) Transaction {
+	call := npPallet.CallClaimCommission{PoolId: poolId}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Top up the deficit or withdraw the excess ED from the pool.
+//
+// When a pool is created, the pool depositor transfers ED to the reward account of the
+// pool. ED is subject to change and over time, the deposit in the reward account may be
+// insufficient to cover the ED deficit of the pool or vice-versa where there is excess
+// deposit to the pool. This call allows anyone to adjust the ED deposit of the
+// pool by either topping up the deficit or claiming the excess.
+func (this *NominationPoolsTx) AdjustPoolDeposit(poolId uint32) Transaction {
+	call := npPallet.CallAdjustPoolDeposit{PoolId: poolId}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Set or remove a pool's commission claim permission.
+//
+// Determines who can claim the pool's pending commission. Only the `Root` role of the pool
+// is able to conifigure commission claim permissions.
+func (this *NominationPoolsTx) SetCommissionClaimPermission(poolId uint32, permission prim.Option[metadata.CommissionClaimPermission]) Transaction {
+	call := npPallet.CallSetCommissionClaimPermission{PoolId: poolId, Permission: permission}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+type SystemTx struct {
+	client *Client
+}
+
+// Make some on-chain remark.
+//
+// Can be executed by every `origin`
+func (this *SystemTx) Remark(remark []byte) Transaction {
+	call := syPallet.CallRemark{Remark: remark}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+// Make some on-chain remark and emit event
+func (this *SystemTx) RemarkWithEvent(remark []byte) Transaction {
+	call := syPallet.CallRemarkWithEvent{Remark: remark}
 	return NewTransaction(this.client, call.ToPayload())
 }
