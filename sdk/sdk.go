@@ -43,6 +43,7 @@ type Transactions struct {
 	Staking          StakingTx
 	NominationPools  NominationPoolsTx
 	System           SystemTx
+	Vector           VectorTx
 }
 
 func newTransactions(client *Client) Transactions {
@@ -54,6 +55,7 @@ func newTransactions(client *Client) Transactions {
 		Staking:          StakingTx{client: client},
 		NominationPools:  NominationPoolsTx{client: client},
 		System:           SystemTx{client: client},
+		Vector:           VectorTx{client: client},
 	}
 }
 

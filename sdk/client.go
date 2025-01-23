@@ -116,7 +116,15 @@ func (this *Client) Request(method string, params string) (string, error) {
 
 	if mappedData["error"] != nil {
 		err := mappedData["error"].(map[string]interface{})
-		return "", errors.New(err["message"].(string) + ". " + err["data"].(string))
+		errMessage := ""
+		if err["message"] != nil {
+			errMessage += err["message"].(string)
+		}
+		if err["data"] != nil {
+			errMessage += " " + err["data"].(string)
+		}
+
+		return "", errors.New(errMessage)
 	}
 
 	if mappedData["result"] == nil {

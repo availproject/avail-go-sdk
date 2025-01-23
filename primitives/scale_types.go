@@ -40,6 +40,12 @@ func (this *Option[T]) Set(value T) {
 	this.isSet = true
 }
 
+func (this *Option[T]) Unset() {
+	var t T
+	this.value = t
+	this.isSet = false
+}
+
 func (this Option[T]) IsSome() bool {
 	return this.isSet
 }

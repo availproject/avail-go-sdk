@@ -10,6 +10,7 @@ import (
 	stPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
+	vcPallet "github.com/availproject/avail-go-sdk/metadata/pallets/vector"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -619,5 +620,14 @@ func (this *SystemTx) Remark(remark []byte) Transaction {
 // Make some on-chain remark and emit event
 func (this *SystemTx) RemarkWithEvent(remark []byte) Transaction {
 	call := syPallet.CallRemarkWithEvent{Remark: remark}
+	return NewTransaction(this.client, call.ToPayload())
+}
+
+type VectorTx struct {
+	client *Client
+}
+
+func (this *VectorTx) SendMessage(message metadata.VectorMessageKind, To prim.H256, domain uint32) Transaction {
+	call := vcPallet.CallSendMessage{Message: message, To: To, Domain: domain}
 	return NewTransaction(this.client, call.ToPayload())
 }

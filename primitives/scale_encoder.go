@@ -77,7 +77,7 @@ func (encoderT) callMethod(value reflect.Value, dest *string) bool {
 
 }
 
-func (encoderT) structureFields(value reflect.Value, dest *string) bool {
+func (encoderT) structureFields(value reflect.Value, dest *string, isCompact bool) bool {
 	valueType := value.Type()
 
 	for i := 0; i < valueType.NumField(); i++ {
@@ -87,9 +87,9 @@ func (encoderT) structureFields(value reflect.Value, dest *string) bool {
 			continue
 		}
 
-		isCompact := scaleTag == "compact"
+		isFieldCompact := isCompact || scaleTag == "compact"
 		fieldValue := value.Field(i)
-		if !Encoder.encodeToInner(fieldValue, dest, isCompact) {
+		if !Encoder.encodeToInner(fieldValue, dest, isFieldCompact) {
 			return false
 		}
 	}
@@ -97,7 +97,7 @@ func (encoderT) structureFields(value reflect.Value, dest *string) bool {
 	return true
 }
 
-func (encoderT) structure(value reflect.Value, dest *string) bool {
+func (encoderT) structure(value reflect.Value, dest *string, isCompact bool) bool {
 	// See if there is a method that doesn't need a pointer
 	if Encoder.callMethod(value, dest) {
 		return true
@@ -112,7 +112,7 @@ func (encoderT) structure(value reflect.Value, dest *string) bool {
 	}
 
 	// See if we can encode all the fields
-	return Encoder.structureFields(value, dest)
+	return Encoder.structureFields(value, dest, isCompact)
 }
 
 func (encoderT) pointer(value reflect.Value, dest *string) bool {
@@ -240,7 +240,7 @@ func (encoderT) encodeToInner(value reflect.Value, dest *string, isCompact bool)
 	case reflect.Slice:
 		return Encoder.slice(value, dest)
 	case reflect.Struct:
-		return Encoder.structure(value, dest)
+		return Encoder.structure(value, dest, isCompact)
 	case reflect.Pointer:
 		return Encoder.encodeToInner(value.Elem(), dest, isCompact)
 	default:
