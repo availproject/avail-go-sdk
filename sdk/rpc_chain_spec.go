@@ -4,6 +4,10 @@ import (
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
+type chainSpecRPC struct {
+	client *Client
+}
+
 func (this *chainSpecRPC) V1GenesisHash() (prim.H256, error) {
 	params := RPCParams{}
 	value, err := this.client.Request("chainSpec_v1_genesisHash", params.Build())

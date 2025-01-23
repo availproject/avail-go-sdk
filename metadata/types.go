@@ -1401,3 +1401,10 @@ func (this *PoolRoleConfig) Decode(decoder *prim.Decoder) error {
 
 	return nil
 }
+
+type BlockLength struct {
+	Max       PerDispatchClassU32
+	Cols      uint32 `scale:"compact"`
+	Rows      uint32 `scale:"compact"`
+	ChunkSize uint32 `scale:"compact"`
+}

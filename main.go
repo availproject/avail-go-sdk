@@ -1,7 +1,13 @@
 package main
 
-import "github.com/availproject/avail-go-sdk/examples"
+import (
+	"github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
 
 func main() {
-	examples.Run()
+	sdk := SDK.NewSDK(SDK.LocalEndpoint)
+
+	sdk.Client.Rpc.Kate.BlockLength(primitives.NewNone[primitives.H256]())
+
 }

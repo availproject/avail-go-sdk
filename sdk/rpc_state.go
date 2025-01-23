@@ -5,6 +5,10 @@ import (
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
+type stateRPC struct {
+	client *Client
+}
+
 func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) (prim.RuntimeVersion, error) {
 	var params = &RPCParams{}
 	if blockHash.IsSome() {
