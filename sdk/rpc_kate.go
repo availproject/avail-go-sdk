@@ -274,3 +274,42 @@ type KateCell struct {
 }
 
 type GDataProof = metadata.Tuple2[string, [48]byte]
+
+func (this *kateRPC) QueryRows(rows []uint32, blockHash prim.Option[prim.H256]) ([][]string, error) {
+	var params = &RPCParams{}
+	res := [][]string{}
+
+	rowsEnc := "["
+	for i, row := range rows {
+		rowsEnc += fmt.Sprintf("%v", row)
+
+		if i < (len(rows) - 1) {
+			rowsEnc += ","
+		}
+	}
+	rowsEnc += "]"
+	params.Add(rowsEnc)
+	if blockHash.IsSome() {
+		params.AddH256(blockHash.Unwrap())
+	}
+
+	rawJson, err := this.client.Request("kate_queryRows", params.Build())
+	if err != nil {
+		return res, err
+	}
+
+	var outerArrays []interface{}
+	if err := json.Unmarshal([]byte(rawJson), &outerArrays); err != nil {
+		return res, err
+	}
+
+	for i, outerArray := range outerArrays {
+		res = append(res, []string{})
+		innerArray := outerArray.([]interface{})
+		for _, elm := range innerArray {
+			res[i] = append(res[i], elm.(string))
+		}
+	}
+
+	return res, nil
+}

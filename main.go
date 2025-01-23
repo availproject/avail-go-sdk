@@ -8,14 +8,13 @@ import (
 func main() {
 	sdk := SDK.NewSDK(SDK.LocalEndpoint)
 
-	val, _ := primitives.NewH256FromHexString("0xea552116539b130effd3404e409a3a9f99c55e47bcb855320bb70bc640b4eab3")
+	val, _ := primitives.NewH256FromHexString("0x513e312001b7e288baba4b6f94bca753f0a6d6d10dcfa2ff41e52f50bc936188")
 
-	cells := []SDK.KateCell{}
+	rows := []uint32{}
 
-	cells = append(cells, SDK.KateCell{Row: 0, Col: 0})
-	cells = append(cells, SDK.KateCell{Row: 0, Col: 1})
+	rows = append(rows, 0, 1)
 
-	_, err := sdk.Client.Rpc.Kate.QueryProof(cells, primitives.NewSome(val))
+	_, err := sdk.Client.Rpc.Kate.QueryRows(rows, primitives.NewSome(val))
 	if err != nil {
 		panic(err)
 	}
