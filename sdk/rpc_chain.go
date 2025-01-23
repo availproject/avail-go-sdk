@@ -4,6 +4,10 @@ import (
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
+type chainRPC struct {
+	client *Client
+}
+
 func (this *chainRPC) GetBlock(blockHash prim.Option[prim.H256]) (prim.Block, error) {
 	params := RPCParams{}
 	if blockHash.IsSome() {

@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"fmt"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -15,6 +16,18 @@ import (
 
 type Balance struct {
 	Value uint128.Uint128
+}
+
+func NewBalanceFromString(value string) (Balance, error) {
+	var res, ok = new(big.Int).SetString(value, 10)
+	if !ok {
+		return Balance{}, errors.New("Failed to convert string to Balance")
+	}
+	return NewBalanceFromBigInt(res), nil
+}
+
+func NewBalanceFromBigInt(value *big.Int) Balance {
+	return Balance{Value: uint128.FromBig(value)}
 }
 
 func (this Balance) String() string {
@@ -1400,4 +1413,105 @@ func (this *PoolRoleConfig) Decode(decoder *prim.Decoder) error {
 	}
 
 	return nil
+}
+
+type BlockLength struct {
+	Max       PerDispatchClassU32
+	Cols      uint32 `scale:"compact"`
+	Rows      uint32 `scale:"compact"`
+	ChunkSize uint32 `scale:"compact"`
+}
+
+type VectorMessageKind struct {
+	VariantIndex     uint8
+	ArbitraryMessage prim.Option[[]byte]
+	FungibleToken    prim.Option[MessageFungibleToken]
+}
+
+type MessageFungibleToken struct {
+	AssetId prim.H256
+	Amount  Balance `scale:"compact"`
+}
+
+func (this VectorMessageKind) ToHuman() string {
+	return this.ToString()
+}
+
+func (this VectorMessageKind) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return fmt.Sprintf("ArbitraryMessage: %v", string(this.ArbitraryMessage.Unwrap()))
+	case 1:
+		v := this.FungibleToken.Unwrap()
+		return fmt.Sprintf("FungibleToken: Asset Id: %v,  Amount: %v", v.AssetId, v.Amount.String())
+	default:
+		panic("Unknown VectorMessageKind Variant Index")
+	}
+}
+
+func (this *VectorMessageKind) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+
+	if this.ArbitraryMessage.IsSome() {
+		prim.Encoder.EncodeTo(this.ArbitraryMessage.Unwrap(), dest)
+	}
+
+	if this.FungibleToken.IsSome() {
+		prim.Encoder.EncodeTo(this.FungibleToken.Unwrap(), dest)
+	}
+}
+
+func (this *VectorMessageKind) Decode(decoder *prim.Decoder) error {
+	*this = VectorMessageKind{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+		var t []byte
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
+		this.ArbitraryMessage.Set(t)
+	case 1:
+		var t MessageFungibleToken
+		if err := decoder.Decode(&t); err != nil {
+			return err
+		}
+		this.FungibleToken.Set(t)
+	default:
+		return errors.New("Unknown VectorMessageKind Variant Index while Decoding")
+	}
+
+	return nil
+}
+
+type ProofResponse struct {
+	DataProof DataProof
+	Message   prim.Option[AddressedMessage]
+}
+
+type DataProof struct {
+	Roots          TxDataRoots
+	Proof          []prim.H256
+	NumberOfLeaves uint32 `scale:"compact"`
+	LeafIndex      uint32 `scale:"compact"`
+	Leaf           prim.H256
+}
+
+type TxDataRoots struct {
+	DataRoot   prim.H256
+	BlobRoot   prim.H256
+	BridgeRoot prim.H256
+}
+
+type AddressedMessage struct {
+	Message           VectorMessageKind
+	From              prim.H256
+	To                prim.H256
+	OriginDomain      uint32 `scale:"compact"`
+	DestinationDomain uint32 `scale:"compact"`
+	Id                uint64 `scale:"compact"`
 }

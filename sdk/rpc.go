@@ -12,6 +12,7 @@ type RPC struct {
 	State     stateRPC
 	Chain     chainRPC
 	ChainSpec chainSpecRPC
+	Kate      kateRPC
 }
 
 func newRPC(client *Client) RPC {
@@ -21,23 +22,8 @@ func newRPC(client *Client) RPC {
 		State:     stateRPC{client: client},
 		Chain:     chainRPC{client: client},
 		ChainSpec: chainSpecRPC{client: client},
+		Kate:      kateRPC{client: client},
 	}
-}
-
-type systemRPC struct {
-	client *Client
-}
-
-type stateRPC struct {
-	client *Client
-}
-
-type chainRPC struct {
-	client *Client
-}
-
-type chainSpecRPC struct {
-	client *Client
 }
 
 type RPCParams struct {

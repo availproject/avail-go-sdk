@@ -5,6 +5,10 @@ import (
 	"strconv"
 )
 
+type systemRPC struct {
+	client *Client
+}
+
 func (this *systemRPC) AccountNextIndex(accountId string) (uint32, error) {
 	if len(accountId) < 1 {
 		return uint32(0), errors.New("AccountId needs to have a length of > 0")
