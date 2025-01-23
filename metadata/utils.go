@@ -315,3 +315,7 @@ type Tuple2[T0 any, T1 any] struct {
 	T0 T0
 	T1 T1
 }
+
+func NewTuple2[T0 any, T1 any](v1 T0, v2 T1) Tuple2[T0, T1] {
+	return Tuple2[T0, T1]{T0: v1, T1: v2}
+}

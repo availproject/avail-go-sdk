@@ -3,6 +3,7 @@ package sdk
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/availproject/avail-go-sdk/metadata"
@@ -57,7 +58,8 @@ func (this *kateRPC) BlockLength(blockHash prim.Option[prim.H256]) (metadata.Blo
 	return res, nil
 }
 
-func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Option[prim.H256]) (string, error) {
+func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Option[prim.H256]) (metadata.ProofResponse, error) {
+	res := metadata.ProofResponse{}
 	var params = &RPCParams{}
 	params.AddUint32(transactionIndex)
 	if blockHash.IsSome() {
@@ -66,37 +68,36 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 	rawJson, err := this.client.Request("kate_queryDataProof", params.Build())
 	if err != nil {
-		return "", err
+		return res, err
 	}
 
 	println(rawJson)
 
-	res := metadata.ProofResponse{}
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
-		return "", err
+		return res, err
 	}
 
 	if mappedData["dataProof"] == nil {
-		return "", errors.New("QueryDataProof is missing dataProof")
+		return res, errors.New("QueryDataProof is missing dataProof")
 	}
 
 	dataProofMap := mappedData["dataProof"].(map[string]interface{})
 
 	if dataProofMap["leaf"] == nil {
-		return "", errors.New("QueryDataProof is missing leaf")
+		return res, errors.New("QueryDataProof is missing leaf")
 	}
 	if dataProofMap["leafIndex"] == nil {
-		return "", errors.New("QueryDataProof is missing leafIndex")
+		return res, errors.New("QueryDataProof is missing leafIndex")
 	}
 	if dataProofMap["numberOfLeaves"] == nil {
-		return "", errors.New("QueryDataProof is missing numberOfLeaves")
+		return res, errors.New("QueryDataProof is missing numberOfLeaves")
 	}
 	if dataProofMap["proof"] == nil {
-		return "", errors.New("QueryDataProof is missing proof")
+		return res, errors.New("QueryDataProof is missing proof")
 	}
 	if dataProofMap["roots"] == nil {
-		return "", errors.New("QueryDataProof is missing roots")
+		return res, errors.New("QueryDataProof is missing roots")
 	}
 
 	res.DataProof.Leaf, err = prim.NewH256FromHexString(dataProofMap["leaf"].(string))
@@ -108,13 +109,13 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 	rootsMap := dataProofMap["roots"].(map[string]interface{})
 	if rootsMap["blobRoot"] == nil {
-		return "", errors.New("QueryDataProof is missing blobRoot")
+		return res, errors.New("QueryDataProof is missing blobRoot")
 	}
 	if rootsMap["bridgeRoot"] == nil {
-		return "", errors.New("QueryDataProof is missing bridgeRoot")
+		return res, errors.New("QueryDataProof is missing bridgeRoot")
 	}
 	if rootsMap["dataRoot"] == nil {
-		return "", errors.New("QueryDataProof is missing dataRoot")
+		return res, errors.New("QueryDataProof is missing dataRoot")
 	}
 
 	res.DataProof.Roots.BlobRoot, err = prim.NewH256FromHexString(rootsMap["blobRoot"].(string))
@@ -141,27 +142,27 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 	if mappedData["message"] == nil {
 		res.Message.Unset()
-		return "", nil
+		return res, nil
 	}
 
 	addressedMsgMap := mappedData["message"].(map[string]interface{})
 	if addressedMsgMap["destinationDomain"] == nil {
-		return "", errors.New("QueryDataProof is missing destinationDomain")
+		return res, errors.New("QueryDataProof is missing destinationDomain")
 	}
 	if addressedMsgMap["originDomain"] == nil {
-		return "", errors.New("QueryDataProof is missing originDomain")
+		return res, errors.New("QueryDataProof is missing originDomain")
 	}
 	if addressedMsgMap["from"] == nil {
-		return "", errors.New("QueryDataProof is missing from")
+		return res, errors.New("QueryDataProof is missing from")
 	}
 	if addressedMsgMap["to"] == nil {
-		return "", errors.New("QueryDataProof is missing to")
+		return res, errors.New("QueryDataProof is missing to")
 	}
 	if addressedMsgMap["id"] == nil {
-		return "", errors.New("QueryDataProof is missing id")
+		return res, errors.New("QueryDataProof is missing id")
 	}
 	if addressedMsgMap["message"] == nil {
-		return "", errors.New("QueryDataProof is missing message")
+		return res, errors.New("QueryDataProof is missing message")
 	}
 
 	msg := metadata.AddressedMessage{}
@@ -184,10 +185,10 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 		msg.Message.VariantIndex = 0
 		fungMap := msg2Map["fungibleToken"].(map[string]interface{})
 		if fungMap["asset_id"] == nil {
-			return "", errors.New("QueryDataProof is missing AssetId")
+			return res, errors.New("QueryDataProof is missing AssetId")
 		}
 		if fungMap["amount"] == nil {
-			return "", errors.New("QueryDataProof is missing Amount")
+			return res, errors.New("QueryDataProof is missing Amount")
 		}
 
 		t := metadata.MessageFungibleToken{}
@@ -200,7 +201,7 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 		amountF := fungMap["amount"].(float64)
 		amount, err := metadata.NewBalanceFromString(strconv.FormatFloat(amountF, 'f', -1, 64))
 		if err != nil {
-			return "", err
+			return res, err
 		}
 		t.Amount = amount
 
@@ -217,5 +218,59 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 	res.Message.Set(msg)
 
-	return rawJson, nil
+	return res, nil
 }
+
+func (this *kateRPC) QueryProof(cells []KateCell, blockHash prim.Option[prim.H256]) ([]GDataProof, error) {
+	var params = &RPCParams{}
+	res := []GDataProof{}
+
+	cellsEnc := "["
+	for i, cell := range cells {
+		cellsEnc += "[" + fmt.Sprintf("%v", cell.Row) + "," + fmt.Sprintf("%v", cell.Col) + "]"
+
+		if i < (len(cells) - 1) {
+			cellsEnc += ","
+		}
+	}
+	cellsEnc += "]"
+	params.Add(cellsEnc)
+	if blockHash.IsSome() {
+		params.AddH256(blockHash.Unwrap())
+	}
+
+	rawJson, err := this.client.Request("kate_queryProof", params.Build())
+	if err != nil {
+		return res, err
+	}
+
+	var mappedData []interface{}
+	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
+		return res, err
+	}
+
+	for _, elems := range mappedData {
+		mappedData2 := elems.([]interface{})
+		gProofArray := mappedData2[1].([]interface{})
+
+		gProof := [48]byte{}
+		if len(gProofArray) != 48 {
+			return res, errors.New("GProof is not 48 bytes long")
+		}
+		for i, el := range gProofArray {
+			gProof[i] = byte(el.(float64))
+		}
+
+		res = append(res, metadata.NewTuple2(mappedData2[0].(string), gProof))
+
+	}
+
+	return res, nil
+}
+
+type KateCell struct {
+	Row int32 `scale:"compact"`
+	Col int32 `scale:"compact"`
+}
+
+type GDataProof = metadata.Tuple2[string, [48]byte]
