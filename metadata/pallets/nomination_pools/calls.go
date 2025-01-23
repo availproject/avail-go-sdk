@@ -342,7 +342,7 @@ func (this *CallCreate) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
 // same as `create` with the inclusion of
 // * `pool_id` - `A valid PoolId.
 type CallCreateWithPoolId struct {
-	Amount    uint128.Uint128 `scale:"compact"`
+	Amount    metadata.Balance `scale:"compact"`
 	Root      prim.MultiAddress
 	Nominator prim.MultiAddress
 	Bouncer   prim.MultiAddress

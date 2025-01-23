@@ -41,6 +41,8 @@ type Transactions struct {
 	Utility          UtilityTx
 	Balances         BalancesTx
 	Staking          StakingTx
+	NominationPools  NominationPoolsTx
+	System           SystemTx
 }
 
 func newTransactions(client *Client) Transactions {
@@ -50,6 +52,8 @@ func newTransactions(client *Client) Transactions {
 		Utility:          UtilityTx{client: client},
 		Balances:         BalancesTx{client: client},
 		Staking:          StakingTx{client: client},
+		NominationPools:  NominationPoolsTx{client: client},
+		System:           SystemTx{client: client},
 	}
 }
 
