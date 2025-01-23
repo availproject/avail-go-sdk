@@ -1,12 +1,12 @@
 package examples
 
 import (
-	"go-sdk/metadata"
-	idenPallet "go-sdk/metadata/pallets/identity"
-	staPallet "go-sdk/metadata/pallets/staking"
-	sysPallet "go-sdk/metadata/pallets/system"
-	prim "go-sdk/primitives"
-	SDK "go-sdk/sdk"
+	"github.com/availproject/avail-go-sdk/metadata"
+	idenPallet "github.com/availproject/avail-go-sdk/metadata/pallets/identity"
+	staPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
+	sysPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	prim "github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
 func run_storage() {

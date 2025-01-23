@@ -1,7 +1,7 @@
 package sdk
 
 import (
-	"go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/primitives"
 )
 
 type BlockStorage struct {

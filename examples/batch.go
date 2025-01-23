@@ -1,12 +1,12 @@
 package examples
 
 import (
-	"go-sdk/metadata"
-	baPallet "go-sdk/metadata/pallets/balances"
-	syPallet "go-sdk/metadata/pallets/system"
-	utPallet "go-sdk/metadata/pallets/utility"
-	prim "go-sdk/primitives"
-	SDK "go-sdk/sdk"
+	"github.com/availproject/avail-go-sdk/metadata"
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
+	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
+	prim "github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
 
 	"github.com/itering/scale.go/utiles/uint128"
 )

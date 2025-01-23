@@ -1,7 +1,7 @@
 package utility
 
 import (
-	"go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/metadata"
 )
 
 // Batch of dispatches did not complete fully. Index of first failing dispatch given, as well as the error

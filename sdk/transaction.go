@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"go-sdk/metadata"
-	syPallet "go-sdk/metadata/pallets/system"
-	prim "go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/metadata"
+	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 const Finalization = uint8(0)
@@ -142,7 +142,7 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 		}
 		currentBlockHash = prim.NewSome(blockHash)
 
-		block, err := client.BlockAt(prim.NewSome(blockHash))
+		block, err := client.RPCBlockAt(prim.NewSome(blockHash))
 		if err != nil {
 			return prim.NewNone[TransactionDetails](), err
 		}

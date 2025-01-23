@@ -1,8 +1,8 @@
 package data_availability
 
 import (
-	"go-sdk/metadata"
-	prim "go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/metadata"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 // A new application key was created.

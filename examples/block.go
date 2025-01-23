@@ -3,9 +3,9 @@ package examples
 import (
 	"fmt"
 
-	"go-sdk/metadata"
-	balancesPallet "go-sdk/metadata/pallets/balances"
-	SDK "go-sdk/sdk"
+	"github.com/availproject/avail-go-sdk/metadata"
+	balancesPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
 func run_block() {
@@ -46,13 +46,13 @@ func run_block() {
 	//
 	// Available methods:
 	// DataSubmissionAll, DataSubmissionBySigner, DataSubmissionByIndex, DataSubmissionByHash, DataSubmissionByAppId
-	allDS := block.DataSubmissionAll()
-	println("Data Submission Count: ", len(allDS))
+	blobs := block.DataSubmissionAll()
+	println("Data Submission Count: ", len(blobs))
 
-	ds := allDS[0]
-	println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Tx Data: %v, Tx AppId: %v`, ds.TxHash.ToHexWith0x(), ds.TxIndex, string(ds.Data), ds.AppId))
+	blob := blobs[0]
+	println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Tx Data: %v, Tx AppId: %v`, blob.TxHash.ToHexWith0x(), blob.TxIndex, string(blob.Data), blob.AppId))
 
-	accountId := metadata.AccountId{Value: ds.TxSigner.Id.Unwrap()}
+	accountId := metadata.AccountId{Value: blob.TxSigner.Id.Unwrap()}
 	println(fmt.Sprintf(`Tx Signer: %v`, accountId.ToHuman()))
 
 	// Events

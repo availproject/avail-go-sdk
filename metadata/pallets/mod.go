@@ -1,8 +1,8 @@
 package pallets
 
 import (
-	meta "go-sdk/metadata"
-	prim "go-sdk/primitives"
+	meta "github.com/availproject/avail-go-sdk/metadata"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type CallT interface {

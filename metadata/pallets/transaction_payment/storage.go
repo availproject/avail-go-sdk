@@ -1,8 +1,8 @@
 package transaction_payment
 
 import (
-	"go-sdk/interfaces"
-	. "go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/interfaces"
+	. "github.com/availproject/avail-go-sdk/metadata"
 )
 
 type StorageNextFeeMultiplierValue = Balance

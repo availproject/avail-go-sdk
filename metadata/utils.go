@@ -3,8 +3,8 @@ package metadata
 import (
 	"strings"
 
-	"go-sdk/interfaces"
-	prim "go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/interfaces"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 const Blake2_128ConcatHasher = uint8(0)

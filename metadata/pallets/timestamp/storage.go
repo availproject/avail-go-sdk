@@ -1,8 +1,8 @@
 package timestamp
 
 import (
-	"go-sdk/interfaces"
-	. "go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/interfaces"
+	. "github.com/availproject/avail-go-sdk/metadata"
 )
 
 type StorageNowValue = uint64

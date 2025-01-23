@@ -1,9 +1,9 @@
 package staking
 
 import (
-	"go-sdk/interfaces"
-	. "go-sdk/metadata"
-	prim "go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/interfaces"
+	. "github.com/availproject/avail-go-sdk/metadata"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type StorageActiveEra struct {

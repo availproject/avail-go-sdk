@@ -3,14 +3,14 @@ package sdk
 import (
 	"github.com/itering/scale.go/utiles/uint128"
 
-	"go-sdk/metadata"
-	baPallet "go-sdk/metadata/pallets/balances"
-	daPallet "go-sdk/metadata/pallets/data_availability"
-	npPallet "go-sdk/metadata/pallets/nomination_pools"
-	stPallet "go-sdk/metadata/pallets/staking"
-	syPallet "go-sdk/metadata/pallets/system"
-	utPallet "go-sdk/metadata/pallets/utility"
-	prim "go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/metadata"
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	npPallet "github.com/availproject/avail-go-sdk/metadata/pallets/nomination_pools"
+	stPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
+	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type DataAvailabilityTx struct {

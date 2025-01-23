@@ -1,9 +1,9 @@
 package sdk
 
 import (
-	"go-sdk/metadata"
-	syPallet "go-sdk/metadata/pallets/system"
-	"go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/metadata"
+	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	"github.com/availproject/avail-go-sdk/primitives"
 
 	"github.com/vedhavyas/go-subkey/v2"
 	"github.com/vedhavyas/go-subkey/v2/sr25519"

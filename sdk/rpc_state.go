@@ -2,7 +2,7 @@ package sdk
 
 import (
 	"encoding/json"
-	prim "go-sdk/primitives"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) (prim.RuntimeVersion, error) {

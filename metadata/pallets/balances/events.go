@@ -1,7 +1,7 @@
 package balances
 
 import (
-	"go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/metadata"
 )
 
 // An account was created with some free balance.

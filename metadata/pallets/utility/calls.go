@@ -1,9 +1,9 @@
 package utility
 
 import (
-	"go-sdk/metadata"
-	. "go-sdk/metadata/pallets"
-	prim "go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/metadata"
+	. "github.com/availproject/avail-go-sdk/metadata/pallets"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 // Send a batch of dispatch calls.

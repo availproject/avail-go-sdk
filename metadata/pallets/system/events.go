@@ -1,7 +1,7 @@
 package system
 
 import (
-	meta "go-sdk/metadata"
+	meta "github.com/availproject/avail-go-sdk/metadata"
 )
 
 // An extrinsic completed successfully.

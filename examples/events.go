@@ -2,8 +2,8 @@ package examples
 
 import (
 	"fmt"
-	daPallet "go-sdk/metadata/pallets/data_availability"
-	SDK "go-sdk/sdk"
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
 func run_events() {

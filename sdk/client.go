@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/metadata"
 	"io"
 	"net/http"
 
-	meta "go-sdk/metadata"
-	prim "go-sdk/primitives"
+	meta "github.com/availproject/avail-go-sdk/metadata"
+	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type Client struct {
@@ -147,7 +147,7 @@ func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {
 	return prim.NewH256FromHexString(txHash)
 }
 
-func (this *Client) BlockAt(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
+func (this *Client) RPCBlockAt(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
 	primBlock, err := this.Rpc.Chain.GetBlock(blockHash)
 	if err != nil {
 		return RPCBlock{}, err
