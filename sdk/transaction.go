@@ -1,6 +1,9 @@
 package sdk
 
 import (
+	"fmt"
+
+	"github.com/sirupsen/logrus"
 	"github.com/vedhavyas/go-subkey/v2"
 
 	"errors"
@@ -64,10 +67,6 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 
 	var retryCount = 3
 	for {
-		if retryCount == 0 {
-			break
-		}
-
 		tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
 		if err != nil {
 			return TransactionDetails{}, err
@@ -77,6 +76,10 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 		if err != nil {
 			return TransactionDetails{}, err
 		}
+		iden := txHash.ToString()[0:10]
+		if logrus.IsLevelEnabled(logrus.DebugLevel) {
+			logrus.Debug(fmt.Sprintf("%v: Transaction was submitted. Account: %v, TxHash: %v", iden, account.SS58Address(42), txHash.ToHexWith0x()))
+		}
 		maybeDetails, err := TransactionWatch(client, txHash, waitFor, blockTimeout)
 		if err != nil {
 			return TransactionDetails{}, err
@@ -85,9 +88,19 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 			return maybeDetails.Unwrap(), nil
 		}
 
+		if retryCount == 0 {
+			if logrus.IsLevelEnabled(logrus.DebugLevel) {
+				logrus.Debug(fmt.Sprintf("%v: Failed to find transaction. TxHash: %v. Aborting", iden, txHash.ToHexWith0x()))
+			}
+			break
+		}
+
 		RegenerateEra(client, &extra, &additional)
 
 		retryCount -= 1
+		if logrus.IsLevelEnabled(logrus.DebugLevel) {
+			logrus.Debug(fmt.Sprintf("%v: Failed to find transaction. TxHash: %v, Retry Count: %v/3. Trying again", iden, txHash.ToHexWith0x(), retryCount))
+		}
 	}
 
 	return TransactionDetails{}, errors.New("Failed to submit transaction. Tried 3 times.")
@@ -106,12 +119,14 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 	shouldSleep := false
 	currentBlockHash := prim.NewNone[prim.H256]()
 	timeoutBlockNumber := prim.NewNone[uint32]()
+	iden := txHash.ToString()[0:10]
 	var err error
-
-	if waitFor == Finalization {
-		println("Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for finalization")
-	} else {
-		println("Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for inclusion")
+	if logrus.IsLevelEnabled(logrus.DebugLevel) {
+		if waitFor == Finalization {
+			logrus.Debug(iden + ": Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for finalization")
+		} else {
+			logrus.Debug(iden + ": Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for inclusion")
+		}
 	}
 
 	for {
@@ -148,15 +163,18 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 		}
 
 		blockNumber := block.Header.Number
-		println("New Block fetched. Hash: " + blockHash.ToHexWith0x() + ", Number: " + strconv.FormatUint(uint64(blockNumber), 10))
+		if logrus.IsLevelEnabled(logrus.DebugLevel) {
+			logrus.Debug(iden + ": New Block fetched. Hash: " + blockHash.ToHexWith0x() + ", Number: " + strconv.FormatUint(uint64(blockNumber), 10))
+		}
 
 		for _, element := range block.Extrinsics {
 			if element.TxHash.ToHexWith0x() == txHash.ToHexWith0x() {
+
 				// Get Events
 				blockEvents, err := client.EventsAt(prim.NewSome(blockHash))
 				events := prim.NewNone[EventRecords]()
 				if err != nil {
-					println(err.Error())
+					logrus.Error(err.Error())
 				} else {
 					events.Set(FilterByTxIndex(blockEvents, element.TxIndex))
 				}
@@ -168,13 +186,20 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 					BlockNumber: blockNumber,
 					Events:      events,
 				}
+
+				if logrus.IsLevelEnabled(logrus.DebugLevel) {
+					logrus.Debug(fmt.Sprintf("%v: Transaction was found. Tx Hash: %v, Tx Index: %v, Block Hash: %v, Block Number: %v", iden, details.TxHash.ToHexWith0x(), details.TxIndex, details.BlockHash.ToHexWith0x(), details.BlockNumber))
+				}
+
 				return prim.NewSome(details), nil
 			}
 		}
 
 		if timeoutBlockNumber.IsNone() {
 			timeoutBlockNumber = prim.NewSome(blockNumber + blockTimeout)
-			println("Current Block Number: " + strconv.FormatUint(uint64(blockNumber), 10) + ", Timeout Block Number: " + strconv.FormatUint(uint64(blockNumber+blockTimeout+1), 10))
+			if logrus.IsLevelEnabled(logrus.DebugLevel) {
+				logrus.Debug(iden + ": Current Block Number: " + strconv.FormatUint(uint64(blockNumber), 10) + ", Timeout Block Number: " + strconv.FormatUint(uint64(blockNumber+blockTimeout+1), 10))
+			}
 		}
 
 		if timeoutBlockNumber.IsSome() {
