@@ -14,6 +14,7 @@ func main() {
 		level = logrus.InfoLevel // Default to INFO if parsing fails
 	}
 	logrus.SetLevel(level)
+	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 
 	examples.Run_data_submission()
 }

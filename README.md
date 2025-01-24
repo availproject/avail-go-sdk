@@ -23,6 +23,7 @@ if err != nil {
     level = logrus.InfoLevel // Default to INFO if parsing fails
 }
 logrus.SetLevel(level)
+logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 ```
 
 And run go command with `LOG_LEVEL` set to debug
