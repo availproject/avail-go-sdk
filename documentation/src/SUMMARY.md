@@ -1,6 +1,7 @@
 # Summary
 
 - [Start](./start.md)
+- [Installation](./installation.md)
 - [Account Nonce](./account_nonce.md)
 - [Block](./block.md)
 - [Data Submission](./data_submission.md)

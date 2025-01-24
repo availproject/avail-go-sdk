@@ -1,22 +1,25 @@
 package main
 
 import (
-	"github.com/availproject/avail-go-sdk/primitives"
+	"fmt"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
 func main() {
-	sdk := SDK.NewSDK(SDK.LocalEndpoint)
+	sdk := SDK.NewSDK(SDK.TuringEndpoint)
 
-	val, _ := primitives.NewH256FromHexString("0x513e312001b7e288baba4b6f94bca753f0a6d6d10dcfa2ff41e52f50bc936188")
-
-	rows := []uint32{}
-
-	rows = append(rows, 0, 1)
-
-	_, err := sdk.Client.Rpc.Kate.QueryRows(rows, primitives.NewSome(val))
+	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
+	acc, err := SDK.Account.Alice()
 	if err != nil {
 		panic(err)
 	}
 
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
+	res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(1))
+	if err != nil {
+		panic(err)
+	}
+
+	// Transaction Details
+	println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
 }
