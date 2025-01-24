@@ -8,7 +8,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func run_block() {
+func Run_block() {
 	sdk := SDK.NewSDK(SDK.LocalEndpoint)
 
 	acc, err := SDK.Account.Alice()

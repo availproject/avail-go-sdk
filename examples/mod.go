@@ -1,9 +1,11 @@
 package examples
 
 func Run() {
-	run_block()
-	run_events()
-	run_account_nonce()
-	run_data_submission()
-	run_storage()
+	Run_account_nonce()
+	Run_batch()
+	Run_block()
+	Run_data_submission()
+	Run_events()
+	Run_storage()
+	Run_rpc()
 }

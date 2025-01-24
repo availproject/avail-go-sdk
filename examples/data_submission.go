@@ -8,7 +8,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func run_data_submission() {
+func Run_data_submission() {
 	sdk := SDK.NewSDK(SDK.LocalEndpoint)
 
 	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
