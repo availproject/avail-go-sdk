@@ -59,7 +59,7 @@ module mymodule
 
 go 1.23.4
 
-require github.com/availproject/avail-go-sdk v0.2.0-rc3
+require github.com/availproject/avail-go-sdk v0.2.0-rc4
 ```
 
 3. Fetch dependencies:

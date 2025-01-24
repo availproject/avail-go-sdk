@@ -1,25 +1,20 @@
 package main
 
 import (
-	"fmt"
-	SDK "github.com/availproject/avail-go-sdk/sdk"
+	"os"
+
+	"github.com/availproject/avail-go-sdk/examples"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	sdk := SDK.NewSDK(SDK.TuringEndpoint)
-
-	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
-	acc, err := SDK.Account.Alice()
+	// Set log level based on the environment variable
+	level, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
 	if err != nil {
-		panic(err)
+		level = logrus.InfoLevel // Default to INFO if parsing fails
 	}
+	logrus.SetLevel(level)
+	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 
-	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
-	res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(1))
-	if err != nil {
-		panic(err)
-	}
-
-	// Transaction Details
-	println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
+	examples.Run_data_submission()
 }

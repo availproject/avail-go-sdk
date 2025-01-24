@@ -453,7 +453,7 @@ func (this RewardDestination) ToString() string {
 	case 2:
 		return "Controller"
 	case 3:
-		return "Account"
+		return fmt.Sprintf("Account: %v", this.Account.Unwrap().ToHuman())
 	case 4:
 		return "None"
 	default:

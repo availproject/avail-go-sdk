@@ -1,7 +1,0 @@
-Pallet metadata location
-```
-daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
-balancesPallet  "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
-tpPallet  "github.com/availproject/avail-go-sdk/metadata/pallets/transaction_payment"
-systemPallet  "github.com/availproject/avail-go-sdk/metadata/pallets/system"
-```

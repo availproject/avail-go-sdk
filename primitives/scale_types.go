@@ -66,6 +66,17 @@ func (this Option[T]) Unwrap() T {
 	return this.value
 }
 
+// This function will panic when no value is set.
+//
+// If Set, returns set value.
+// If Not Set, panics
+func (this Option[T]) SafeUnwrap() T {
+	if this.isSet == false {
+		panic("Option is not set.")
+	}
+	return this.value
+}
+
 // This function does not panic when no value is set.
 //
 // If Set, returns set value.

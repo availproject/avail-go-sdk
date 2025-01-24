@@ -4,7 +4,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func run_account_nonce() {
+func Run_account_nonce() {
 	sdk := SDK.NewSDK(SDK.LocalEndpoint)
 
 	nonce, err := sdk.Client.Rpc.System.AccountNextIndex("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")

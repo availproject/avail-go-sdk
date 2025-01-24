@@ -11,7 +11,7 @@ import (
 	"github.com/itering/scale.go/utiles/uint128"
 )
 
-func run_batch() {
+func Run_batch() {
 	sdk := SDK.NewSDK(SDK.LocalEndpoint)
 
 	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice

@@ -6,6 +6,7 @@ require (
 	github.com/centrifuge/go-substrate-rpc-client/v4 v4.2.1
 	github.com/itering/scale.go v1.9.14
 	github.com/shopspring/decimal v1.2.0
+	github.com/sirupsen/logrus v1.9.3
 	github.com/vedhavyas/go-subkey/v2 v2.0.0
 	golang.org/x/crypto v0.31.0
 )

@@ -6,7 +6,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func run_events() {
+func Run_events() {
 	sdk := SDK.NewSDK(SDK.LocalEndpoint)
 
 	acc, err := SDK.Account.Alice()

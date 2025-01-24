@@ -13,6 +13,7 @@ type RPC struct {
 	Chain     chainRPC
 	ChainSpec chainSpecRPC
 	Kate      kateRPC
+	Author    authorRPC
 }
 
 func newRPC(client *Client) RPC {
@@ -23,6 +24,7 @@ func newRPC(client *Client) RPC {
 		Chain:     chainRPC{client: client},
 		ChainSpec: chainSpecRPC{client: client},
 		Kate:      kateRPC{client: client},
+		Author:    authorRPC{client: client},
 	}
 }
 
