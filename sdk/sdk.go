@@ -17,7 +17,7 @@ func (this *SDK) UpdateMetadata(blockHash prim.Option[prim.H256]) error {
 	return this.Client.InitMetadata(blockHash)
 }
 
-// Returns a new SDK using the latest metadata for the chain.
+// Returns a new SDK using the latest metadata from the chain.
 // To get the SDK initialized with different metadata, call NewSDKWithMetadata#
 //
 // In 99% cases this is the one that you need to call. In case you are exploring
