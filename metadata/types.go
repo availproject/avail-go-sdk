@@ -224,7 +224,7 @@ func (this DispatchError) ToString() string {
 	}
 }
 
-func (this DispatchError) EncodeTo(dest *string) {
+func (this *DispatchError) EncodeTo(dest *string) {
 	prim.Encoder.EncodeTo(this.VariantIndex, dest)
 
 	if this.Module.IsSome() {

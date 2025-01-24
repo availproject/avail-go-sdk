@@ -6,7 +6,10 @@ import (
 )
 
 func Run_rpc() {
-	sdk := SDK.NewSDK(SDK.TuringEndpoint)
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	if err != nil {
+		panic(err)
+	}
 
 	{
 		// chain_GetBlock

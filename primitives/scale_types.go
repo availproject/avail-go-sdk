@@ -9,7 +9,7 @@ type Option[T any] struct {
 	isSet bool
 }
 
-func (this Option[T]) EncodeTo(dest *string) {
+func (this *Option[T]) EncodeTo(dest *string) {
 	if !this.isSet {
 		Encoder.EncodeTo(uint8(0), dest)
 		return

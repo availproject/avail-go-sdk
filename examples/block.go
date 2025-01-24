@@ -9,12 +9,12 @@ import (
 )
 
 func Run_block() {
-	sdk := SDK.NewSDK(SDK.LocalEndpoint)
-
-	acc, err := SDK.Account.Alice()
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)
 	}
+
+	acc := SDK.Account.Alice()
 
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
 	res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(1))

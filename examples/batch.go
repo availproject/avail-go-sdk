@@ -12,13 +12,13 @@ import (
 )
 
 func Run_batch() {
-	sdk := SDK.NewSDK(SDK.LocalEndpoint)
-
-	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
-	acc, err := SDK.Account.Alice()
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)
 	}
+
+	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
+	acc := SDK.Account.Alice()
 
 	callsToExecute := []prim.Call{}
 

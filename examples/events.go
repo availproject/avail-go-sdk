@@ -7,12 +7,12 @@ import (
 )
 
 func Run_events() {
-	sdk := SDK.NewSDK(SDK.LocalEndpoint)
-
-	acc, err := SDK.Account.Alice()
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)
 	}
+
+	acc := SDK.Account.Alice()
 
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
 	res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(1))
@@ -20,11 +20,13 @@ func Run_events() {
 		panic(err)
 	}
 
-	eventsM := res.Events
-	if eventsM.IsNone() {
-		panic("Failed to decode events")
+	if isSuc, err := res.IsSuccessful(); err != nil {
+		panic(err)
+	} else if !isSuc {
+		println("The transaction was unsuccessful")
 	}
-	events := eventsM.Unwrap()
+
+	events := res.Events.Unwrap()
 	for _, event := range events {
 		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v`, event.PalletName, event.PalletIndex, event.EventName, event.EventIndex))
 	}
