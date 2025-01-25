@@ -2,7 +2,7 @@
 
 You can find Go installation instructions [here](https://go.dev/doc/install). The required minimum version of Go is 1.23.0
 
-If you already have installed Go, jump to -First Time Running- section.
+If you already have installed Go (version no less than 1.23.0), jump to `Add Avail-GO SDK as dependency`  section.
 
 ## Installing GO in an Empty Ubuntu Container
 Here are the instructions on how to install GO using the latest Ubuntu image.
@@ -20,9 +20,27 @@ export PATH=$PATH:/usr/local/go/bin
 go version
 # "go version go1.23.5 linux/amd64"
 ```
+## Add Avail-GO SDK as dependency 
 
+#### To Existing Project
 
-## First Time Running
+```bash
+# Fetches Avail-GO SDK v0.2.0-rc5. This might not be the newest version so make sure to check out the latest github avail-go-sdk release.
+# Link to Github: https://github.com/availproject/avail-go-sdk/releases
+go get github.com/availproject/avail-go-sdk@v0.2.0-rc5
+```
+
+#### To A New Project
+
+```bash
+# Creates a new project with name myproject
+go mod init myproject
+# Fetches Avail-GO SDK v0.2.0-rc5. This might not be the newest version so make sure to check out the latest github avail-go-sdk release.
+# Link to Github: https://github.com/availproject/avail-go-sdk/releases
+go get github.com/availproject/avail-go-sdk@v0.2.0-rc5
+```
+
+#### First Time Running
 
 1. Paste the following code to `main.go`:
 ```go
@@ -34,15 +52,16 @@ import (
 )
 
 func main() {
-	sdk := SDK.NewSDK(SDK.TuringEndpoint)
-
-	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
-	acc, err := SDK.Account.Alice()
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
 	if err != nil {
 		panic(err)
 	}
 
+	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Ferdie
+	acc := SDK.Account.Ferdie()
+
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
+	println("Submitting new Transaction... Can take up to 20 seconds")
 	res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(1))
 	if err != nil {
 		panic(err)
@@ -53,21 +72,12 @@ func main() {
 }
 ```
 
-2. Paste the following code to `go.mod`
-```go
-module mymodule
-
-go 1.23.4
-
-require github.com/availproject/avail-go-sdk v0.2.0-rc4
-```
-
-3. Fetch dependencies:
+2. Fetch dependencies:
 ```bash
 go mod tidy
 ```
 
-4. Run Example:
+3. Run Example:
 ```bash
 go run .
 ```

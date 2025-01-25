@@ -53,6 +53,15 @@ func (accountT) Eve() subkey.KeyPair {
 	return val
 }
 
+func (accountT) Ferdie() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Ferdie")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
+}
+
 func (accountT) Balance(client *Client, accountId metadata.AccountId) (metadata.AccountData, error) {
 	storageAt, err := client.StorageAt(primitives.NewNone[primitives.H256]())
 	if err != nil {
