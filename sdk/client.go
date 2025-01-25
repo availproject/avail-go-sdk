@@ -153,14 +153,7 @@ func (this *Client) Request(method string, params string) (string, error) {
 }
 
 func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {
-	params := "[\"" + tx.ToHexWith0x() + "\"]"
-
-	txHash, err := this.Request("author_submitExtrinsic", params)
-	if err != nil {
-		return prim.H256{}, err
-	}
-
-	return prim.NewH256FromHexString(txHash)
+	return this.Rpc.Author.SubmitExtrinsic(tx.ToHexWith0x())
 }
 
 func (this *Client) Metadata() *meta.Metadata {

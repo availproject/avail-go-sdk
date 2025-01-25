@@ -26,6 +26,33 @@ func (accountT) Alice() subkey.KeyPair {
 	return val
 }
 
+func (accountT) Bob() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Bob")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
+}
+
+func (accountT) Charlie() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Charlie")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
+}
+
+func (accountT) Eve() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Eve")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
+}
+
 func (accountT) Balance(client *Client, accountId metadata.AccountId) (metadata.AccountData, error) {
 	storageAt, err := client.StorageAt(primitives.NewNone[primitives.H256]())
 	if err != nil {

@@ -164,6 +164,16 @@ func (this AccountId) ToMultiAddress() prim.MultiAddress {
 	return prim.NewMultiAddressId(this.Value)
 }
 
+func NewAccountIdFromKeyPair(keyPair subkey.KeyPair) AccountId {
+	h256, err := prim.NewH256FromByteSlice(keyPair.AccountID())
+	if err != nil {
+		// This should never happen
+		panic(err)
+	}
+
+	return AccountId{Value: h256}
+}
+
 func NewAccountIdFromAddress(address string) (AccountId, error) {
 	var _, accountBytes, err = subkey.SS58Decode(address)
 	if err != nil {

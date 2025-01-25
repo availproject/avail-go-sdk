@@ -16,18 +16,18 @@ func removePalletStoragePrefix(key string) string {
 }
 
 func storageKeyEncode[S StorageT](storage S) string {
-	return "0x" + prim.Hex.ToHex(prim.TwoX128(storage.PalletName())) + prim.Hex.ToHex(prim.TwoX128(storage.StorageName()))
+	return "0x" + prim.Hex.ToHex(prim.Crypto.TwoX128(storage.PalletName())) + prim.Hex.ToHex(prim.Crypto.TwoX128(storage.StorageName()))
 }
 
 func storageMapKeyEncode[S StorageMapT, K any](storage S, mapKey prim.Option[K]) string {
-	encoded := "0x" + prim.Hex.ToHex(prim.TwoX128(storage.PalletName())) + prim.Hex.ToHex(prim.TwoX128(storage.StorageName()))
+	encoded := "0x" + prim.Hex.ToHex(prim.Crypto.TwoX128(storage.PalletName())) + prim.Hex.ToHex(prim.Crypto.TwoX128(storage.StorageName()))
 	if mapKey.IsSome() {
 		keyEncoded := prim.Hex.FromHex(prim.Encoder.Encode(mapKey.Unwrap()))
 		switch storage.MapKeyHasher() {
 		case Blake2_128ConcatHasher:
-			encoded += prim.Hex.ToHex(prim.Blake2_128_Concat(keyEncoded))
+			encoded += prim.Hex.ToHex(prim.Crypto.Blake2_128_Concat(keyEncoded))
 		case Twox64ConcatHasher:
-			encoded += prim.Hex.ToHex(prim.Twox64Concat(keyEncoded))
+			encoded += prim.Hex.ToHex(prim.Crypto.Twox64Concat(keyEncoded))
 		default:
 			panic("Unknown hasher")
 		}
@@ -37,14 +37,14 @@ func storageMapKeyEncode[S StorageMapT, K any](storage S, mapKey prim.Option[K])
 }
 
 func storageDoubleMapKeyEncode[S StorageDoubleMapT, K1 any, K2 any](storage S, key1 prim.Option[K1], key2 prim.Option[K2]) string {
-	encoded := "0x" + prim.Hex.ToHex(prim.TwoX128(storage.PalletName())) + prim.Hex.ToHex(prim.TwoX128(storage.StorageName()))
+	encoded := "0x" + prim.Hex.ToHex(prim.Crypto.TwoX128(storage.PalletName())) + prim.Hex.ToHex(prim.Crypto.TwoX128(storage.StorageName()))
 	if key1.IsSome() {
 		keyEncoded := prim.Hex.FromHex(prim.Encoder.Encode(key1.Unwrap()))
 		switch storage.MapKey1Hasher() {
 		case Blake2_128ConcatHasher:
-			encoded += prim.Hex.ToHex(prim.Blake2_128_Concat(keyEncoded))
+			encoded += prim.Hex.ToHex(prim.Crypto.Blake2_128_Concat(keyEncoded))
 		case Twox64ConcatHasher:
-			encoded += prim.Hex.ToHex(prim.Twox64Concat(keyEncoded))
+			encoded += prim.Hex.ToHex(prim.Crypto.Twox64Concat(keyEncoded))
 		default:
 			panic("Unknown hasher")
 		}
@@ -54,9 +54,9 @@ func storageDoubleMapKeyEncode[S StorageDoubleMapT, K1 any, K2 any](storage S, k
 		keyEncoded := prim.Hex.FromHex(prim.Encoder.Encode(key2.Unwrap()))
 		switch storage.MapKey1Hasher() {
 		case Blake2_128ConcatHasher:
-			encoded += prim.Hex.ToHex(prim.Blake2_128_Concat(keyEncoded))
+			encoded += prim.Hex.ToHex(prim.Crypto.Blake2_128_Concat(keyEncoded))
 		case Twox64ConcatHasher:
-			encoded += prim.Hex.ToHex(prim.Twox64Concat(keyEncoded))
+			encoded += prim.Hex.ToHex(prim.Crypto.Twox64Concat(keyEncoded))
 		default:
 			panic("Unknown hasher")
 		}
@@ -72,9 +72,9 @@ func storageMapKeyDecode[K any, S StorageMapT](storageKey string, storage S) (K,
 	keyEncoded := []byte{}
 	switch storage.MapKeyHasher() {
 	case Blake2_128ConcatHasher:
-		keyEncoded = prim.DecodeBlake2_128Concat(input)
+		keyEncoded = prim.Crypto.DecodeBlake2_128Concat(input)
 	case Twox64ConcatHasher:
-		keyEncoded = prim.DecodeTwox64Concat(input)
+		keyEncoded = prim.Crypto.DecodeTwox64Concat(input)
 	default:
 		panic("Unknown Hasher.")
 	}

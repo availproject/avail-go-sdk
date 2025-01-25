@@ -8,6 +8,7 @@ import (
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	npPallet "github.com/availproject/avail-go-sdk/metadata/pallets/nomination_pools"
 	stPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
+	sdPallet "github.com/availproject/avail-go-sdk/metadata/pallets/sudo"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
 	vcPallet "github.com/availproject/avail-go-sdk/metadata/pallets/vector"
@@ -630,4 +631,33 @@ type VectorTx struct {
 func (this *VectorTx) SendMessage(message metadata.VectorMessageKind, To prim.H256, domain uint32) Transaction {
 	call := vcPallet.CallSendMessage{Message: message, To: To, Domain: domain}
 	return NewTransaction(this.client, call.ToPayload())
+}
+
+type SudoTx struct {
+	client *Client
+}
+
+// Authenticates the sudo key and dispatches a function call with `Root` origin.
+func (this *SudoTx) Sudo(call prim.Call) Transaction {
+	c := sdPallet.CallSudo{Call: call}
+	return NewTransaction(this.client, c.ToPayload())
+}
+
+// Authenticates the sudo key and dispatches a function call with `Root` origin.
+// This function does not check the weight of the call, and instead allows the
+// Sudo user to specify the weight of the call.
+//
+// The dispatch origin for this call must be _Signed_.
+func (this *SudoTx) SudoUncheckedWeight(call prim.Call) Transaction {
+	c := sdPallet.CallSudoUncheckedWeight{Call: call}
+	return NewTransaction(this.client, c.ToPayload())
+}
+
+// Authenticates the sudo key and dispatches a function call with `Signed` origin from
+// a given account.
+//
+// The dispatch origin for this call must be _Signed_.
+func (this *SudoTx) SudoAs(who prim.MultiAddress, call prim.Call) Transaction {
+	c := sdPallet.CallSudoAs{Who: who, Call: call}
+	return NewTransaction(this.client, c.ToPayload())
 }
