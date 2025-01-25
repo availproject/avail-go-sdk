@@ -62,6 +62,14 @@ func (this *Client) StorageAt(at prim.Option[prim.H256]) (BlockStorage, error) {
 	}, nil
 }
 
+func (this *Client) RPCBlockAt(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
+	primBlock, err := this.Rpc.Chain.GetBlock(blockHash)
+	if err != nil {
+		return RPCBlock{}, err
+	}
+	return NewRPCBlockFromPrimBlock(primBlock)
+}
+
 func (this *Client) InitMetadata(at prim.Option[prim.H256]) error {
 	scaleMetadata, err := this.Rpc.State.GetMetadata(at)
 	if err != nil {
@@ -145,22 +153,7 @@ func (this *Client) Request(method string, params string) (string, error) {
 }
 
 func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {
-	params := "[\"" + tx.ToHexWith0x() + "\"]"
-
-	txHash, err := this.Request("author_submitExtrinsic", params)
-	if err != nil {
-		return prim.H256{}, err
-	}
-
-	return prim.NewH256FromHexString(txHash)
-}
-
-func (this *Client) RPCBlockAt(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
-	primBlock, err := this.Rpc.Chain.GetBlock(blockHash)
-	if err != nil {
-		return RPCBlock{}, err
-	}
-	return NewRPCBlockFromPrimBlock(primBlock)
+	return this.Rpc.Author.SubmitExtrinsic(tx.ToHexWith0x())
 }
 
 func (this *Client) Metadata() *meta.Metadata {

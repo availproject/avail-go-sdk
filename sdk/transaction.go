@@ -176,7 +176,7 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 				if err != nil {
 					logrus.Error(err.Error())
 				} else {
-					events.Set(FilterByTxIndex(blockEvents, element.TxIndex))
+					events.Set(EventFilterByTxIndex(blockEvents, element.TxIndex))
 				}
 
 				details := TransactionDetails{

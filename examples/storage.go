@@ -10,7 +10,10 @@ import (
 )
 
 func Run_storage() {
-	sdk := SDK.NewSDK(SDK.TuringEndpoint)
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	if err != nil {
+		panic(err)
+	}
 
 	blockHash, err := prim.NewH256FromHexString("0x9e813bb85fca217f8f3967bd4b550b05f7d559412571ca1dd621aa37343b300b")
 	if err != nil {

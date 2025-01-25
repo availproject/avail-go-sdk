@@ -64,7 +64,7 @@ func (this *CallTransferAlowDeath) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bo
 type CallForceTransfer struct {
 	Source prim.MultiAddress
 	Dest   prim.MultiAddress
-	Value  uint128.Uint128 `scale:"compact"`
+	Value  metadata.Balance `scale:"compact"`
 }
 
 func (this CallForceTransfer) PalletIndex() uint8 {
@@ -109,7 +109,7 @@ func (this *CallForceTransfer) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
 // kill the origin account.
 type CallTransferKeepAlive struct {
 	Dest  prim.MultiAddress
-	Value uint128.Uint128 `scale:"compact"`
+	Value metadata.Balance `scale:"compact"`
 }
 
 func (this CallTransferKeepAlive) PalletIndex() uint8 {

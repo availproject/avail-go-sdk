@@ -9,13 +9,13 @@ import (
 )
 
 func Run_data_submission() {
-	sdk := SDK.NewSDK(SDK.LocalEndpoint)
-
-	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
-	acc, err := SDK.Account.Alice()
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)
 	}
+
+	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
+	acc := SDK.Account.Alice()
 
 	key := fmt.Sprintf("MyKey%v", rand.Uint32())
 	// Transactions can be found under sdk.Tx.*
@@ -28,6 +28,11 @@ func Run_data_submission() {
 		// Failed to submit transaction
 		panic(err)
 	}
+	if isSuc, err := res.IsSuccessful(); err != nil {
+		panic(err)
+	} else if !isSuc {
+		println("The transaction was unsuccessful")
+	}
 
 	events := res.Events.Unwrap()
 	event := SDK.EventFindFirst(events, daPallet.EventApplicationKeyCreated{}).Unwrap()
@@ -39,6 +44,12 @@ func Run_data_submission() {
 	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(appId))
 	if err != nil {
 		panic(err)
+	}
+
+	if isSuc, err := res.IsSuccessful(); err != nil {
+		panic(err)
+	} else if !isSuc {
+		println("The transaction was unsuccessful")
 	}
 
 	// Transaction Details

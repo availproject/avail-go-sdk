@@ -8,6 +8,7 @@ import (
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	npPallet "github.com/availproject/avail-go-sdk/metadata/pallets/nomination_pools"
 	stPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
+	sdPallet "github.com/availproject/avail-go-sdk/metadata/pallets/sudo"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
 	vcPallet "github.com/availproject/avail-go-sdk/metadata/pallets/vector"
@@ -87,21 +88,21 @@ type BalancesTx struct {
 // of the transfer, the account will be reaped.
 //
 // The dispatch origin for this call must be `Signed` by the transactor.
-func (this *BalancesTx) TransferAllowDeath(dest prim.MultiAddress, amount uint128.Uint128) Transaction {
-	call := baPallet.CallTransferAlowDeath{Dest: dest, Value: amount}
+func (this *BalancesTx) TransferAllowDeath(dest prim.MultiAddress, amount metadata.Balance) Transaction {
+	call := baPallet.CallTransferAlowDeath{Dest: dest, Value: amount.Value}
 	return NewTransaction(this.client, call.ToPayload())
 }
 
 // Exactly as `TransferAlowDeath`, except the origin must be root and the source account
 // may be specified
-func (this *BalancesTx) ForceTransfer(dest prim.MultiAddress, amount uint128.Uint128) Transaction {
+func (this *BalancesTx) ForceTransfer(dest prim.MultiAddress, amount metadata.Balance) Transaction {
 	call := baPallet.CallForceTransfer{Dest: dest, Value: amount}
 	return NewTransaction(this.client, call.ToPayload())
 }
 
 // Same as the `TransferAlowDeath` call, but with a check that the transfer will not
 // kill the origin account.
-func (this *BalancesTx) TransferKeepAlive(dest prim.MultiAddress, amount uint128.Uint128) Transaction {
+func (this *BalancesTx) TransferKeepAlive(dest prim.MultiAddress, amount metadata.Balance) Transaction {
 	call := baPallet.CallTransferKeepAlive{Dest: dest, Value: amount}
 	return NewTransaction(this.client, call.ToPayload())
 }
@@ -630,4 +631,33 @@ type VectorTx struct {
 func (this *VectorTx) SendMessage(message metadata.VectorMessageKind, To prim.H256, domain uint32) Transaction {
 	call := vcPallet.CallSendMessage{Message: message, To: To, Domain: domain}
 	return NewTransaction(this.client, call.ToPayload())
+}
+
+type SudoTx struct {
+	client *Client
+}
+
+// Authenticates the sudo key and dispatches a function call with `Root` origin.
+func (this *SudoTx) Sudo(call prim.Call) Transaction {
+	c := sdPallet.CallSudo{Call: call}
+	return NewTransaction(this.client, c.ToPayload())
+}
+
+// Authenticates the sudo key and dispatches a function call with `Root` origin.
+// This function does not check the weight of the call, and instead allows the
+// Sudo user to specify the weight of the call.
+//
+// The dispatch origin for this call must be _Signed_.
+func (this *SudoTx) SudoUncheckedWeight(call prim.Call) Transaction {
+	c := sdPallet.CallSudoUncheckedWeight{Call: call}
+	return NewTransaction(this.client, c.ToPayload())
+}
+
+// Authenticates the sudo key and dispatches a function call with `Signed` origin from
+// a given account.
+//
+// The dispatch origin for this call must be _Signed_.
+func (this *SudoTx) SudoAs(who prim.MultiAddress, call prim.Call) Transaction {
+	c := sdPallet.CallSudoAs{Who: who, Call: call}
+	return NewTransaction(this.client, c.ToPayload())
 }

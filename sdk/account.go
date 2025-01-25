@@ -13,12 +13,53 @@ type accountT struct{}
 
 var Account accountT
 
-func (accountT) NewKeyPair(uri string) (kp subkey.KeyPair, err error) {
+func (accountT) NewKeyPair(uri string) (subkey.KeyPair, error) {
 	return subkey.DeriveKeyPair(sr25519.Scheme{}, uri)
 }
 
-func (accountT) Alice() (kp subkey.KeyPair, err error) {
-	return Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice")
+func (accountT) Alice() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
+}
+
+func (accountT) Bob() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Bob")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
+}
+
+func (accountT) Charlie() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Charlie")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
+}
+
+func (accountT) Eve() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Eve")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
+}
+
+func (accountT) Ferdie() subkey.KeyPair {
+	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Ferdie")
+	if err != nil {
+		panic("Should never happen.")
+	}
+
+	return val
 }
 
 func (accountT) Balance(client *Client, accountId metadata.AccountId) (metadata.AccountData, error) {

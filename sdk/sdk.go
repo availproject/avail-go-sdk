@@ -5,6 +5,7 @@ import (
 
 	"math/big"
 
+	"github.com/availproject/avail-go-sdk/metadata"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -13,26 +14,35 @@ type SDK struct {
 	Tx     Transactions
 }
 
-func NewSDK(endpoint string) SDK {
+func (this *SDK) UpdateMetadata(blockHash prim.Option[prim.H256]) error {
+	return this.Client.InitMetadata(blockHash)
+}
+
+// Returns a new SDK using the latest metadata from the chain.
+// To get the SDK initialized with different metadata, call NewSDKWithMetadata#
+//
+// In 99% cases this is the one that you need to call. In case you are exploring
+// historical blocks that needs different metadata then make sure to call
+// NewSDKWithMetadata instead of this.
+//
+// The metadata can be updated on fly by calling sdk.UpdateMetadata(blockHash)
+func NewSDK(endpoint string) (SDK, error) {
+	return NewSDKWithMetadata(endpoint, prim.NewNone[prim.H256]())
+}
+
+// Same as NewSDK but allows passing the block hash from which the metadata will be
+// fetched.
+func NewSDKWithMetadata(endpoint string, metadataBlockHash prim.Option[prim.H256]) (SDK, error) {
 	var client = NewClient(endpoint)
 
 	// Temp for testing
-	if err := client.InitMetadata(prim.NewNone[prim.H256]()); err != nil {
-		panic(err)
+	if err := client.InitMetadata(metadataBlockHash); err != nil {
+		return SDK{}, err
 	}
 	return SDK{
 		Client: client,
 		Tx:     newTransactions(client),
-	}
-}
-
-// Temp for testing
-func NewSDK2(endpoint string) SDK {
-	var client = NewClient(endpoint)
-	return SDK{
-		Client: client,
-		Tx:     newTransactions(client),
-	}
+	}, nil
 }
 
 type Transactions struct {
@@ -44,6 +54,7 @@ type Transactions struct {
 	NominationPools  NominationPoolsTx
 	System           SystemTx
 	Vector           VectorTx
+	Sudo             SudoTx
 }
 
 func newTransactions(client *Client) Transactions {
@@ -56,12 +67,13 @@ func newTransactions(client *Client) Transactions {
 		NominationPools:  NominationPoolsTx{client: client},
 		System:           SystemTx{client: client},
 		Vector:           VectorTx{client: client},
+		Sudo:             SudoTx{client: client},
 	}
 }
 
-func OneAvail() uint128.Uint128 {
+func OneAvail() metadata.Balance {
 	var res, _ = new(big.Int).SetString("1000000000000000000", 10)
-	return uint128.FromBig(res)
+	return metadata.Balance{Value: uint128.FromBig(res)}
 }
 
 const LocalEndpoint = "http://127.0.0.1:9944"

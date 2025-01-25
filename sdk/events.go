@@ -279,7 +279,7 @@ func EventFindLastChecked[T interfaces.EventT](eventRecords EventRecords, target
 	return prim.NewSome(result[len(result)-1]), nil
 }
 
-func FilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecords {
+func EventFilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecords {
 	var result = EventRecords{}
 	for _, elem := range eventRecords {
 		if elem.Phase.ApplyExtrinsic.IsNone() {
@@ -296,7 +296,7 @@ func FilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecords {
 	return result
 }
 
-func FilterSystemEvents(eventRecords EventRecords, txIndex uint32) EventRecords {
+func EventFilterSystemEvents(eventRecords EventRecords) EventRecords {
 	var result = EventRecords{}
 	for _, elem := range eventRecords {
 		if elem.Phase.ApplyExtrinsic.IsSome() {
