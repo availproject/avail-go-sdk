@@ -24,10 +24,16 @@ func Run_block() {
 
 	// Fetching
 	// Fetching Best Block
-	_, _ = SDK.NewBestBlock(sdk.Client)
+	_, err = SDK.NewBestBlock(sdk.Client)
+	if err != nil {
+		panic(err)
+	}
 
 	// Fetching Last Finalized Block
-	_, _ = SDK.NewFinalizedBlock(sdk.Client)
+	_, err = SDK.NewFinalizedBlock(sdk.Client)
+	if err != nil {
+		panic(err)
+	}
 
 	// Fetching block with Block Hash
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
