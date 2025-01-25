@@ -66,6 +66,66 @@ func (this Balance) ToHuman() string {
 	return result + " Avail"
 }
 
+// Add returns this+v.
+func (this Balance) Add(v Balance) Balance {
+	return Balance{Value: this.Value.Add(v.Value)}
+}
+
+// Add64 returns this+v.
+func (this Balance) Add64(v uint64) Balance {
+	return Balance{Value: this.Value.Add64(v)}
+}
+
+// Add128 returns this+v.
+func (this Balance) Add128(v uint128.Uint128) Balance {
+	return Balance{Value: this.Value.Add(v)}
+}
+
+// Sub returns this-v.
+func (this Balance) Sub(v Balance) Balance {
+	return Balance{Value: this.Value.Sub(v.Value)}
+}
+
+// Sub64 returns this-v.
+func (this Balance) Sub64(v uint64) Balance {
+	return Balance{Value: this.Value.Sub64(v)}
+}
+
+// Sub128 returns this-v.
+func (this Balance) Sub128(v uint128.Uint128) Balance {
+	return Balance{Value: this.Value.Sub(v)}
+}
+
+// Mul returns this*v.
+func (this Balance) Mul(v Balance) Balance {
+	return Balance{Value: this.Value.Mul(v.Value)}
+}
+
+// Mul64 returns this*v.
+func (this Balance) Mul64(v uint64) Balance {
+	return Balance{Value: this.Value.Mul64(v)}
+}
+
+// Mul128 returns this*v.
+func (this Balance) Mul128(v uint128.Uint128) Balance {
+	return Balance{Value: this.Value.Mul(v)}
+}
+
+// Div returns this/v.
+func (this Balance) Div(v Balance) Balance {
+	return Balance{Value: this.Value.Div(v.Value)}
+}
+
+// Div64 returns this/v.
+func (this Balance) Div64(v uint64) Balance {
+	return Balance{Value: this.Value.Div64(v)}
+}
+
+// Div128 returns this/v.
+func (this Balance) Div128(v uint128.Uint128) Balance {
+	return Balance{Value: this.Value.Div(v)}
+}
+
 func removeTrailingZeros(s string) string {
 	for {
 		if len(s) == 0 {

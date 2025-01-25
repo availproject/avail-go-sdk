@@ -248,10 +248,7 @@ func (this *StorageErasRewardPoints) MapKeyHasher() uint8 {
 
 func (this *StorageErasRewardPoints) Fetch(blockStorage interfaces.BlockStorageT, key StorageErasRewardPointsKey) (StorageErasRewardPointsEntry, error) {
 	val, err := GenericMapFetch[StorageErasRewardPoints](blockStorage, key, this)
-	if err != nil {
-		return StorageErasRewardPointsEntry{}, nil
-	}
-	return val.Unwrap(), nil
+	return val.Unwrap(), err
 
 }
 

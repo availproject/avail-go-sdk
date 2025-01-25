@@ -7,8 +7,6 @@ import (
 	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
-
-	"github.com/itering/scale.go/utiles/uint128"
 )
 
 func Run_batch() {
@@ -150,7 +148,7 @@ func Run_batch() {
 		if err != nil {
 			panic(err)
 		}
-		tx := sdk.Tx.Balances.TransferKeepAlive(destEve.ToMultiAddress(), SDK.OneAvail().Mul(uint128.From64(uint64(1_000_000_000))))
+		tx := sdk.Tx.Balances.TransferKeepAlive(destEve.ToMultiAddress(), SDK.OneAvail().Mul64(uint64(1_000_000_000)))
 		callsToExecute = append(callsToExecute, tx.Payload.Call)
 	}
 

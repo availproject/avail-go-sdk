@@ -5,6 +5,7 @@ import (
 
 	"math/big"
 
+	"github.com/availproject/avail-go-sdk/metadata"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -36,7 +37,7 @@ func NewSDKWithMetadata(endpoint string, metadataBlockHash prim.Option[prim.H256
 
 	// Temp for testing
 	if err := client.InitMetadata(metadataBlockHash); err != nil {
-		return SDK{}, nil
+		return SDK{}, err
 	}
 	return SDK{
 		Client: client,
@@ -68,9 +69,9 @@ func newTransactions(client *Client) Transactions {
 	}
 }
 
-func OneAvail() uint128.Uint128 {
+func OneAvail() metadata.Balance {
 	var res, _ = new(big.Int).SetString("1000000000000000000", 10)
-	return uint128.FromBig(res)
+	return metadata.Balance{Value: uint128.FromBig(res)}
 }
 
 const LocalEndpoint = "http://127.0.0.1:9944"

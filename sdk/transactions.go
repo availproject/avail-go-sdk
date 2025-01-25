@@ -87,21 +87,21 @@ type BalancesTx struct {
 // of the transfer, the account will be reaped.
 //
 // The dispatch origin for this call must be `Signed` by the transactor.
-func (this *BalancesTx) TransferAllowDeath(dest prim.MultiAddress, amount uint128.Uint128) Transaction {
-	call := baPallet.CallTransferAlowDeath{Dest: dest, Value: amount}
+func (this *BalancesTx) TransferAllowDeath(dest prim.MultiAddress, amount metadata.Balance) Transaction {
+	call := baPallet.CallTransferAlowDeath{Dest: dest, Value: amount.Value}
 	return NewTransaction(this.client, call.ToPayload())
 }
 
 // Exactly as `TransferAlowDeath`, except the origin must be root and the source account
 // may be specified
-func (this *BalancesTx) ForceTransfer(dest prim.MultiAddress, amount uint128.Uint128) Transaction {
+func (this *BalancesTx) ForceTransfer(dest prim.MultiAddress, amount metadata.Balance) Transaction {
 	call := baPallet.CallForceTransfer{Dest: dest, Value: amount}
 	return NewTransaction(this.client, call.ToPayload())
 }
 
 // Same as the `TransferAlowDeath` call, but with a check that the transfer will not
 // kill the origin account.
-func (this *BalancesTx) TransferKeepAlive(dest prim.MultiAddress, amount uint128.Uint128) Transaction {
+func (this *BalancesTx) TransferKeepAlive(dest prim.MultiAddress, amount metadata.Balance) Transaction {
 	call := baPallet.CallTransferKeepAlive{Dest: dest, Value: amount}
 	return NewTransaction(this.client, call.ToPayload())
 }

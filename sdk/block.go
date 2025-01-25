@@ -15,7 +15,7 @@ type Block struct {
 func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
 	block, err := client.RPCBlockAt(prim.NewSome(blockHash))
 	if err != nil {
-		return Block{}, nil
+		return Block{}, err
 	}
 
 	events, err := client.EventsAt(prim.NewSome(blockHash))
