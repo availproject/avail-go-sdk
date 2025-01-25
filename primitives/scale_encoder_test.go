@@ -275,11 +275,16 @@ func TestEncoderCompactUint128(t *testing.T) {
 	}
 }
 
+type StructWithUint32 struct {
+	Value uint32
+}
+
 type DummyStruct struct {
-	Array     [5]byte
-	Slice     []byte
-	Primitive uint64
-	Compact   uint32 `scale:"compact"`
+	Array         [5]byte
+	Slice         []byte
+	Primitive     uint64
+	Compact       uint32           `scale:"compact"`
+	CompactStruct StructWithUint32 `scale:"compact"`
 }
 
 type DummyStruct2 struct {
@@ -322,12 +327,13 @@ func TestEncoderArray(t *testing.T) {
 
 	// Structures
 	{
-		var expected = "0x000102030414000102030480000000000000003c000102030414000102030480000000000000003c"
+		var expected = "0x000102030414000102030480000000000000003c04000102030414000102030480000000000000003c04"
 		var el = DummyStruct{
-			Array:     [5]byte{0, 1, 2, 3, 4},
-			Slice:     []byte{0, 1, 2, 3, 4},
-			Primitive: 128,
-			Compact:   15,
+			Array:         [5]byte{0, 1, 2, 3, 4},
+			Slice:         []byte{0, 1, 2, 3, 4},
+			Primitive:     128,
+			Compact:       15,
+			CompactStruct: StructWithUint32{Value: 1},
 		}
 		var el2 = el
 		var array = [2]DummyStruct{el, el2}
@@ -363,12 +369,13 @@ func TestEncoderSlice(t *testing.T) {
 
 	// Structures
 	{
-		var expected = "0x08000102030414000102030480000000000000003c000102030414000102030480000000000000003c"
+		var expected = "0x08000102030414000102030480000000000000003c04000102030414000102030480000000000000003c04"
 		var el = DummyStruct{
-			Array:     [5]byte{0, 1, 2, 3, 4},
-			Slice:     []byte{0, 1, 2, 3, 4},
-			Primitive: 128,
-			Compact:   15,
+			Array:         [5]byte{0, 1, 2, 3, 4},
+			Slice:         []byte{0, 1, 2, 3, 4},
+			Primitive:     128,
+			Compact:       15,
+			CompactStruct: StructWithUint32{Value: 1},
 		}
 		var el2 = el
 		var array = []DummyStruct{el, el2}
@@ -387,12 +394,13 @@ func TestEncoderSlice(t *testing.T) {
 
 func TestEncoderStructures(t *testing.T) {
 	{
-		var expected = "0x000102030414000102030480000000000000003c"
+		var expected = "0x000102030414000102030480000000000000003c04"
 		var el = DummyStruct{
-			Array:     [5]byte{0, 1, 2, 3, 4},
-			Slice:     []byte{0, 1, 2, 3, 4},
-			Primitive: 128,
-			Compact:   15,
+			Array:         [5]byte{0, 1, 2, 3, 4},
+			Slice:         []byte{0, 1, 2, 3, 4},
+			Primitive:     128,
+			Compact:       15,
+			CompactStruct: StructWithUint32{Value: 1},
 		}
 		var actual = "0x" + Encoder.Encode(el)
 		if actual != expected {
@@ -431,6 +439,38 @@ func TestEncoderStructures(t *testing.T) {
 		var actual2 = Encoder.Encode(&DummyStruct3{})
 		if actual2 != expected {
 			t.Fatalf(`Encoder Structure Method. Output %v, Expected Output %v`, actual2, expected)
+		}
+	}
+}
+
+func TestEncoderString(t *testing.T) {
+	{
+		var expected = "0x4054686973204973204120537472696e67"
+		var el = "This Is A String"
+		var actual = "0x" + Encoder.Encode(el)
+		if actual != expected {
+			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
+		}
+
+		var actual2 = "0x"
+		Encoder.EncodeTo(el, &actual2)
+		if actual != expected {
+			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
+		}
+	}
+
+	{
+		var expected = "0x00"
+		var el = ""
+		var actual = "0x" + Encoder.Encode(el)
+		if actual != expected {
+			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
+		}
+
+		var actual2 = "0x"
+		Encoder.EncodeTo(el, &actual2)
+		if actual != expected {
+			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
 		}
 	}
 }

@@ -18,7 +18,9 @@ func TestDecoderBool(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = false
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual != expected {
 			t.Fatalf(`Decoder Bool Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -41,7 +43,9 @@ func TestDecoderUint8(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint8(0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual != expected {
 			t.Fatalf(`Decoder Uint8 Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -64,7 +68,9 @@ func TestDecoderUint16(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint16(0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual != expected {
 			t.Fatalf(`Decoder Uint16 Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -87,7 +93,9 @@ func TestDecoderUint32(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint32(0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual != expected {
 			t.Fatalf(`Decoder Uint32 Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -110,7 +118,9 @@ func TestDecoderUint64(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint64(0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual != expected {
 			t.Fatalf(`Decoder Uint64 Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -135,7 +145,9 @@ func TestDecoderUint128(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = uint128.Uint128{}
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual != expected {
 			t.Fatalf(`Decoder Uint128 Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -158,7 +170,9 @@ func TestDecoderCompactU32(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = CompactU32{}
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual.Value != expected {
 			t.Fatalf(`Decoder Compact Uint32 Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -181,7 +195,9 @@ func TestDecoderCompactU64(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = CompactU64{}
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual.Value != expected {
 			t.Fatalf(`Decoder Compact Uint64 Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -206,7 +222,9 @@ func TestDecoderCompactUint128(t *testing.T) {
 	for key, expected := range testParameters {
 		var decoder = NewDecoder(Hex.FromHex(key), 0)
 		var actual = CompactU128{}
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if actual.Value != expected {
 			t.Fatalf(`Decoder Compact Uint128 Failure. Input %v, Output %v, Expected Output %v`, key, actual, expected)
 		}
@@ -220,7 +238,9 @@ func TestDecoderArray(t *testing.T) {
 		var input = "0x0001020304"
 		var actual = [5]byte{}
 		var decoder = NewDecoder(Hex.FromHex(input), 0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Array Failure. Input %v, Output %v, Expected Output %v`, input, actual, expected)
 		}
@@ -228,18 +248,21 @@ func TestDecoderArray(t *testing.T) {
 
 	// Structures
 	{
-		var input = "0x000102030414000102030480000000000000003c000102030414000102030480000000000000003c"
+		var input = "0x000102030414000102030480000000000000003c04000102030414000102030480000000000000003c04"
 		var el = DummyStruct{
-			Array:     [5]byte{0, 1, 2, 3, 4},
-			Slice:     []byte{0, 1, 2, 3, 4},
-			Primitive: 128,
-			Compact:   15,
+			Array:         [5]byte{0, 1, 2, 3, 4},
+			Slice:         []byte{0, 1, 2, 3, 4},
+			Primitive:     128,
+			Compact:       15,
+			CompactStruct: StructWithUint32{Value: 1},
 		}
 		var el2 = el
 		var expected = [2]DummyStruct{el, el2}
 		var actual = [2]DummyStruct{}
 		var decoder = NewDecoder(Hex.FromHex(input), 0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Array Failure. Input %v, Output %v, Expected Output %v`, input, actual, expected)
 		}
@@ -253,7 +276,9 @@ func TestDecoderSlice(t *testing.T) {
 		var expected = []byte{0, 1, 2, 3, 4}
 		var actual = []byte{}
 		var decoder = NewDecoder(Hex.FromHex(input), 0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Slice Failure. Input %v, Output %v, Expected Output %v`, input, actual, expected)
 		}
@@ -261,18 +286,21 @@ func TestDecoderSlice(t *testing.T) {
 
 	// Structures
 	{
-		var input = "0x08000102030414000102030480000000000000003c000102030414000102030480000000000000003c"
+		var input = "0x08000102030414000102030480000000000000003c04000102030414000102030480000000000000003c04"
 		var el = DummyStruct{
-			Array:     [5]byte{0, 1, 2, 3, 4},
-			Slice:     []byte{0, 1, 2, 3, 4},
-			Primitive: 128,
-			Compact:   15,
+			Array:         [5]byte{0, 1, 2, 3, 4},
+			Slice:         []byte{0, 1, 2, 3, 4},
+			Primitive:     128,
+			Compact:       15,
+			CompactStruct: StructWithUint32{Value: 1},
 		}
 		var el2 = el
 		var expected = []DummyStruct{el, el2}
 		var actual = []DummyStruct{}
 		var decoder = NewDecoder(Hex.FromHex(input), 0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Slice Failure. Input %v, Output %v, Expected Output %v`, input, actual, expected)
 		}
@@ -281,16 +309,19 @@ func TestDecoderSlice(t *testing.T) {
 
 func TestDecoderStructures(t *testing.T) {
 	{
-		var input = "0x000102030414000102030480000000000000003c"
+		var input = "0x000102030414000102030480000000000000003c04"
 		var expected = DummyStruct{
-			Array:     [5]byte{0, 1, 2, 3, 4},
-			Slice:     []byte{0, 1, 2, 3, 4},
-			Primitive: 128,
-			Compact:   15,
+			Array:         [5]byte{0, 1, 2, 3, 4},
+			Slice:         []byte{0, 1, 2, 3, 4},
+			Primitive:     128,
+			Compact:       15,
+			CompactStruct: StructWithUint32{Value: 1},
 		}
 		var actual = DummyStruct{}
 		var decoder = NewDecoder(Hex.FromHex(input), 0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Structure. Output %v, Expected Output %v`, actual, expected)
 		}
@@ -304,9 +335,39 @@ func TestDecoderStructures(t *testing.T) {
 		var input = Encoder.Encode(&expected)
 		var actual = DummyStruct2{}
 		var decoder = NewDecoder(Hex.FromHex(input), 0)
-		decoder.Decode(&actual)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
 		if !reflect.DeepEqual(actual, expected) {
 			t.Fatalf(`Decoder Structure. Output %v, Expected Output %v`, actual, expected)
+		}
+	}
+}
+
+func TestDecoderString(t *testing.T) {
+	{
+		var input = "0x4054686973204973204120537472696e67"
+		var expected = "This Is A String"
+		var actual = ""
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
+		if actual != expected {
+			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
+		}
+	}
+
+	{
+		var input = "0x00"
+		var expected = ""
+		var actual = ""
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
+		if actual != expected {
+			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
 		}
 	}
 }
