@@ -59,4 +59,6 @@ func RunDataSubmission() {
 	event2 := SDK.EventFindFirst(events, daPallet.EventDataSubmitted{}).Unwrap()
 
 	println(fmt.Sprintf(`Who: %v, Datahash: %v`, event2.Who.ToHuman(), event2.DataHash.ToHexWith0x()))
+
+	println("RunDataSubmission finished correctly.")
 }

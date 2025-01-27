@@ -257,5 +257,5 @@ func RunBatch() {
 		println("Force Batch call done")
 	}
 
-	println("All Good :)")
+	println("RunBatch finished correctly.")
 }

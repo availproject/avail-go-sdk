@@ -28,4 +28,6 @@ func RunAccountNonce() {
 		panic(err)
 	}
 	println("Abstraction Nonce: ", nonce2)
+
+	println("RunAccountNonce finished correctly.")
 }

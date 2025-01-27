@@ -154,4 +154,6 @@ func RunRpc() {
 		// author_RotateKeys
 		_, _ = sdk.Client.Rpc.Author.RotateKeys()
 	}
+
+	println("RunRpc finished correctly.")
 }

@@ -18,4 +18,6 @@ func RunTransactionPayment() {
 	println("Adjusted Weight Fee:", feeDetails.AdjustedWeightFee.ToHuman())
 	println("Len Fee:", feeDetails.LenFee.ToHuman())
 	println("Base Fee:", feeDetails.BaseFee.ToHuman())
+
+	println("RunTransactionPayment finished correctly.")
 }

@@ -50,4 +50,5 @@ func RunRvents() {
 	event3 := eventM3.Unwrap()
 	println(fmt.Sprintf(`Who: %v, Datahash: %v`, event3.Who.ToHuman(), event3.DataHash.ToHexWith0x()))
 
+	println("RunEvents finished correctly.")
 }

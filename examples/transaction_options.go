@@ -8,6 +8,8 @@ import (
 func RunTransactionOptions() {
 	runAppId()
 	runNonce()
+
+	println("RunTransactionOptions finished correctly.")
 }
 
 func runAppId() {

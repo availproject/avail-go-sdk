@@ -115,6 +115,7 @@ func RunStorage() {
 				break
 			}
 		}
-
 	}
+
+	println("RunStorage finished correctly.")
 }

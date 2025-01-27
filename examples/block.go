@@ -82,4 +82,6 @@ func RunBlock() {
 	withdrawEvent = withdrawEvent2.Unwrap()
 	println("Who:", withdrawEvent.Who.ToHuman())
 	println("Amount: ", withdrawEvent.Amount.ToHuman())
+
+	println("RunBlock finished correctly.")
 }

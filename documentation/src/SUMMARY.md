@@ -13,4 +13,5 @@
 - [RPC](./rpc.md)
 - [Transaction Options](./transaction_options.md)
 - [Transaction Payment](./transaction_payment.md)
+- [Custom Transaction](./custom_transaction.md)
 
