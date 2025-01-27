@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	examples.RunBlockEvents()
+	examples.RunBlock()
 }
 
 func panic2(err error) {
