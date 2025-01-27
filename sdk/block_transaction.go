@@ -64,8 +64,18 @@ func (this *BlockTransaction) Events() prim.Option[EventRecords] {
 	return this.events
 }
 
-func (this *BlockTransaction) Signer() string {
-	return metadata.AccountId{Value: this.Signed().Unwrap().Address.Id.Unwrap()}.ToHuman()
+func (this *BlockTransaction) Signer() prim.Option[string] {
+	signed := this.Signed()
+	if signed.IsNone() {
+		return prim.NewNone[string]()
+	}
+
+	address := signed.Unwrap().Address
+	if address.Id.IsNone() {
+		return prim.NewSome("Not Decoded")
+	}
+
+	return prim.NewSome(metadata.AccountId{Value: address.Id.Unwrap()}.ToHuman())
 }
 
 func (this *BlockTransaction) AppId() prim.Option[uint32] {

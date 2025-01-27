@@ -1,5 +1,7 @@
 package examples
 
+import "fmt"
+
 func Run() {
 	RunAccountNonce()
 	RunAccountBalance()
@@ -12,12 +14,12 @@ func Run() {
 	RunTransactionOptions()
 	RunTransactionPayment()
 	RunCustomTransaction()
-	RunBlockTransactions()
 }
 
+// v1 is Actual value, v2 is Expected value
 func AssertEq[T comparable](v1 T, v2 T, message string) {
 	if v1 != v2 {
-		panic(message)
+		panic(fmt.Sprintf("Failure. Message: %v, Actual: %v, Expected: %v", message, v1, v2))
 	}
 }
 

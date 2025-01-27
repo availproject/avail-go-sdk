@@ -25,13 +25,13 @@ func RunBlockTransactionByIndex() {
 	tx := block.TransactionByIndex(1).UnsafeUnwrap()
 
 	// Printout Block Transaction
-	println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash().ToHuman(), tx.TxIndex(), tx.Signer(), tx.AppId()))
+	println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex(), tx.Signer(), tx.AppId()))
 
 	// Convert from Block Transaction to Specific Transaction
 	baTx := baPallet.CallTransferKeepAlive{}
 	isOk := pallets.Decode(&baTx, tx.Extrinsic)
 	AssertEq(isOk, true, "Transaction was not of type Transfer Keep Alive")
-	println(fmt.Sprintf(`Destination: %v, Value: %v`, baTx.Dest.Id.UnsafeUnwrap().ToHuman(), baTx.Value.ToHuman()))
+	println(fmt.Sprintf(`Destination: %v, Value: %v`, baTx.Dest.Id.UnsafeUnwrap().ToHuman(), baTx.Value))
 
 	// Printout all Transaction Events
 	txEvents := tx.Events().UnsafeUnwrap()
@@ -43,7 +43,7 @@ func RunBlockTransactionByIndex() {
 
 	// Convert from Block Transaction Event to Specific Transaction Event
 	event := SDK.EventFindFirst(txEvents, syPallet.EventNewAccount{}).UnsafeUnwrap()
-	println(fmt.Sprintf(`Account: %v`, event.Account.ToHuman()))
+	println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Account: %v`, event.PalletName(), event.EventName(), event.Account.ToHuman()))
 
 	println("RunBlockTransactionByIndex finished correctly.")
 }

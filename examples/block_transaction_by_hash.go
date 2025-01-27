@@ -22,10 +22,11 @@ func RunBlockTransactionByHash() {
 
 	// Transaction filtered by Transaction hash
 	txHash, err := primitives.NewH256FromHexString("0x19c486e107c926ff4af3fa9b1d95aaba130cb0bc89515d0f5b523ef6bac06338")
+	PanicOnError(err)
 	tx := block.TransactionByHash(txHash).UnsafeUnwrap()
 
 	// Printout Block Transaction
-	println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash().ToHuman(), tx.TxIndex(), tx.Signer(), tx.AppId()))
+	println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex(), tx.Signer(), tx.AppId()))
 
 	// Convert from Block Transaction to Specific Transaction
 	baTx := baPallet.CallTransferKeepAlive{}
@@ -43,7 +44,7 @@ func RunBlockTransactionByHash() {
 
 	// Convert from Block Transaction Event to Specific Transaction Event
 	event := SDK.EventFindFirst(txEvents, baPallet.EventTransfer{}).UnsafeUnwrap()
-	println(fmt.Sprintf(`From: %v, To: %v, Amount: %v`, event.From.ToHuman(), event.To.ToHuman(), event.Amount.ToHuman()))
+	println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, From: %v, To: %v, Amount: %v`, event.PalletName(), event.EventName(), event.From.ToHuman(), event.To.ToHuman(), event.Amount))
 
 	println("RunBlockTransactionByHash finished correctly.")
 }

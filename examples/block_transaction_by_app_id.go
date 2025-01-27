@@ -27,7 +27,7 @@ func RunBlockTransactionByAppId() {
 
 	// Printout Block Transactions made by Signer
 	for _, tx := range blockTxs {
-		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash().ToHuman(), tx.TxIndex(), tx.Signer(), tx.AppId()))
+		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex(), tx.Signer(), tx.AppId()))
 		AssertEq(tx.AppId().UnsafeUnwrap(), 2, "Transactions don't have App Id equal to 2")
 	}
 
@@ -47,7 +47,7 @@ func RunBlockTransactionByAppId() {
 
 	// Convert from Block Transaction Event to Specific Transaction Event
 	event := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{}).UnsafeUnwrap()
-	println(fmt.Sprintf(`DataHash: %v, Who: %v`, event.DataHash.ToHuman(), event.Who.ToHuman()))
+	println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, DataHash: %v, Who: %v`, event.PalletName(), event.EventName(), event.DataHash, event.Who.ToHuman()))
 
 	println("RunBlockTransactionByAppId finished correctly.")
 }

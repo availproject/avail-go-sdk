@@ -194,6 +194,14 @@ func NewAccountIdFromAddress(address string) (AccountId, error) {
 	return res, nil
 }
 
+func NewAccountIdFromMultiAddress(address prim.MultiAddress) (AccountId, error) {
+	if address.Id.IsNone() {
+		return AccountId{}, errors.New("Cannot decode multiaddress")
+	}
+
+	return AccountId{Value: address.Id.Unwrap()}, nil
+}
+
 // Do not add, remove or change any of the field members.
 type DispatchInfo struct {
 	Weight      Weight
@@ -228,6 +236,10 @@ func (this DispatchClass) ToString() string {
 	default:
 		panic("Unknown DispatchCall Variant Index")
 	}
+}
+
+func (this DispatchClass) String() string {
+	return this.ToString()
 }
 
 // Do not add, remove or change any of the field members.

@@ -27,6 +27,10 @@ func (this H256) ToString() string {
 	return this.ToHexWith0x()
 }
 
+func (this H256) String() string {
+	return this.ToHexWith0x()
+}
+
 func (this H256) ToRpcParam() string {
 	return "\"" + this.ToHexWith0x() + "\""
 }

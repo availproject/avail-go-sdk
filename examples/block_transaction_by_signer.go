@@ -31,8 +31,8 @@ func RunBlockTransactionBySigner() {
 
 	// Printout Block Transactions made by Signer
 	for _, tx := range blockTxs {
-		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash().ToHuman(), tx.TxIndex(), tx.Signer(), tx.AppId()))
-		AssertEq(tx.Signer(), accountId.ToHuman(), "Signer is not the correct one")
+		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex(), tx.Signer(), tx.AppId()))
+		AssertEq(tx.Signer().UnsafeUnwrap(), accountId.ToHuman(), "Signer is not the correct one")
 	}
 
 	// Convert from Block Transaction to Specific Transaction
@@ -51,7 +51,7 @@ func RunBlockTransactionBySigner() {
 
 	// Convert from Block Transaction Event to Specific Transaction Event
 	event := SDK.EventFindFirst(txEvents, daPallet.EventApplicationKeyCreated{}).UnsafeUnwrap()
-	println(fmt.Sprintf(`Owner: %v, Key: %v, AppId: %v`, event.Owner.ToHuman(), string(event.Key), event.Id))
+	println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Owner: %v, Key: %v, AppId: %v`, event.PalletName(), event.EventName(), event.Owner.ToHuman(), string(event.Key), event.Id))
 
 	println("RunBlockTransactionBySigner finished correctly.")
 }

@@ -5,12 +5,7 @@ import (
 )
 
 func main() {
-	examples.RunBlockTransactionAll()
-	examples.RunBlockTransactionBySigner()
-	examples.RunBlockTransactionByIndex()
-	examples.RunBlockTransactionByHash()
-	examples.RunBlockTransactionByAppId()
-
+	examples.RunBlockEvents()
 }
 
 func panic2(err error) {

@@ -27,7 +27,7 @@ func RunBlockTransactionAll() {
 
 	// Printout Block Transactions
 	for _, tx := range blockTxs {
-		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash().ToHuman(), tx.TxIndex(), tx.Signer(), tx.AppId()))
+		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex(), tx.Signer(), tx.AppId()))
 	}
 
 	// Convert from Block Transaction to Specific Transaction
@@ -46,7 +46,7 @@ func RunBlockTransactionAll() {
 
 	// Convert from Block Transaction Event to Specific Transaction Event
 	event := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{}).UnsafeUnwrap()
-	println(fmt.Sprintf(`Who: %v, Data Hash: %v`, event.Who.ToHuman(), event.DataHash.ToHuman()))
+	println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Who: %v, Data Hash: %v`, event.PalletName(), event.EventName(), event.Who.ToHuman(), event.DataHash))
 
 	println("RunBlockTransactionAll finished correctly.")
 }
