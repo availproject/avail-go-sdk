@@ -1,14 +1,9 @@
 package main
 
-import (
-/*
-	 	"github.com/availproject/avail-go-sdk/metadata/pallets"
-		SDK "github.com/availproject/avail-go-sdk/sdk"
-*/
-)
+import "github.com/availproject/avail-go-sdk/examples"
 
 func main() {
-	// sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	examples.Run_transaction_options()
 
 }
 
