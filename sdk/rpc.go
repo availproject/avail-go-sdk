@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"fmt"
 	"strconv"
 
 	prim "github.com/availproject/avail-go-sdk/primitives"
@@ -14,6 +15,7 @@ type RPC struct {
 	ChainSpec chainSpecRPC
 	Kate      kateRPC
 	Author    authorRPC
+	Payment   paymentRPC
 }
 
 func newRPC(client *Client) RPC {
@@ -25,6 +27,7 @@ func newRPC(client *Client) RPC {
 		ChainSpec: chainSpecRPC{client: client},
 		Kate:      kateRPC{client: client},
 		Author:    authorRPC{client: client},
+		Payment:   paymentRPC{client: client},
 	}
 }
 
@@ -34,6 +37,25 @@ type RPCParams struct {
 
 func (this *RPCParams) Add(value string) {
 	this.Values = append(this.Values, value)
+}
+
+func (this *RPCParams) AddByteSlice(value []byte) {
+	if len(value) == 0 {
+		return
+	}
+
+	res := "["
+	for i, elem := range value {
+		res += fmt.Sprintf("%v", elem)
+
+		if i < (len(value) - 1) {
+			res += ","
+		}
+	}
+
+	res = res + "]"
+
+	this.Values = append(this.Values, res)
 }
 
 func (this *RPCParams) AddH256(value prim.H256) {

@@ -19,31 +19,44 @@ const Finalization = uint8(0)
 const Inclusion = uint8(1)
 
 type Transaction struct {
-	Client  *Client
+	client  *Client
 	Payload metadata.Payload
 }
 
 func NewTransaction(client *Client, payload metadata.Payload) Transaction {
 	return Transaction{
-		Client:  client,
+		client:  client,
 		Payload: payload,
 	}
 }
 
 func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOptions) (prim.H256, error) {
-	return TransactionSignAndSend(this.Client, account, this.Payload, options)
+	return TransactionSignAndSend(this.client, account, this.Payload, options)
 }
 
 func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, blockTimeout uint32, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.Client, account, this.Payload, waitFor, blockTimeout, options)
+	return TransactionSignSendWatch(this.client, account, this.Payload, waitFor, blockTimeout, options)
 }
 
 func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.Client, account, this.Payload, Finalization, 5, options)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, 5, options)
 }
 
 func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.Client, account, this.Payload, Inclusion, 3, options)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, 3, options)
+}
+
+func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options TransactionOptions) (metadata.InclusionFee, error) {
+	extra, additional, err := options.ToPrimitive(this.client, account.SS58Address(42))
+	if err != nil {
+		return metadata.InclusionFee{}, err
+	}
+	tx, err := prim.CreateSigned(this.Payload.Call, extra, additional, account)
+	if err != nil {
+		return metadata.InclusionFee{}, err
+	}
+
+	return this.client.Rpc.Payment.QueryFeeDetails(tx.Value, prim.NewNone[prim.H256]())
 }
 
 func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload metadata.Payload, options TransactionOptions) (prim.H256, error) {

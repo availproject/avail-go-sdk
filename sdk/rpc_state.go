@@ -71,3 +71,15 @@ func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) (string, error) {
 
 	return this.client.Request("state_getStorage", params.Build())
 }
+
+/* func (this *stateRPC) Call(method string, data string, at prim.Option[prim.H256]) (string, error) {
+	params := RPCParams{}
+	params.Add("\"" + method + "\"")
+	params.Add("\"" + data + "\"")
+	if at.IsSome() {
+		params.AddH256(at.Unwrap())
+	}
+
+	return this.client.Request("state_call", params.Build())
+}
+*/

@@ -46,7 +46,14 @@ func (this Balance) ToHuman() string {
 		var trailing = removeTrailingZeros(stringValue)
 		if trailing == "" {
 			result += "0"
+		} else {
+			missingPlaces := 18 - len(stringValue)
+
+			for i := 0; i < missingPlaces; i++ {
+				result += "0"
+			}
 		}
+
 		return result + trailing + " Avail"
 	}
 
@@ -1584,4 +1591,10 @@ type AddressedMessage struct {
 	OriginDomain      uint32 `scale:"compact"`
 	DestinationDomain uint32 `scale:"compact"`
 	Id                uint64 `scale:"compact"`
+}
+
+type InclusionFee struct {
+	BaseFee           Balance
+	LenFee            Balance
+	AdjustedWeightFee Balance
 }
