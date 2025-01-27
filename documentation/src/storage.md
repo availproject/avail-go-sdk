@@ -1,4 +1,4 @@
-# Events
+# Storage
 
 ```go
 {{#include ./../../examples/storage.go}}

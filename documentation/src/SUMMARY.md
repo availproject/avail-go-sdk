@@ -12,4 +12,5 @@
 - [Batch](./batch.md)
 - [RPC](./rpc.md)
 - [Transaction Options](./transaction_options.md)
+- [Transaction Payment](./transaction_payment.md)
 

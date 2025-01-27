@@ -9,4 +9,6 @@ func Run() {
 	RunRvents()
 	RunStorage()
 	RunRpc()
+	RunTransactionOptions()
+	RunTransactionPayment()
 }
