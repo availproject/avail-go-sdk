@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/availproject/avail-go-sdk/metadata"
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
@@ -34,16 +35,16 @@ func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOpti
 	return TransactionSignAndSend(this.client, account, this.Payload, options)
 }
 
-func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, blockTimeout uint32, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, waitFor, blockTimeout, options)
+func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, options TransactionOptions, blockTimeout uint32) (TransactionDetails, error) {
+	return TransactionSignSendWatch(this.client, account, this.Payload, waitFor, options, blockTimeout, 3)
 }
 
 func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, 5, options)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options, 5, 3)
 }
 
 func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, 3, options)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 3, 3)
 }
 
 func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options TransactionOptions) (metadata.InclusionFee, error) {
@@ -60,6 +61,10 @@ func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options 
 }
 
 func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload metadata.Payload, options TransactionOptions) (prim.H256, error) {
+	if !CheckPayloadAndOptionsValidity(&payload, &options) {
+		return prim.H256{}, errors.New("Transaction is not compatible with non-zero AppIds")
+	}
+
 	extra, additional, err := options.ToPrimitive(client, account.SS58Address(42))
 	if err != nil {
 		return prim.H256{}, err
@@ -72,13 +77,16 @@ func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload meta
 	return client.Send(tx)
 }
 
-func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitFor uint8, blockTimeout uint32, options TransactionOptions) (TransactionDetails, error) {
+func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitFor uint8, options TransactionOptions, blockTimeout uint32, retryCount uint32) (TransactionDetails, error) {
+	if !CheckPayloadAndOptionsValidity(&payload, &options) {
+		return TransactionDetails{}, errors.New("Transaction is not compatible with non-zero AppIds")
+	}
+
 	extra, additional, err := options.ToPrimitive(client, account.SS58Address(42))
 	if err != nil {
 		return TransactionDetails{}, err
 	}
 
-	var retryCount = 3
 	for {
 		tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
 		if err != nil {
@@ -117,6 +125,22 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 	}
 
 	return TransactionDetails{}, errors.New("Failed to submit transaction. Tried 3 times.")
+}
+
+// Check that ID is zero for non-submitData payloads
+func CheckPayloadAndOptionsValidity(payload *metadata.Payload, options *TransactionOptions) bool {
+	targetPalletIndex := daPallet.CallSubmitData{}.PalletIndex()
+	targetCallIndex := daPallet.CallSubmitData{}.CallIndex()
+
+	if payload.Call.PalletIndex == targetPalletIndex && payload.Call.CallIndex == targetCallIndex {
+		return true
+	}
+
+	if options.AppId.Unwrap() != 0 {
+		return false
+	}
+
+	return true
 }
 
 type TransactionDetails struct {
