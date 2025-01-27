@@ -9,9 +9,10 @@ type BlockTransaction struct {
 	Extrinsic  *prim.DecodedExtrinsic
 	palletName string
 	callName   string
+	events     prim.Option[EventRecords]
 }
 
-func NewBlockTransaction(client *Client, extrinsic *prim.DecodedExtrinsic) BlockTransaction {
+func NewBlockTransaction(client *Client, extrinsic *prim.DecodedExtrinsic, events prim.Option[EventRecords]) BlockTransaction {
 	palletName, callName, err := client.Metadata().PalletCallName(extrinsic.Call.PalletIndex, extrinsic.Call.CallIndex)
 	if err != nil {
 		println(err.Error())
@@ -22,6 +23,7 @@ func NewBlockTransaction(client *Client, extrinsic *prim.DecodedExtrinsic) Block
 		Extrinsic:  extrinsic,
 		palletName: palletName,
 		callName:   callName,
+		events:     events,
 	}
 }
 
@@ -55,4 +57,8 @@ func (this *BlockTransaction) Signed() prim.Option[prim.DecodedExtrinsicSigned] 
 
 func (this *BlockTransaction) Fields() prim.AlreadyEncoded {
 	return this.Extrinsic.Call.Fields
+}
+
+func (this *BlockTransaction) Events() prim.Option[EventRecords] {
+	return this.events
 }

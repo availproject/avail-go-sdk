@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	"github.com/availproject/avail-go-sdk/primitives"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
@@ -41,7 +42,7 @@ func RunBlockTransactions() {
 		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex()))
 		println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v`, tx.TxHash().ToHuman(), tx.TxIndex()))
 
-		// Converting generic block tx to a DataAvailability SubmitData Call Data
+		// Converting generic block tx to specific one
 		call := daPallet.CallSubmitData{}
 		if !pallets.Decode(&call, tx.Extrinsic) {
 			println("Failed to decode transaction. Skipping it.")
@@ -51,6 +52,28 @@ func RunBlockTransactions() {
 
 		decodedIndices = append(decodedIndices, tx.TxIndex())
 		println(fmt.Sprintf(`Found Submit Data call. Length: %v`, len(call.Data)))
+
+		eventsMyb := tx.Events()
+		if eventsMyb.IsNone() {
+			panic("Events should be present for this transactions")
+		}
+		txEvents := eventsMyb.SafeUnwrap()
+
+		if len(txEvents) != 7 {
+			panic("There should be 7 events")
+		}
+
+		eventMyb, err := SDK.EventFindFirstChecked(txEvents, baPallet.EventWithdraw{})
+		if err != nil {
+			panic("Failed to decode events")
+		}
+
+		if eventMyb.IsNone() {
+			panic("Failed to find  EventWithdraw event")
+		}
+
+		println("Withdraw amount:", eventMyb.Unwrap().Amount.ToHuman())
+
 		println()
 	}
 

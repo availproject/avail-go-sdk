@@ -50,66 +50,82 @@ func NewFinalizedBlock(client *Client) (Block, error) {
 }
 
 func (this *Block) TransactionAll() []BlockTransaction {
-	var result = []BlockTransaction{}
-	for _, tx := range this.Block.Extrinsics {
-		result = append(result, NewBlockTransaction(this.client, &tx))
+	extrinsics := this.Block.Extrinsics
+	result := []BlockTransaction{}
+	for i := range this.Block.Extrinsics {
+		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
+		result = append(result, NewBlockTransaction(this.client, &extrinsics[i], txEvents))
 	}
 
 	return result
 }
 
 func (this *Block) TransactionBySigner(accountId meta.AccountId) []BlockTransaction {
-	var result = []BlockTransaction{}
-	for _, tx := range this.Block.Extrinsics {
-		if !sameSignature(&tx, accountId) {
+	extrinsics := this.Block.Extrinsics
+	result := []BlockTransaction{}
+	for i := range extrinsics {
+		if !sameSignature(&extrinsics[i], accountId) {
 			continue
 		}
-		result = append(result, NewBlockTransaction(this.client, &tx))
+
+		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
+		result = append(result, NewBlockTransaction(this.client, &extrinsics[i], txEvents))
 	}
 
 	return result
 }
 
 func (this *Block) TransactionByIndex(txIndex uint32) prim.Option[BlockTransaction] {
-	for _, tx := range this.Block.Extrinsics {
-		if tx.TxIndex == txIndex {
-			return prim.NewSome(NewBlockTransaction(this.client, &tx))
+	extrinsics := this.Block.Extrinsics
+	for i := range extrinsics {
+		if extrinsics[i].TxIndex != txIndex {
+			continue
 		}
+
+		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
+		return prim.NewSome(NewBlockTransaction(this.client, &extrinsics[i], txEvents))
 	}
 
 	return prim.NewNone[BlockTransaction]()
 }
 
 func (this *Block) TransactionByHash(txHash prim.H256) prim.Option[BlockTransaction] {
-	for _, tx := range this.Block.Extrinsics {
-		if tx.TxHash == txHash {
-			return prim.NewSome(NewBlockTransaction(this.client, &tx))
+	extrinsics := this.Block.Extrinsics
+	for i := range extrinsics {
+		if extrinsics[i].TxHash != txHash {
+			continue
 		}
+		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
+		return prim.NewSome(NewBlockTransaction(this.client, &extrinsics[i], txEvents))
 	}
 
 	return prim.NewNone[BlockTransaction]()
 }
 
 func (this *Block) TransactionByAppId(appId uint32) []BlockTransaction {
-	var result = []BlockTransaction{}
-	for _, tx := range this.Block.Extrinsics {
-		if tx.Signed.IsNone() {
+	extrinsics := this.Block.Extrinsics
+	result := []BlockTransaction{}
+	for i := range extrinsics {
+		if extrinsics[i].Signed.IsNone() {
 			continue
 		}
-		var signed = tx.Signed.Unwrap()
+		var signed = extrinsics[i].Signed.Unwrap()
 		if signed.AppId != appId {
 			continue
 		}
-		result = append(result, NewBlockTransaction(this.client, &tx))
+
+		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
+		result = append(result, NewBlockTransaction(this.client, &extrinsics[i], txEvents))
 	}
 
 	return result
 }
 
 func (this *Block) DataSubmissionAll() []DataSubmission {
-	var result = []DataSubmission{}
-	for _, tx := range this.Block.Extrinsics {
-		if res, ok := NewDataSubmission(&tx); ok {
+	extrinsics := this.Block.Extrinsics
+	result := []DataSubmission{}
+	for i := range extrinsics {
+		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
 			result = append(result, res)
 		}
 	}
@@ -118,27 +134,28 @@ func (this *Block) DataSubmissionAll() []DataSubmission {
 }
 
 func (this *Block) DataSubmissionBySigner(accountId meta.AccountId) []DataSubmission {
-	var result = []DataSubmission{}
-	for _, tx := range this.Block.Extrinsics {
-		if !sameSignature(&tx, accountId) {
+	extrinsics := this.Block.Extrinsics
+	result := []DataSubmission{}
+	for i := range extrinsics {
+		if !sameSignature(&extrinsics[i], accountId) {
 			continue
 		}
 
-		if res, ok := NewDataSubmission(&tx); ok {
+		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
 			result = append(result, res)
 		}
-
 	}
 
 	return result
 }
 
 func (this *Block) DataSubmissionByIndex(txIndex uint32) prim.Option[DataSubmission] {
-	for _, tx := range this.Block.Extrinsics {
-		if tx.TxIndex != txIndex {
+	extrinsics := this.Block.Extrinsics
+	for i := range extrinsics {
+		if extrinsics[i].TxIndex != txIndex {
 			continue
 		}
-		if res, ok := NewDataSubmission(&tx); ok {
+		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
 			return prim.NewSome(res)
 		}
 	}
@@ -147,11 +164,12 @@ func (this *Block) DataSubmissionByIndex(txIndex uint32) prim.Option[DataSubmiss
 }
 
 func (this *Block) DataSubmissionByHash(txHash prim.H256) prim.Option[DataSubmission] {
-	for _, tx := range this.Block.Extrinsics {
-		if tx.TxHash != txHash {
+	extrinsics := this.Block.Extrinsics
+	for i := range extrinsics {
+		if extrinsics[i].TxHash != txHash {
 			continue
 		}
-		if res, ok := NewDataSubmission(&tx); ok {
+		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
 			return prim.NewSome(res)
 		}
 	}
@@ -160,21 +178,45 @@ func (this *Block) DataSubmissionByHash(txHash prim.H256) prim.Option[DataSubmis
 }
 
 func (this *Block) DataSubmissionByAppId(appId uint32) []DataSubmission {
-	var result = []DataSubmission{}
-	for _, tx := range this.Block.Extrinsics {
-		if tx.Signed.IsNone() {
+	extrinsics := this.Block.Extrinsics
+	result := []DataSubmission{}
+	for i := range extrinsics {
+		if extrinsics[i].Signed.IsNone() {
 			continue
 		}
-		var signed = tx.Signed.Unwrap()
+		var signed = extrinsics[i].Signed.Unwrap()
 		if signed.AppId != appId {
 			continue
 		}
-		if res, ok := NewDataSubmission(&tx); ok {
+		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
 			result = append(result, res)
 		}
 	}
 
 	return result
+}
+
+func (this *Block) EventsForTransaction(txIndex uint32) prim.Option[EventRecords] {
+	extrinsics := this.Block.Extrinsics
+
+	if txIndex >= uint32(len(extrinsics)) {
+		return prim.NewNone[EventRecords]()
+	}
+
+	if this.events.IsNone() {
+		return prim.NewNone[EventRecords]()
+	}
+
+	for i := range extrinsics {
+		if extrinsics[i].TxIndex != txIndex {
+			continue
+		}
+		allEvents := this.events.Unwrap()
+		txEvents := EventFilterByTxIndex(allEvents, txIndex)
+		return prim.NewSome(txEvents)
+	}
+
+	return prim.NewNone[EventRecords]()
 }
 
 func (this *Block) Events() prim.Option[EventRecords] {
