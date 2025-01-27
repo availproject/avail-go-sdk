@@ -107,8 +107,8 @@ func (this *systemRPC) NodeRoles() ([]string, error) {
 	}
 
 	res := []string{}
-	for _, el := range jsonData {
-		res = append(res, el.(string))
+	for i := range jsonData {
+		res = append(res, jsonData[i].(string))
 	}
 
 	return res, nil

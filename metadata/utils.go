@@ -207,8 +207,8 @@ func GenericMapKeysFetch[V any, K any, S StorageMapT](blockStorage interfaces.Bl
 	}
 
 	storageEntries := []StorageEntry[K, V]{}
-	for _, storageKey := range storageKeys {
-		mapKey, err := storageMapKeyDecode[K](storageKey, storage)
+	for i := range storageKeys {
+		mapKey, err := storageMapKeyDecode[K](storageKeys[i], storage)
 		if err != nil {
 			return nil, err
 		}
@@ -261,8 +261,8 @@ func GenericDoubleMapKeysFetch[V any, K1 any, K2 any, S StorageDoubleMapT](block
 	}
 
 	storageEntries := []StorageEntryDoubleMap[K1, K2, V]{}
-	for _, storageKey := range storageKeys {
-		mapKey1, mapKey2, err := storageDoubleMapKeyDecode[K1, K2](storageKey, storage)
+	for i := range storageKeys {
+		mapKey1, mapKey2, err := storageDoubleMapKeyDecode[K1, K2](storageKeys[i], storage)
 		if err != nil {
 			return nil, err
 		}

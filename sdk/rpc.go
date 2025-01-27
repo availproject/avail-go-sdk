@@ -45,8 +45,8 @@ func (this *RPCParams) AddByteSlice(value []byte) {
 	}
 
 	res := "["
-	for i, elem := range value {
-		res += fmt.Sprintf("%v", elem)
+	for i := range value {
+		res += fmt.Sprintf("%v", value[i])
 
 		if i < (len(value) - 1) {
 			res += ","

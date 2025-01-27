@@ -180,8 +180,9 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 			logrus.Debug(iden + ": New Block fetched. Hash: " + blockHash.ToHexWith0x() + ", Number: " + strconv.FormatUint(uint64(blockNumber), 10))
 		}
 
-		for _, element := range block.Extrinsics {
-			if element.TxHash.ToHexWith0x() == txHash.ToHexWith0x() {
+		extrinsics := block.Extrinsics
+		for i := range extrinsics {
+			if extrinsics[i].TxHash.ToHexWith0x() == txHash.ToHexWith0x() {
 
 				// Get Events
 				blockEvents, err := client.EventsAt(prim.NewSome(blockHash))
@@ -189,12 +190,12 @@ func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTime
 				if err != nil {
 					logrus.Error(err.Error())
 				} else {
-					events.Set(EventFilterByTxIndex(blockEvents, element.TxIndex))
+					events.Set(EventFilterByTxIndex(blockEvents, extrinsics[i].TxIndex))
 				}
 
 				details := TransactionDetails{
 					TxHash:      txHash,
-					TxIndex:     element.TxIndex,
+					TxIndex:     extrinsics[i].TxIndex,
 					BlockHash:   blockHash,
 					BlockNumber: blockNumber,
 					Events:      events,

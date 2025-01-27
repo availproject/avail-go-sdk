@@ -132,8 +132,8 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 	}
 
 	proofMap := dataProofMap["proof"].([]interface{})
-	for _, elem := range proofMap {
-		val, err := prim.NewH256FromHexString(elem.(string))
+	for i := range proofMap {
+		val, err := prim.NewH256FromHexString(proofMap[i].(string))
 		if err != nil {
 			panic(err)
 		}
@@ -226,8 +226,8 @@ func (this *kateRPC) QueryProof(cells []KateCell, blockHash prim.Option[prim.H25
 	res := []GDataProof{}
 
 	cellsEnc := "["
-	for i, cell := range cells {
-		cellsEnc += "[" + fmt.Sprintf("%v", cell.Row) + "," + fmt.Sprintf("%v", cell.Col) + "]"
+	for i := range cells {
+		cellsEnc += "[" + fmt.Sprintf("%v", cells[i].Row) + "," + fmt.Sprintf("%v", cells[i].Col) + "]"
 
 		if i < (len(cells) - 1) {
 			cellsEnc += ","
@@ -249,16 +249,16 @@ func (this *kateRPC) QueryProof(cells []KateCell, blockHash prim.Option[prim.H25
 		return res, err
 	}
 
-	for _, elems := range mappedData {
-		mappedData2 := elems.([]interface{})
+	for i := range mappedData {
+		mappedData2 := mappedData[i].([]interface{})
 		gProofArray := mappedData2[1].([]interface{})
 
 		gProof := [48]byte{}
 		if len(gProofArray) != 48 {
 			return res, errors.New("GProof is not 48 bytes long")
 		}
-		for i, el := range gProofArray {
-			gProof[i] = byte(el.(float64))
+		for i := range gProofArray {
+			gProof[i] = byte(gProofArray[i].(float64))
 		}
 
 		res = append(res, metadata.NewTuple2(mappedData2[0].(string), gProof))
@@ -280,8 +280,8 @@ func (this *kateRPC) QueryRows(rows []uint32, blockHash prim.Option[prim.H256]) 
 	res := [][]string{}
 
 	rowsEnc := "["
-	for i, row := range rows {
-		rowsEnc += fmt.Sprintf("%v", row)
+	for i := range rows {
+		rowsEnc += fmt.Sprintf("%v", rows[i])
 
 		if i < (len(rows) - 1) {
 			rowsEnc += ","
@@ -303,11 +303,11 @@ func (this *kateRPC) QueryRows(rows []uint32, blockHash prim.Option[prim.H256]) 
 		return res, err
 	}
 
-	for i, outerArray := range outerArrays {
+	for i := range outerArrays {
 		res = append(res, []string{})
-		innerArray := outerArray.([]interface{})
-		for _, elm := range innerArray {
-			res[i] = append(res[i], elm.(string))
+		innerArray := outerArrays[i].([]interface{})
+		for j := range innerArray {
+			res[i] = append(res[i], innerArray[j].(string))
 		}
 	}
 
