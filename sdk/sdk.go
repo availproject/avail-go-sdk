@@ -35,7 +35,6 @@ func NewSDK(endpoint string) (SDK, error) {
 func NewSDKWithMetadata(endpoint string, metadataBlockHash prim.Option[prim.H256]) (SDK, error) {
 	var client = NewClient(endpoint)
 
-	// Temp for testing
 	if err := client.InitMetadata(metadataBlockHash); err != nil {
 		return SDK{}, err
 	}
