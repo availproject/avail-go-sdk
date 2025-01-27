@@ -371,3 +371,31 @@ func TestDecoderString(t *testing.T) {
 		}
 	}
 }
+
+func TestDecoderOption(t *testing.T) {
+	{
+		var input = "0x00"
+		var expected = NewNone[uint16]()
+		var actual Option[uint16]
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
+		if actual != expected {
+			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
+		}
+	}
+
+	{
+		var input = "0x016400"
+		var expected = NewSome(uint16(100))
+		var actual Option[uint16]
+		var decoder = NewDecoder(Hex.FromHex(input), 0)
+		if err := decoder.Decode(&actual); err != nil {
+			panic(err)
+		}
+		if actual != expected {
+			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
+		}
+	}
+}

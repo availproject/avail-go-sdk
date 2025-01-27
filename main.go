@@ -1,8 +1,14 @@
 package main
 
-import ()
+import (
+/*
+	 	"github.com/availproject/avail-go-sdk/metadata/pallets"
+		SDK "github.com/availproject/avail-go-sdk/sdk"
+*/
+)
 
 func main() {
+	// sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 
 }
 
