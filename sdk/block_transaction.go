@@ -1,7 +1,6 @@
 package sdk
 
 import (
-	"github.com/availproject/avail-go-sdk/interfaces"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -24,10 +23,6 @@ func NewBlockTransaction(client *Client, extrinsic *prim.DecodedExtrinsic) Block
 		palletName: palletName,
 		callName:   callName,
 	}
-}
-
-func (this *BlockTransaction) CallData(data interfaces.CallDataT) prim.Option[interface{}] {
-	return data.Decode(this.Extrinsic.Call)
 }
 
 func (this *BlockTransaction) PalletName() string {
