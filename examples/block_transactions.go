@@ -9,7 +9,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func RunBlockTransaction() {
+func RunBlockTransactions() {
 	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
 	if err != nil {
 		panic(err)
@@ -36,6 +36,7 @@ func RunBlockTransaction() {
 		panic("Transaction count needs to be 4")
 	}
 
+	decodedIndices := []uint32{}
 	for _, tx := range allTxs {
 		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex()))
 		println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v`, tx.TxHash().ToHuman(), tx.TxIndex()))
@@ -43,10 +44,19 @@ func RunBlockTransaction() {
 		// Converting generic block tx to a DataAvailability SubmitData Call Data
 		call := daPallet.CallSubmitData{}
 		if !pallets.Decode(&call, tx.Extrinsic) {
+			println("Failed to decode transaction. Skipping it.")
+			println()
 			continue
 		}
 
+		decodedIndices = append(decodedIndices, tx.TxIndex())
 		println(fmt.Sprintf(`Found Submit Data call. Length: %v`, len(call.Data)))
-
+		println()
 	}
+
+	if len(decodedIndices) != 2 || decodedIndices[0] != 1 || decodedIndices[1] != 2 {
+		panic("We we supposed to decode 2 transactions")
+	}
+
+	println("RunBlockTransactions finished correctly.")
 }

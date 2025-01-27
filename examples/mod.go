@@ -6,10 +6,11 @@ func Run() {
 	RunBatch()
 	RunBlock()
 	RunDataSubmission()
-	RunRvents()
+	RunEvents()
 	RunStorage()
 	RunRpc()
 	RunTransactionOptions()
 	RunTransactionPayment()
 	RunCustomTransaction()
+	RunBlockTransactions()
 }

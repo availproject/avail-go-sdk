@@ -6,7 +6,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func RunRvents() {
+func RunEvents() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)
