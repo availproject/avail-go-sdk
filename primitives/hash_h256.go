@@ -47,3 +47,11 @@ func NewH256FromByteSlice(array []byte) (H256, error) {
 
 	return H256{Value: [32]byte(array)}, nil
 }
+
+func NewBlockHashFromHexString(hexString string) (H256, error) {
+	return NewH256FromHexString(hexString)
+}
+
+func NewBlockHashFromByteSlice(array []byte) (H256, error) {
+	return NewH256FromByteSlice(array)
+}

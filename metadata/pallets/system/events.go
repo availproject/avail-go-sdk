@@ -46,3 +46,24 @@ func (this EventExtrinsicFailed) EventIndex() uint8 {
 func (this EventExtrinsicFailed) EventName() string {
 	return "ExtrinsicFailed"
 }
+
+// A new account was created.
+type EventNewAccount struct {
+	Account meta.AccountId
+}
+
+func (this EventNewAccount) PalletIndex() uint8 {
+	return PalletIndex
+}
+
+func (this EventNewAccount) PalletName() string {
+	return PalletName
+}
+
+func (this EventNewAccount) EventIndex() uint8 {
+	return 3
+}
+
+func (this EventNewAccount) EventName() string {
+	return "NewAccount"
+}

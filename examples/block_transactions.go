@@ -57,7 +57,7 @@ func RunBlockTransactions() {
 		if eventsMyb.IsNone() {
 			panic("Events should be present for this transactions")
 		}
-		txEvents := eventsMyb.SafeUnwrap()
+		txEvents := eventsMyb.UnsafeUnwrap()
 
 		if len(txEvents) != 7 {
 			panic("There should be 7 events")

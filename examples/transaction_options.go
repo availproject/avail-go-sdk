@@ -36,8 +36,8 @@ func runAppId() {
 		panic(err)
 	}
 
-	genTx := block.TransactionByHash(res.TxHash).SafeUnwrap()
-	foundAppId := genTx.Signed().SafeUnwrap().AppId
+	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
+	foundAppId := genTx.Signed().UnsafeUnwrap().AppId
 	if appId != foundAppId {
 		panic("Wrong appid was used.")
 	}
@@ -72,8 +72,8 @@ func runNonce() {
 		panic(err)
 	}
 
-	genTx := block.TransactionByHash(res.TxHash).SafeUnwrap()
-	foundNonce := genTx.Signed().SafeUnwrap().Nonce
+	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
+	foundNonce := genTx.Signed().UnsafeUnwrap().Nonce
 
 	if foundNonce != currentNonce {
 		panic("Wrong Nonce 1")

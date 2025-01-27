@@ -49,7 +49,7 @@ func RunCustomTransaction() {
 		panic(err)
 	}
 
-	genTx := block.TransactionByIndex(res.TxIndex).SafeUnwrap()
+	genTx := block.TransactionByIndex(res.TxIndex).UnsafeUnwrap()
 
 	foundTx := CustomTransaction{}
 	if isOk := pallets.Decode(&foundTx, genTx.Extrinsic); !isOk {

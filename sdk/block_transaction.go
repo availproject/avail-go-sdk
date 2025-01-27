@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"github.com/availproject/avail-go-sdk/metadata"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -61,4 +62,17 @@ func (this *BlockTransaction) Fields() prim.AlreadyEncoded {
 
 func (this *BlockTransaction) Events() prim.Option[EventRecords] {
 	return this.events
+}
+
+func (this *BlockTransaction) Signer() string {
+	return metadata.AccountId{Value: this.Signed().Unwrap().Address.Id.Unwrap()}.ToHuman()
+}
+
+func (this *BlockTransaction) AppId() prim.Option[uint32] {
+	signed := this.Signed()
+	if signed.IsNone() {
+		return prim.NewNone[uint32]()
+	}
+
+	return prim.NewSome(signed.Unwrap().AppId)
 }

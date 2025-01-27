@@ -19,10 +19,6 @@ type DataAvailabilityTx struct {
 	client *Client
 }
 
-func (this *Transactions) NewTransaction(payload metadata.Payload) Transaction {
-	return NewTransaction(this.client, payload)
-}
-
 func (this *DataAvailabilityTx) SubmitData(data []byte) Transaction {
 	call := daPallet.CallSubmitData{Data: data}
 	return NewTransaction(this.client, call.ToPayload())
