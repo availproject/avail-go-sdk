@@ -5,7 +5,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func Run_rpc() {
+func RunRpc() {
 	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
 	if err != nil {
 		panic(err)

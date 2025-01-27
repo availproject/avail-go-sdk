@@ -8,7 +8,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func Run_data_submission() {
+func RunDataSubmission() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)

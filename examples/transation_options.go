@@ -5,11 +5,12 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func Run_transaction_options() {
-	run_app_id()
+func RunTransactionOptions() {
+	runAppId()
+	runNonce()
 }
 
-func run_app_id() {
+func runAppId() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)
@@ -40,7 +41,7 @@ func run_app_id() {
 	}
 }
 
-func run_nonce() {
+func runNonce() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)

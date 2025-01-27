@@ -9,7 +9,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func Run_storage() {
+func RunStorage() {
 	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
 	if err != nil {
 		panic(err)

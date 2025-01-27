@@ -5,7 +5,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func Run_account_balance() {
+func RunAccountBalance() {
 	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
 	if err != nil {
 		panic(err)
