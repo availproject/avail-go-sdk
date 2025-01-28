@@ -27,7 +27,7 @@ func (this *kateRPC) BlockLength(blockHash prim.Option[prim.H256]) (metadata.Blo
 
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
-		return metadata.BlockLength{}, err
+		return metadata.BlockLength{}, newError(err, ErrorCode002)
 	}
 
 	if mappedData["chunkSize"] == nil {
@@ -75,7 +75,7 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
-		return res, err
+		return res, newError(err, ErrorCode002)
 	}
 
 	if mappedData["dataProof"] == nil {
@@ -246,7 +246,7 @@ func (this *kateRPC) QueryProof(cells []KateCell, blockHash prim.Option[prim.H25
 
 	var mappedData []interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
-		return res, err
+		return res, newError(err, ErrorCode002)
 	}
 
 	for i := range mappedData {
@@ -300,7 +300,7 @@ func (this *kateRPC) QueryRows(rows []uint32, blockHash prim.Option[prim.H256]) 
 
 	var outerArrays []interface{}
 	if err := json.Unmarshal([]byte(rawJson), &outerArrays); err != nil {
-		return res, err
+		return res, newError(err, ErrorCode002)
 	}
 
 	for i := range outerArrays {

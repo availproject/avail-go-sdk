@@ -33,7 +33,7 @@ func (this *paymentRPC) QueryFeeDetails(extrinsic string, at prim.Option[prim.H2
 
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
-		return metadata.InclusionFee{}, err
+		return metadata.InclusionFee{}, newError(err, ErrorCode002)
 	}
 
 	if mappedData["inclusionFee"] == nil {

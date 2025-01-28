@@ -103,7 +103,7 @@ func (this *Client) Request(method string, params string) (string, error) {
 	request.Header.Add("Content-Type", "application/json")
 	response, err := this.client.Do(request)
 	if err != nil {
-		return "", err
+		return "", newError(err, ErrorCode000)
 	}
 
 	defer response.Body.Close()
@@ -114,12 +114,14 @@ func (this *Client) Request(method string, params string) (string, error) {
 	// fmt.Println("response Body:", string(responseBodyBytes))
 
 	if response.StatusCode != http.StatusOK {
-		return "", errors.New("HTTP status was NOT OK")
+		err := ErrorCode001
+		err.Message = fmt.Sprintf(`Status Code: %v`, response.StatusCode)
+		return "", &err
 	}
 
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal(responseBodyBytes, &mappedData); err != nil {
-		return "", err
+		return "", newError(err, ErrorCode002)
 	}
 
 	if mappedData["error"] != nil {
@@ -132,7 +134,7 @@ func (this *Client) Request(method string, params string) (string, error) {
 			errMessage += " " + err["data"].(string)
 		}
 
-		return "", errors.New(errMessage)
+		return "", newError(errors.New(errMessage), ErrorCode002)
 	}
 
 	if mappedData["result"] == nil {

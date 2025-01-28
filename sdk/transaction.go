@@ -149,7 +149,9 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 		}
 	}
 
-	return TransactionDetails{}, errors.New("Failed to submit transaction. Tried 3 times.")
+	customErr := ErrorCode003
+	customErr.Message = fmt.Sprintf(`Retry count: %v`, retryCount)
+	return TransactionDetails{}, &customErr
 }
 
 // Check that ID is zero for non-submitData payloads

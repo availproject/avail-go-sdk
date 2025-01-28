@@ -57,7 +57,7 @@ func (this *systemRPC) Health() (RpcSystemHealth, error) {
 
 	var jsonData map[string]interface{}
 	if err := json.Unmarshal([]byte(val), &jsonData); err != nil {
-		return RpcSystemHealth{}, err
+		return RpcSystemHealth{}, newError(err, ErrorCode002)
 	}
 
 	if jsonData["peers"] == nil {
@@ -103,7 +103,7 @@ func (this *systemRPC) NodeRoles() ([]string, error) {
 
 	var jsonData []interface{}
 	if err := json.Unmarshal([]byte(val), &jsonData); err != nil {
-		return []string{}, err
+		return []string{}, newError(err, ErrorCode002)
 	}
 
 	res := []string{}
@@ -123,7 +123,7 @@ func (this *systemRPC) Properties() (RpcSystemChainProperties, error) {
 
 	var jsonData map[string]interface{}
 	if err := json.Unmarshal([]byte(val), &jsonData); err != nil {
-		return RpcSystemChainProperties{}, err
+		return RpcSystemChainProperties{}, newError(err, ErrorCode002)
 	}
 
 	if jsonData["ss58Format"] == nil {
@@ -166,7 +166,7 @@ func (this *systemRPC) SyncState() (RpcSystemSyncState, error) {
 
 	var jsonData map[string]interface{}
 	if err := json.Unmarshal([]byte(val), &jsonData); err != nil {
-		return RpcSystemSyncState{}, err
+		return RpcSystemSyncState{}, newError(err, ErrorCode002)
 	}
 
 	if jsonData["startingBlock"] == nil {

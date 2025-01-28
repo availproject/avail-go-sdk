@@ -47,7 +47,7 @@ func (this *stateRPC) GetKeys(key string, at prim.Option[prim.H256]) ([]string, 
 
 	res := []string{}
 	if err := json.Unmarshal([]byte(value), &res); err != nil {
-		return nil, err
+		return nil, newError(err, ErrorCode002)
 	}
 
 	return res, nil
