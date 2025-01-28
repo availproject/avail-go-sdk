@@ -60,6 +60,31 @@ func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options 
 	return this.client.Rpc.Payment.QueryFeeDetails(tx.Value, prim.NewNone[prim.H256]())
 }
 
+func (this *Transaction) PaymentQueryFeeInfo(account subkey.KeyPair, options TransactionOptions) (metadata.FeeInfo, error) {
+	extra, additional, err := options.ToPrimitive(this.client, account.SS58Address(42))
+	if err != nil {
+		return metadata.FeeInfo{}, err
+	}
+	tx, err := prim.CreateSigned(this.Payload.Call, extra, additional, account)
+	if err != nil {
+		return metadata.FeeInfo{}, err
+	}
+
+	encodedTxLen := len(tx.HexToBytes())
+	encoded := tx.ToHexWith0x() + prim.Encoder.Encode(uint32(encodedTxLen))
+
+	val, err := this.client.Rpc.State.Call("TransactionPaymentApi_query_info", encoded, prim.NewNone[prim.H256]())
+	if err != nil {
+		return metadata.FeeInfo{}, err
+	}
+
+	res := metadata.FeeInfo{}
+	decoder := prim.NewDecoder(prim.Hex.FromHex(val), 0)
+	err = decoder.Decode(&res)
+
+	return res, err
+}
+
 func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload metadata.Payload, options TransactionOptions) (prim.H256, error) {
 	if !CheckPayloadAndOptionsValidity(&payload, &options) {
 		return prim.H256{}, errors.New("Transaction is not compatible with non-zero AppIds")

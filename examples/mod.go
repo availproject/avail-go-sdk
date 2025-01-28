@@ -8,7 +8,6 @@ func Run() {
 	RunBatch()
 	RunBlock()
 	RunDataSubmission()
-	RunEvents()
 	RunStorage()
 	RunRpc()
 	RunTransactionOptions()

@@ -1610,3 +1610,9 @@ type InclusionFee struct {
 	LenFee            Balance
 	AdjustedWeightFee Balance
 }
+
+type FeeInfo struct {
+	Weight     Weight
+	Class      DispatchClass
+	PartialFee Balance
+}
