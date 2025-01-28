@@ -2,13 +2,10 @@ package sdk
 
 import (
 	"fmt"
-
 	"github.com/sirupsen/logrus"
 	"github.com/vedhavyas/go-subkey/v2"
 
 	"errors"
-	"strconv"
-	"time"
 
 	"github.com/availproject/avail-go-sdk/metadata"
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
@@ -82,11 +79,11 @@ func (this *Transaction) PaymentQueryFeeInfo(account subkey.KeyPair, options Tra
 	decoder := prim.NewDecoder(prim.Hex.FromHex(val), 0)
 	err = decoder.Decode(&res)
 
-	return res, err
+	return res, newError(err, ErrorCode004)
 }
 
 func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload metadata.Payload, options TransactionOptions) (prim.H256, error) {
-	if !CheckPayloadAndOptionsValidity(&payload, &options) {
+	if !checkPayloadAndOptionsValidity(&payload, &options) {
 		return prim.H256{}, errors.New("Transaction is not compatible with non-zero AppIds")
 	}
 
@@ -94,16 +91,12 @@ func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload meta
 	if err != nil {
 		return prim.H256{}, err
 	}
-	tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
-	if err != nil {
-		return prim.H256{}, err
-	}
 
-	return client.Send(tx)
+	return signAndSend(client, account, payload, extra, additional)
 }
 
 func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitFor uint8, options TransactionOptions, blockTimeout uint32, retryCount uint32) (TransactionDetails, error) {
-	if !CheckPayloadAndOptionsValidity(&payload, &options) {
+	if !checkPayloadAndOptionsValidity(&payload, &options) {
 		return TransactionDetails{}, errors.New("Transaction is not compatible with non-zero AppIds")
 	}
 
@@ -113,25 +106,28 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 	}
 
 	for {
-		tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
+		txHash, err := signAndSend(client, account, payload, extra, additional)
 		if err != nil {
 			return TransactionDetails{}, err
 		}
 
-		txHash, err := client.Send(tx)
-		if err != nil {
-			return TransactionDetails{}, err
-		}
 		iden := txHash.ToString()[0:10]
 		if logrus.IsLevelEnabled(logrus.DebugLevel) {
 			logrus.Debug(fmt.Sprintf("%v: Transaction was submitted. Account: %v, TxHash: %v", iden, account.SS58Address(42), txHash.ToHexWith0x()))
 		}
-		maybeDetails, err := TransactionWatch(client, txHash, waitFor, blockTimeout)
+
+		watcher := newWatcher(client, txHash, waitFor, blockTimeout, 3)
+		maybeDetails, err := watcher.Run()
 		if err != nil {
 			return TransactionDetails{}, err
 		}
+
 		if maybeDetails.IsSome() {
-			return maybeDetails.Unwrap(), nil
+			val := maybeDetails.Unwrap()
+			if logrus.IsLevelEnabled(logrus.DebugLevel) {
+				logrus.Debug(fmt.Sprintf("%v: Transaction was found. Tx Hash: %v, Tx Index: %v, Block Hash: %v, Block Number: %v", iden, val.TxHash.ToHexWith0x(), val.TxIndex, val.BlockHash.ToHexWith0x(), val.BlockNumber))
+			}
+			return val, nil
 		}
 
 		if retryCount == 0 {
@@ -154,8 +150,17 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 	return TransactionDetails{}, &customErr
 }
 
+func signAndSend(client *Client, account subkey.KeyPair, payload metadata.Payload, extra prim.Extra, additional prim.Additional) (prim.H256, error) {
+	tx, err := prim.CreateSigned(payload.Call, extra, additional, account)
+	if err != nil {
+		return prim.H256{}, err
+	}
+
+	return client.Send(tx)
+}
+
 // Check that ID is zero for non-submitData payloads
-func CheckPayloadAndOptionsValidity(payload *metadata.Payload, options *TransactionOptions) bool {
+func checkPayloadAndOptionsValidity(payload *metadata.Payload, options *TransactionOptions) bool {
 	targetPalletIndex := daPallet.CallSubmitData{}.PalletIndex()
 	targetCallIndex := daPallet.CallSubmitData{}.CallIndex()
 
@@ -171,111 +176,12 @@ func CheckPayloadAndOptionsValidity(payload *metadata.Payload, options *Transact
 }
 
 type TransactionDetails struct {
-	Client      *Client
+	client      *Client
 	TxHash      prim.H256
 	TxIndex     uint32
 	BlockHash   prim.H256
 	BlockNumber uint32
 	Events      prim.Option[EventRecords]
-}
-
-func TransactionWatch(client *Client, txHash prim.H256, waitFor uint8, blockTimeout uint32) (prim.Option[TransactionDetails], error) {
-	shouldSleep := false
-	currentBlockHash := prim.NewNone[prim.H256]()
-	timeoutBlockNumber := prim.NewNone[uint32]()
-	iden := txHash.ToString()[0:10]
-	var err error
-	if logrus.IsLevelEnabled(logrus.DebugLevel) {
-		if waitFor == Finalization {
-			logrus.Debug(iden + ": Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for finalization")
-		} else {
-			logrus.Debug(iden + ": Watching for Tx Hash: " + txHash.ToHexWith0x() + ", Waiting for inclusion")
-		}
-	}
-
-	for {
-		if shouldSleep {
-			time.Sleep(time.Second * 3)
-		}
-		if !shouldSleep {
-			shouldSleep = true
-		}
-
-		blockHash := prim.H256{}
-		if waitFor == Finalization {
-			blockHash, err = client.Rpc.Chain.GetFinalizedHead()
-			if err != nil {
-				return prim.NewNone[TransactionDetails](), err
-			}
-		} else {
-			blockHash, err = client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
-			if err != nil {
-				return prim.NewNone[TransactionDetails](), err
-			}
-		}
-
-		if currentBlockHash.IsSome() {
-			if currentBlockHash.Unwrap() == blockHash {
-				continue
-			}
-		}
-		currentBlockHash = prim.NewSome(blockHash)
-
-		block, err := client.RPCBlockAt(prim.NewSome(blockHash))
-		if err != nil {
-			return prim.NewNone[TransactionDetails](), err
-		}
-
-		blockNumber := block.Header.Number
-		if logrus.IsLevelEnabled(logrus.DebugLevel) {
-			logrus.Debug(iden + ": New Block fetched. Hash: " + blockHash.ToHexWith0x() + ", Number: " + strconv.FormatUint(uint64(blockNumber), 10))
-		}
-
-		extrinsics := block.Extrinsics
-		for i := range extrinsics {
-			if extrinsics[i].TxHash.ToHexWith0x() == txHash.ToHexWith0x() {
-
-				// Get Events
-				blockEvents, err := client.EventsAt(prim.NewSome(blockHash))
-				events := prim.NewNone[EventRecords]()
-				if err != nil {
-					logrus.Error(err.Error())
-				} else {
-					events.Set(EventFilterByTxIndex(blockEvents, extrinsics[i].TxIndex))
-				}
-
-				details := TransactionDetails{
-					TxHash:      txHash,
-					TxIndex:     extrinsics[i].TxIndex,
-					BlockHash:   blockHash,
-					BlockNumber: blockNumber,
-					Events:      events,
-				}
-
-				if logrus.IsLevelEnabled(logrus.DebugLevel) {
-					logrus.Debug(fmt.Sprintf("%v: Transaction was found. Tx Hash: %v, Tx Index: %v, Block Hash: %v, Block Number: %v", iden, details.TxHash.ToHexWith0x(), details.TxIndex, details.BlockHash.ToHexWith0x(), details.BlockNumber))
-				}
-
-				return prim.NewSome(details), nil
-			}
-		}
-
-		if timeoutBlockNumber.IsNone() {
-			timeoutBlockNumber = prim.NewSome(blockNumber + blockTimeout)
-			if logrus.IsLevelEnabled(logrus.DebugLevel) {
-				logrus.Debug(iden + ": Current Block Number: " + strconv.FormatUint(uint64(blockNumber), 10) + ", Timeout Block Number: " + strconv.FormatUint(uint64(blockNumber+blockTimeout+1), 10))
-			}
-		}
-
-		if timeoutBlockNumber.IsSome() {
-			timeoutBlock := timeoutBlockNumber.Unwrap()
-			if timeoutBlock < blockNumber {
-				break
-			}
-		}
-	}
-
-	return prim.NewNone[TransactionDetails](), nil
 }
 
 func (this *TransactionDetails) IsSuccessful() (bool, error) {

@@ -26,7 +26,9 @@ func NewEvents(eventBytes []byte, metadata *meta.Metadata) (Events, error) {
 	// Decode EventCount
 	decoder := prim.NewDecoder(eventBytes, 0)
 	compactEventCount := prim.CompactU32{}
-	decoder.Decode(&compactEventCount)
+	if err := decoder.Decode(&compactEventCount); err != nil {
+		return Events{}, newError(err, ErrorCode004)
+	}
 
 	// Sanity Check. A stupid one but better than nothing
 	if events.eventCount > 1_000_000 {
@@ -93,14 +95,14 @@ func (this *EventPhase) ToString() string {
 func DecodeEventPhase(decoder *prim.Decoder) (EventPhase, error) {
 	var eventPhase = EventPhase{}
 	if err := decoder.Decode(&eventPhase.VariantIndex); err != nil {
-		return EventPhase{}, err
+		return EventPhase{}, newError(err, ErrorCode004)
 	}
 
 	switch eventPhase.VariantIndex {
 	case 0:
 		var value = uint32(0)
 		if err := decoder.Decode(&value); err != nil {
-			return EventPhase{}, err
+			return EventPhase{}, newError(err, ErrorCode004)
 		}
 		eventPhase.ApplyExtrinsic.Set(value)
 		return eventPhase, nil
@@ -154,10 +156,10 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 
 	eventRecord.EventStartIndex = uint32(decoder.Offset())
 	if err := decoder.Decode(&eventRecord.PalletIndex); err != nil {
-		return EventRecord{}, err
+		return EventRecord{}, newError(err, ErrorCode004)
 	}
 	if err := decoder.Decode(&eventRecord.EventIndex); err != nil {
-		return EventRecord{}, err
+		return EventRecord{}, newError(err, ErrorCode004)
 	}
 
 	// Decoding Pallet and Event Names
@@ -183,7 +185,7 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 
 	// Decode Topics
 	if err := decoder.Decode(&eventRecord.Topics); err != nil {
-		return EventRecord{}, err
+		return EventRecord{}, newError(err, ErrorCode004)
 	}
 	/* 	println("After topics") */
 
@@ -221,7 +223,7 @@ func EventFindFirstChecked[T interfaces.EventT](eventRecords EventRecords, targe
 		var t T
 		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
 		if err := decoder.Decode(&t); err != nil {
-			return prim.NewNone[T](), err
+			return prim.NewNone[T](), newError(err, ErrorCode004)
 		}
 
 		return prim.NewSome(t), nil
@@ -251,7 +253,7 @@ func EventFindAllChecked[T interfaces.EventT](eventRecords EventRecords, target 
 
 		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
 		if err := decoder.Decode(&t); err != nil {
-			return []T{}, err
+			return []T{}, newError(err, ErrorCode004)
 		}
 		result = append(result, t)
 	}

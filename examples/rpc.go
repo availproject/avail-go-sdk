@@ -107,6 +107,7 @@ func RunRpc() {
 		// system_SyncState
 		value, err := sdk.Client.Rpc.System.SyncState()
 		PanicOnError(err)
+		println("Starting Block:", value.StartingBlock)
 		println("Current Block:", value.CurrentBlock)
 		println("Highest Block:", value.HighestBlock)
 	}

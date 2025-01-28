@@ -173,7 +173,7 @@ func NewRPCBlockFromPrimBlock(primBlock prim.Block) (RPCBlock, error) {
 		encoded := prim.NewEncodedExtrinsicFromHex(primBlock.Extrinsics[i])
 		decoded, err := encoded.Decode(uint32(i))
 		if err != nil {
-			return RPCBlock{}, err
+			return RPCBlock{}, newError(err, ErrorCode004)
 		}
 		extrinsics = append(extrinsics, decoded)
 	}

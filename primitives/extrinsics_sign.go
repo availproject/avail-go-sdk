@@ -21,6 +21,7 @@ func CreateSigned(call Call, extra Extra, additional Additional, kp subkey.KeyPa
 	if err != nil {
 		return EncodedExtrinsic{}, err
 	}
+
 	signature, err := NewH512FromByteSlice(rawSignature)
 	if err != nil {
 		return EncodedExtrinsic{}, err
