@@ -1,11 +1,11 @@
 package sdk
 
 import (
-	"github.com/vedhavyas/go-subkey/v2"
-
 	"errors"
 
 	"github.com/availproject/avail-go-sdk/metadata"
+	"github.com/vedhavyas/go-subkey/v2"
+
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
@@ -42,18 +42,43 @@ func (this *Transaction) ToHex(account subkey.KeyPair, options TransactionOption
 	return tx.ToHexWith0x(), nil
 }
 
+// Transaction will be signed and sent.
+//
+// There is no guarantee that the transaction was executed at all. It might have been
+// dropped or discarded for various reasons. The caller is responsible for querying future
+// blocks in order to determine the execution status of that transaction.
 func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOptions) (prim.H256, error) {
 	return TransactionSignAndSend(this.client, account, this.Payload, options)
 }
 
+// Transaction will be signed, sent, and watched
+// If the transaction was dropped or never executed, the system will retry it
+// for 2 more times using the same nonce and app id.
+//
+// Param `waitFor` can be either `SDK.Inclusion` or `SDK.Finalization`
+// Param `blockTimeout` defines how many blocks will the watcher explore before determining
+// that the transaction was not executed.
+//
+// Most likely you would want to call `ExecuteAndWatchFinalization` or `ExecuteAndWatchInclusion`
 func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, options TransactionOptions, blockTimeout uint32) (TransactionDetails, error) {
 	return TransactionSignSendWatch(this.client, account, this.Payload, waitFor, options, blockTimeout, 3)
 }
 
+// Transaction will be signed, sent, and watched
+// If the transaction was dropped or never executed, the system will retry it
+// for 2 more times using the same nonce and app id.
+//
+// Waits for finalization to finalize the transaction.
 func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
 	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options, 5, 3)
 }
 
+// Transaction will be signed, sent, and watched
+// If the transaction was dropped or never executed, the system will retry it
+// for 2 more times using the same nonce and app id.
+//
+// Waits for transaction inclusion. Most of the time you would want to call `ExecuteAndWatchFinalization` as
+// inclusion doesn't mean that the transaction will be in the canonical chain.
 func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
 	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 3, 3)
 }
@@ -93,20 +118,26 @@ type TransactionDetails struct {
 	Events      prim.Option[EventRecords]
 }
 
+// Returns an error if there was no way to determine the
+// success status of a transaction. Otherwise it returns
+// true or false.
 func (this *TransactionDetails) IsSuccessful() (bool, error) {
 	if this.Events.IsNone() {
 		return false, errors.New("No events were decoded.")
 	}
 	events := this.Events.Unwrap()
 
-	maybeFound, err := EventFindFirstChecked(events, syPallet.EventExtrinsicFailed{})
-	if err != nil {
-		return false, err
+	extFailedEvent := syPallet.EventExtrinsicFailed{}
+
+	for i := range events {
+		if events[i].PalletIndex != extFailedEvent.PalletIndex() {
+			continue
+		}
+		if events[i].EventIndex != extFailedEvent.EventIndex() {
+			continue
+		}
+		return false, nil
 	}
 
-	if maybeFound.IsNone() {
-		return true, nil
-	}
-
-	return false, nil
+	return true, nil
 }

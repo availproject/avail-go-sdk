@@ -144,13 +144,13 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 
 	eventRecord.StartIdx = uint32(decoder.Offset())
 
-	/* 	println("Before Event Phase") */
+	/* 	fmt.Println("Before Event Phase") */
 	eventPhase, err := DecodeEventPhase(decoder)
 	if err != nil {
 		return EventRecord{}, err
 	}
 	eventRecord.Phase = eventPhase
-	/* 	println("Before After Phase") */
+	/* 	fmt.Println("Before After Phase") */
 
 	// Pallet and Event Index Decoding
 
@@ -170,7 +170,7 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 	eventRecord.PalletName = palletName
 	eventRecord.EventName = eventName
 
-	// println(fmt.Sprintf(`Decoding %v, %v %v`, eventRecord.PalletName, eventRecord.EventName, eventRecord.Phase.ToString()))
+	// fmt.Println(fmt.Sprintf(`Decoding %v, %v %v`, eventRecord.PalletName, eventRecord.EventName, eventRecord.Phase.ToString()))
 
 	// Decode Fields
 	eventRecord.EventFieldsStartIndex = uint32(decoder.Offset())
@@ -178,16 +178,16 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 		return EventRecord{}, err
 	}
 	eventRecord.EventFieldsEndIndex = uint32(decoder.Offset())
-	/* 	println("Before topics")
+	/* 	fmt.Println("Before topics")
 
-	   	println(fmt.Sprintf(`EventFieldsStartIndexed %v`, eventRecord.EventFieldsStartIndex))
-	   	println(fmt.Sprintf(`EventFieldsEndIndex %v`, eventRecord.EventFieldsEndIndex)) */
+	   	fmt.Println(fmt.Sprintf(`EventFieldsStartIndexed %v`, eventRecord.EventFieldsStartIndex))
+	   	fmt.Println(fmt.Sprintf(`EventFieldsEndIndex %v`, eventRecord.EventFieldsEndIndex)) */
 
 	// Decode Topics
 	if err := decoder.Decode(&eventRecord.Topics); err != nil {
 		return EventRecord{}, newError(err, ErrorCode004)
 	}
-	/* 	println("After topics") */
+	/* 	fmt.Println("After topics") */
 
 	eventRecord.EndIdx = uint32(decoder.Offset())
 	eventRecord.AllBytes = decoder.ScaleBytes.Data
@@ -195,10 +195,10 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 	eventRecord.Position = position
 
 	// TODO
-	/* 	println(fmt.Sprintf(`Decoded %v, %v`, eventRecord.PalletName, eventRecord.EventName))
-	   	println(fmt.Sprintf(`Decoded %v`, eventRecord.Phase.ToString())) */
-	/* 	println(fmt.Sprintf(`EventFieldsStartIndexed %v`, eventRecord.EventFieldsStartIndex))
-	   	println(fmt.Sprintf(`EventFieldsEndIndex %v`, eventRecord.EventFieldsEndIndex)) */
+	/* 	fmt.Println(fmt.Sprintf(`Decoded %v, %v`, eventRecord.PalletName, eventRecord.EventName))
+	   	fmt.Println(fmt.Sprintf(`Decoded %v`, eventRecord.Phase.ToString())) */
+	/* 	fmt.Println(fmt.Sprintf(`EventFieldsStartIndexed %v`, eventRecord.EventFieldsStartIndex))
+	   	fmt.Println(fmt.Sprintf(`EventFieldsEndIndex %v`, eventRecord.EventFieldsEndIndex)) */
 
 	return eventRecord, nil
 }

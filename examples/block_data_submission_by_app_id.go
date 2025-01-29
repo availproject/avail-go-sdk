@@ -21,7 +21,7 @@ func RunBlockDataSubmissionByAppId() {
 
 	// Block Blobs filtered by App Id
 	blobs := block.DataSubmissionByAppId(2)
-	println("Blob Count: ", len(blobs))
+	fmt.Println("Blob Count: ", len(blobs))
 	AssertEq(len(blobs), 2, "Data Submission count is not 2")
 
 	// Printout Block Blobs filtered by App Id
@@ -31,8 +31,8 @@ func RunBlockDataSubmissionByAppId() {
 		accountId, err := metadata.NewAccountIdFromMultiAddress(blob.TxSigner)
 		PanicOnError(err)
 
-		println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
+		fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
 	}
 
-	println("RunBlockDataSubmissionByAppId finished correctly.")
+	fmt.Println("RunBlockDataSubmissionByAppId finished correctly.")
 }

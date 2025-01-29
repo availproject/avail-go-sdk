@@ -1,6 +1,8 @@
 package sdk
 
 import (
+	"fmt"
+
 	"github.com/availproject/avail-go-sdk/metadata"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
@@ -16,7 +18,7 @@ type BlockTransaction struct {
 func NewBlockTransaction(client *Client, extrinsic *prim.DecodedExtrinsic, events prim.Option[EventRecords]) BlockTransaction {
 	palletName, callName, err := client.Metadata().PalletCallName(extrinsic.Call.PalletIndex, extrinsic.Call.CallIndex)
 	if err != nil {
-		println(err.Error())
+		fmt.Println(err.Error())
 	}
 
 	return BlockTransaction{

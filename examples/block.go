@@ -1,6 +1,6 @@
 package examples
 
-import ()
+import "fmt"
 
 func RunBlock() {
 	RunBlockTransactionAll()
@@ -15,5 +15,5 @@ func RunBlock() {
 	RunBlockDataSubmissionBySigner()
 	RunBlockEvents()
 
-	println("RunBlock finished correctly.")
+	fmt.Println("RunBlock finished correctly.")
 }

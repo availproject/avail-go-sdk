@@ -26,12 +26,12 @@ func RunBlockTransactionBySigner() {
 
 	// All Transaction filtered by Signer
 	blockTxs := block.TransactionBySigner(accountId)
-	println("Transaction Count: ", len(blockTxs))
+	fmt.Println("Transaction Count: ", len(blockTxs))
 	AssertEq(len(blockTxs), 5, "Transaction count is not 5")
 
 	// Printout Block Transactions made by Signer
 	for _, tx := range blockTxs {
-		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex(), tx.Signer(), tx.AppId()))
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex(), tx.Signer(), tx.AppId()))
 		AssertEq(tx.Signer().UnsafeUnwrap(), accountId.ToHuman(), "Signer is not the correct one")
 	}
 
@@ -39,19 +39,19 @@ func RunBlockTransactionBySigner() {
 	daTx := daPallet.CallCreateApplicationKey{}
 	isOk := pallets.Decode(&daTx, blockTxs[0].Extrinsic)
 	AssertEq(isOk, true, "Transaction was not of type Create Application Key")
-	println(fmt.Sprintf(`Key: %v`, string(daTx.Key)))
+	fmt.Println(fmt.Sprintf(`Key: %v`, string(daTx.Key)))
 
 	// Printout all Transaction Events
 	txEvents := blockTxs[0].Events().UnsafeUnwrap()
 	AssertEq(len(txEvents), 7, "Events count is not 7")
 
 	for _, ev := range txEvents {
-		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
 	}
 
 	// Convert from Block Transaction Event to Specific Transaction Event
 	event := SDK.EventFindFirst(txEvents, daPallet.EventApplicationKeyCreated{}).UnsafeUnwrap()
-	println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Owner: %v, Key: %v, AppId: %v`, event.PalletName(), event.EventName(), event.Owner.ToHuman(), string(event.Key), event.Id))
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Owner: %v, Key: %v, AppId: %v`, event.PalletName(), event.EventName(), event.Owner.ToHuman(), string(event.Key), event.Id))
 
-	println("RunBlockTransactionBySigner finished correctly.")
+	fmt.Println("RunBlockTransactionBySigner finished correctly.")
 }

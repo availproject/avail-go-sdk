@@ -1,6 +1,8 @@
 package examples
 
 import (
+	"fmt"
+
 	prim "github.com/availproject/avail-go-sdk/primitives"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
@@ -13,77 +15,77 @@ func RunRpc() {
 		// chain_GetBlock
 		value, err := sdk.Client.Rpc.Chain.GetBlock(prim.NewNone[prim.H256]())
 		PanicOnError(err)
-		println("Block Number:", value.Header.Number)
+		fmt.Println("Block Number:", value.Header.Number)
 	}
 
 	{
 		// chain_GetBlockHash
 		value, err := sdk.Client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
 		PanicOnError(err)
-		println("Block Hash:", value.ToHuman())
+		fmt.Println("Block Hash:", value.ToHuman())
 	}
 
 	{
 		// chain_GetFinalizedHead
 		value, err := sdk.Client.Rpc.Chain.GetFinalizedHead()
 		PanicOnError(err)
-		println("Block Hash:", value.ToHuman())
+		fmt.Println("Block Hash:", value.ToHuman())
 	}
 
 	{
 		// chain_GetHeader
 		value, err := sdk.Client.Rpc.Chain.GetHeader(prim.NewNone[prim.H256]())
 		PanicOnError(err)
-		println("Block Number:", value.Number)
+		fmt.Println("Block Number:", value.Number)
 	}
 
 	{
 		// chainspec_V1GenesisHash
 		value, err := sdk.Client.Rpc.ChainSpec.V1GenesisHash()
 		PanicOnError(err)
-		println("Genesis Hash:", value.ToHuman())
+		fmt.Println("Genesis Hash:", value.ToHuman())
 	}
 
 	{
 		// system_AccountNextIndex
 		value, err := sdk.Client.Rpc.System.AccountNextIndex("5GEQ6S3vpSFjYCqsrndQhcPL3sh8uAYbpeCiZFhF4u9EjK6F")
 		PanicOnError(err)
-		println("Nonce:", value)
+		fmt.Println("Nonce:", value)
 	}
 
 	{
 		// system_Chain
 		value, err := sdk.Client.Rpc.System.Chain()
 		PanicOnError(err)
-		println("Chain:", value)
+		fmt.Println("Chain:", value)
 	}
 
 	{
 		// system_ChainType
 		value, err := sdk.Client.Rpc.System.ChainType()
 		PanicOnError(err)
-		println("ChainType:", value)
+		fmt.Println("ChainType:", value)
 	}
 
 	{
 		// system_Health
 		value, err := sdk.Client.Rpc.System.Health()
 		PanicOnError(err)
-		println("Health: IsSyncing:", value.IsSyncing)
+		fmt.Println("Health: IsSyncing:", value.IsSyncing)
 	}
 
 	{
 		// system_LocalPeerId
 		value, err := sdk.Client.Rpc.System.LocalPeerId()
 		PanicOnError(err)
-		println("Local Peer Id:", value)
+		fmt.Println("Local Peer Id:", value)
 	}
 
 	{
 		// system_Name
 		value, err := sdk.Client.Rpc.System.Name()
 		PanicOnError(err)
-		println("Name:", value)
+		fmt.Println("Name:", value)
 	}
 
 	{
@@ -91,7 +93,7 @@ func RunRpc() {
 		value, err := sdk.Client.Rpc.System.NodeRoles()
 		PanicOnError(err)
 		for _, elem := range value {
-			println("Role:", elem)
+			fmt.Println("Role:", elem)
 		}
 	}
 
@@ -99,24 +101,24 @@ func RunRpc() {
 		// system_Properties
 		value, err := sdk.Client.Rpc.System.Properties()
 		PanicOnError(err)
-		println("Ss58format:", value.Ss58Format)
-		println("Token Symbol:", value.TokenSymbol)
+		fmt.Println("Ss58format:", value.Ss58Format)
+		fmt.Println("Token Symbol:", value.TokenSymbol)
 	}
 
 	{
 		// system_SyncState
 		value, err := sdk.Client.Rpc.System.SyncState()
 		PanicOnError(err)
-		println("Starting Block:", value.StartingBlock)
-		println("Current Block:", value.CurrentBlock)
-		println("Highest Block:", value.HighestBlock)
+		fmt.Println("Starting Block:", value.StartingBlock)
+		fmt.Println("Current Block:", value.CurrentBlock)
+		fmt.Println("Highest Block:", value.HighestBlock)
 	}
 
 	{
 		// system_Version
 		value, err := sdk.Client.Rpc.System.Version()
 		PanicOnError(err)
-		println("Version:", value)
+		fmt.Println("Version:", value)
 	}
 
 	{
@@ -124,5 +126,5 @@ func RunRpc() {
 		_, _ = sdk.Client.Rpc.Author.RotateKeys()
 	}
 
-	println("RunRpc finished correctly.")
+	fmt.Println("RunRpc finished correctly.")
 }

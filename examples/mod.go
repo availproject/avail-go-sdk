@@ -10,9 +10,13 @@ func Run() {
 	RunDataSubmission()
 	RunStorage()
 	RunRpc()
-	RunTransactionOptions()
-	RunTransactionPayment()
-	RunCustomTransaction()
+	RunTransaction()
+}
+
+func AssertTrue(v bool, message string) {
+	if !v {
+		panic(fmt.Sprintf("Failure. Message: %v", message))
+	}
 }
 
 // v1 is Actual value, v2 is Expected value

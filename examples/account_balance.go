@@ -1,6 +1,8 @@
 package examples
 
 import (
+	"fmt"
+
 	"github.com/availproject/avail-go-sdk/metadata"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	"github.com/availproject/avail-go-sdk/primitives"
@@ -22,17 +24,17 @@ func RunAccountBalance() {
 	val, err := storage.Fetch(&storageAt, accountId)
 	PanicOnError(err)
 
-	println("Free Balance: ", val.Value.AccountData.Free.ToHuman())
-	println("Reserved Balance: ", val.Value.AccountData.Reserved.ToHuman())
-	println("Frozen Balance: ", val.Value.AccountData.Frozen.ToHuman())
+	fmt.Println("Free Balance: ", val.Value.AccountData.Free.ToHuman())
+	fmt.Println("Reserved Balance: ", val.Value.AccountData.Reserved.ToHuman())
+	fmt.Println("Frozen Balance: ", val.Value.AccountData.Frozen.ToHuman())
 
 	// Via Abstraction
 	balance, err := SDK.Account.Balance(sdk.Client, accountId)
 	PanicOnError(err)
 
-	println("Free Balance: ", balance.Free.ToHuman())
-	println("Reserved Balance: ", balance.Reserved.ToHuman())
-	println("Frozen Balance: ", balance.Frozen.ToHuman())
+	fmt.Println("Free Balance: ", balance.Free.ToHuman())
+	fmt.Println("Reserved Balance: ", balance.Reserved.ToHuman())
+	fmt.Println("Frozen Balance: ", balance.Frozen.ToHuman())
 
-	println("RunAccountBalance finished correctly.")
+	fmt.Println("RunAccountBalance finished correctly.")
 }

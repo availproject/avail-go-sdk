@@ -71,7 +71,7 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 		return res, err
 	}
 
-	println(rawJson)
+	fmt.Println(rawJson)
 
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {

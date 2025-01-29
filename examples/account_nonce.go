@@ -1,6 +1,8 @@
 package examples
 
 import (
+	"fmt"
+
 	"github.com/availproject/avail-go-sdk/metadata"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
@@ -13,7 +15,7 @@ func RunAccountNonce() {
 	nonce, err := sdk.Client.Rpc.System.AccountNextIndex("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
 	PanicOnError(err)
 
-	println("RPC Nonce: ", nonce)
+	fmt.Println("RPC Nonce: ", nonce)
 
 	// Via Abstraction
 	accountId, err := metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
@@ -22,7 +24,7 @@ func RunAccountNonce() {
 	nonce2, err := SDK.Account.Nonce(sdk.Client, accountId)
 	PanicOnError(err)
 
-	println("Abstraction Nonce: ", nonce2)
+	fmt.Println("Abstraction Nonce: ", nonce2)
 
-	println("RunAccountNonce finished correctly.")
+	fmt.Println("RunAccountNonce finished correctly.")
 }

@@ -31,14 +31,14 @@ func RunDataSubmission() {
 	if isSuc, err := res.IsSuccessful(); err != nil {
 		panic(err)
 	} else if !isSuc {
-		println("The transaction was unsuccessful")
+		fmt.Println("The transaction was unsuccessful")
 	}
 
 	events := res.Events.Unwrap()
 	event := SDK.EventFindFirst(events, daPallet.EventApplicationKeyCreated{}).Unwrap()
 
 	appId := event.Id
-	println(fmt.Sprintf(`Owner: %v, Key: %v, AppId: %v`, event.Owner.ToHuman(), string(event.Key), appId))
+	fmt.Println(fmt.Sprintf(`Owner: %v, Key: %v, AppId: %v`, event.Owner.ToHuman(), string(event.Key), appId))
 
 	tx = sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
 	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(appId))
@@ -49,16 +49,16 @@ func RunDataSubmission() {
 	if isSuc, err := res.IsSuccessful(); err != nil {
 		panic(err)
 	} else if !isSuc {
-		println("The transaction was unsuccessful")
+		fmt.Println("The transaction was unsuccessful")
 	}
 
 	// Transaction Details
-	println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
 
 	events = res.Events.Unwrap()
 	event2 := SDK.EventFindFirst(events, daPallet.EventDataSubmitted{}).Unwrap()
 
-	println(fmt.Sprintf(`Who: %v, Datahash: %v`, event2.Who.ToHuman(), event2.DataHash.ToHexWith0x()))
+	fmt.Println(fmt.Sprintf(`Who: %v, Datahash: %v`, event2.Who.ToHuman(), event2.DataHash.ToHexWith0x()))
 
-	println("RunDataSubmission finished correctly.")
+	fmt.Println("RunDataSubmission finished correctly.")
 }

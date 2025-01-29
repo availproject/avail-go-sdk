@@ -1,6 +1,8 @@
 package examples
 
 import (
+	"fmt"
+
 	"github.com/availproject/avail-go-sdk/metadata"
 	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
@@ -30,9 +32,8 @@ func RunBatch() {
 	// The other was it to create a transaction using the sdk api and then use the `call` field member
 	{
 		destCharlie, err := metadata.NewAccountIdFromAddress("5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y")
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		tx := sdk.Tx.Balances.TransferKeepAlive(destCharlie.ToMultiAddress(), SDK.OneAvail())
 		callsToExecute = append(callsToExecute, tx.Payload.Call)
 	}
@@ -47,27 +48,25 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("The transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
 		if SDK.EventFindFirst(events, utPallet.EventBatchCompleted{}).IsSome() {
-			println("Batch was successfully completed")
+			fmt.Println("Batch was successfully completed")
 		} else {
 			panic("Batch call failed")
 		}
 
 		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 2 {
-			println("All batch items completed")
+			fmt.Println("All batch items completed")
 		} else {
 			panic("No all items were completed")
 		}
 
-		println("Batch call done")
+		fmt.Println("Batch call done")
 	}
 
 	// Batch All call
@@ -76,27 +75,25 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("The transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
 		if SDK.EventFindFirst(events, utPallet.EventBatchCompleted{}).IsSome() {
-			println("Batch was successfully completed")
+			fmt.Println("Batch was successfully completed")
 		} else {
 			panic("Batch All call failed")
 		}
 
 		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 2 {
-			println("All batch items completed")
+			fmt.Println("All batch items completed")
 		} else {
 			panic("No all items were completed")
 		}
 
-		println("Batch All call done")
+		fmt.Println("Batch All call done")
 	}
 
 	// Force Batch call
@@ -105,27 +102,25 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("The transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
 		if SDK.EventFindFirst(events, utPallet.EventBatchCompleted{}).IsSome() {
-			println("Batch was successfully completed")
+			fmt.Println("Batch was successfully completed")
 		} else {
 			panic("Batch All call failed")
 		}
 
 		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 2 {
-			println("All batch items completed")
+			fmt.Println("All batch items completed")
 		} else {
 			panic("No all items were completed")
 		}
 
-		println("Force Batch call done")
+		fmt.Println("Force Batch call done")
 	}
 
 	//
@@ -156,29 +151,27 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("The transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
 		if event := SDK.EventFindFirst(events, utPallet.EventBatchInterrupted{}); event.IsSome() {
 			ev := event.Unwrap()
-			println("Batch was interrupted. Reason: ", ev.Error.ToHuman())
-			println("Tx Index that caused failure: ", ev.Index)
+			fmt.Println("Batch was interrupted. Reason: ", ev.Error.ToHuman())
+			fmt.Println("Tx Index that caused failure: ", ev.Index)
 		} else {
 			panic("Failed to find EventBatchInterrupted event.")
 		}
 
 		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 2 {
-			println("Some batch items completed")
+			fmt.Println("Some batch items completed")
 		} else {
 			panic("Cannot be more than 2")
 		}
 
-		println("Batch call done")
+		fmt.Println("Batch call done")
 	}
 
 	// Batch All call
@@ -187,21 +180,19 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if isSuc {
-			panic("The transaction is supposed to fail")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, false, "Transaction is supposed to fail")
 
 		events := res.Events.Unwrap()
 
 		if event := SDK.EventFindFirst(events, syPallet.EventExtrinsicFailed{}); event.IsSome() {
-			println("Batch was interrupted. Reason: ", event.Unwrap().DispatchError.ToHuman())
+			fmt.Println("Batch was interrupted. Reason: ", event.Unwrap().DispatchError.ToHuman())
 		} else {
 			panic("Failed to find EventExtrinsicFailed event.")
 		}
 
-		println("Batch All call done")
+		fmt.Println("Batch All call done")
 	}
 
 	// Force Batch call
@@ -210,34 +201,32 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("We either failed to decode events or the transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
 		if SDK.EventFindFirst(events, utPallet.EventBatchCompletedWithErrors{}).IsSome() {
-			println("Batch completed with errors")
+			fmt.Println("Batch completed with errors")
 		} else {
 			panic("Failed to find EventBatchCompletedWithErrors")
 		}
 
 		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 3 {
-			println("3 of out 4 items completed")
+			fmt.Println("3 of out 4 items completed")
 		} else {
 			panic("3 items must be completed")
 		}
 
 		if event := SDK.EventFindFirst(events, utPallet.EventItemFailed{}); event.IsSome() {
-			println("Item failed. Reason: ", event.Unwrap().Error.ToHuman())
+			fmt.Println("Item failed. Reason: ", event.Unwrap().Error.ToHuman())
 		} else {
 			panic("Failed to find EventItemFailed")
 		}
 
-		println("Force Batch call done")
+		fmt.Println("Force Batch call done")
 	}
 
-	println("RunBatch finished correctly.")
+	fmt.Println("RunBatch finished correctly.")
 }
