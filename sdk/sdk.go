@@ -11,7 +11,7 @@ import (
 
 type SDK struct {
 	Client *Client
-	Tx     Transactions
+	Tx     transactions
 }
 
 func (this *SDK) UpdateMetadata(blockHash prim.Option[prim.H256]) error {
@@ -35,7 +35,6 @@ func NewSDK(endpoint string) (SDK, error) {
 func NewSDKWithMetadata(endpoint string, metadataBlockHash prim.Option[prim.H256]) (SDK, error) {
 	var client = NewClient(endpoint)
 
-	// Temp for testing
 	if err := client.InitMetadata(metadataBlockHash); err != nil {
 		return SDK{}, err
 	}
@@ -45,7 +44,7 @@ func NewSDKWithMetadata(endpoint string, metadataBlockHash prim.Option[prim.H256
 	}, nil
 }
 
-type Transactions struct {
+type transactions struct {
 	client           *Client
 	DataAvailability DataAvailabilityTx
 	Utility          UtilityTx
@@ -57,8 +56,8 @@ type Transactions struct {
 	Sudo             SudoTx
 }
 
-func newTransactions(client *Client) Transactions {
-	return Transactions{
+func newTransactions(client *Client) transactions {
+	return transactions{
 		client:           client,
 		DataAvailability: DataAvailabilityTx{client: client},
 		Utility:          UtilityTx{client: client},

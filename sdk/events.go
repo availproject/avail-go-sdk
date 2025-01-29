@@ -26,7 +26,9 @@ func NewEvents(eventBytes []byte, metadata *meta.Metadata) (Events, error) {
 	// Decode EventCount
 	decoder := prim.NewDecoder(eventBytes, 0)
 	compactEventCount := prim.CompactU32{}
-	decoder.Decode(&compactEventCount)
+	if err := decoder.Decode(&compactEventCount); err != nil {
+		return Events{}, newError(err, ErrorCode004)
+	}
 
 	// Sanity Check. A stupid one but better than nothing
 	if events.eventCount > 1_000_000 {
@@ -93,14 +95,14 @@ func (this *EventPhase) ToString() string {
 func DecodeEventPhase(decoder *prim.Decoder) (EventPhase, error) {
 	var eventPhase = EventPhase{}
 	if err := decoder.Decode(&eventPhase.VariantIndex); err != nil {
-		return EventPhase{}, err
+		return EventPhase{}, newError(err, ErrorCode004)
 	}
 
 	switch eventPhase.VariantIndex {
 	case 0:
 		var value = uint32(0)
 		if err := decoder.Decode(&value); err != nil {
-			return EventPhase{}, err
+			return EventPhase{}, newError(err, ErrorCode004)
 		}
 		eventPhase.ApplyExtrinsic.Set(value)
 		return eventPhase, nil
@@ -154,10 +156,10 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 
 	eventRecord.EventStartIndex = uint32(decoder.Offset())
 	if err := decoder.Decode(&eventRecord.PalletIndex); err != nil {
-		return EventRecord{}, err
+		return EventRecord{}, newError(err, ErrorCode004)
 	}
 	if err := decoder.Decode(&eventRecord.EventIndex); err != nil {
-		return EventRecord{}, err
+		return EventRecord{}, newError(err, ErrorCode004)
 	}
 
 	// Decoding Pallet and Event Names
@@ -183,7 +185,7 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 
 	// Decode Topics
 	if err := decoder.Decode(&eventRecord.Topics); err != nil {
-		return EventRecord{}, err
+		return EventRecord{}, newError(err, ErrorCode004)
 	}
 	/* 	println("After topics") */
 
@@ -210,18 +212,18 @@ func EventFindFirst[T interfaces.EventT](eventRecords EventRecords, target T) pr
 }
 
 func EventFindFirstChecked[T interfaces.EventT](eventRecords EventRecords, target T) (prim.Option[T], error) {
-	for _, elem := range eventRecords {
-		if elem.PalletIndex != target.PalletIndex() {
+	for i := range eventRecords {
+		if eventRecords[i].PalletIndex != target.PalletIndex() {
 			continue
 		}
-		if elem.EventIndex != target.EventIndex() {
+		if eventRecords[i].EventIndex != target.EventIndex() {
 			continue
 		}
 
 		var t T
-		var decoder = prim.NewDecoder(elem.AllBytes[elem.EventFieldsStartIndex:elem.EventFieldsEndIndex], 0)
+		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
 		if err := decoder.Decode(&t); err != nil {
-			return prim.NewNone[T](), err
+			return prim.NewNone[T](), newError(err, ErrorCode004)
 		}
 
 		return prim.NewSome(t), nil
@@ -241,17 +243,17 @@ func EventFindAll[T interfaces.EventT](eventRecords EventRecords, target T) []T 
 func EventFindAllChecked[T interfaces.EventT](eventRecords EventRecords, target T) ([]T, error) {
 	var t T
 	var result = []T{}
-	for _, elem := range eventRecords {
-		if elem.PalletIndex != target.PalletIndex() {
+	for i := range eventRecords {
+		if eventRecords[i].PalletIndex != target.PalletIndex() {
 			continue
 		}
-		if elem.EventIndex != target.EventIndex() {
+		if eventRecords[i].EventIndex != target.EventIndex() {
 			continue
 		}
 
-		var decoder = prim.NewDecoder(elem.AllBytes[elem.EventFieldsStartIndex:elem.EventFieldsEndIndex], 0)
+		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
 		if err := decoder.Decode(&t); err != nil {
-			return []T{}, err
+			return []T{}, newError(err, ErrorCode004)
 		}
 		result = append(result, t)
 	}
@@ -281,16 +283,16 @@ func EventFindLastChecked[T interfaces.EventT](eventRecords EventRecords, target
 
 func EventFilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecords {
 	var result = EventRecords{}
-	for _, elem := range eventRecords {
-		if elem.Phase.ApplyExtrinsic.IsNone() {
+	for i := range eventRecords {
+		if eventRecords[i].Phase.ApplyExtrinsic.IsNone() {
 			continue
 		}
-		var elemTxIndex = elem.Phase.ApplyExtrinsic.Unwrap()
+		var elemTxIndex = eventRecords[i].Phase.ApplyExtrinsic.Unwrap()
 		if elemTxIndex != txIndex {
 			continue
 		}
 
-		result = append(result, elem)
+		result = append(result, eventRecords[i])
 	}
 
 	return result
@@ -298,12 +300,12 @@ func EventFilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecord
 
 func EventFilterSystemEvents(eventRecords EventRecords) EventRecords {
 	var result = EventRecords{}
-	for _, elem := range eventRecords {
-		if elem.Phase.ApplyExtrinsic.IsSome() {
+	for i := range eventRecords {
+		if eventRecords[i].Phase.ApplyExtrinsic.IsSome() {
 			continue
 		}
 
-		result = append(result, elem)
+		result = append(result, eventRecords[i])
 	}
 
 	return result

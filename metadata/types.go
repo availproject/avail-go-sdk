@@ -46,7 +46,14 @@ func (this Balance) ToHuman() string {
 		var trailing = removeTrailingZeros(stringValue)
 		if trailing == "" {
 			result += "0"
+		} else {
+			missingPlaces := 18 - len(stringValue)
+
+			for i := 0; i < missingPlaces; i++ {
+				result += "0"
+			}
 		}
+
 		return result + trailing + " Avail"
 	}
 
@@ -187,6 +194,14 @@ func NewAccountIdFromAddress(address string) (AccountId, error) {
 	return res, nil
 }
 
+func NewAccountIdFromMultiAddress(address prim.MultiAddress) (AccountId, error) {
+	if address.Id.IsNone() {
+		return AccountId{}, errors.New("Cannot decode multiaddress")
+	}
+
+	return AccountId{Value: address.Id.Unwrap()}, nil
+}
+
 // Do not add, remove or change any of the field members.
 type DispatchInfo struct {
 	Weight      Weight
@@ -221,6 +236,10 @@ func (this DispatchClass) ToString() string {
 	default:
 		panic("Unknown DispatchCall Variant Index")
 	}
+}
+
+func (this DispatchClass) String() string {
+	return this.ToString()
 }
 
 // Do not add, remove or change any of the field members.
@@ -1584,4 +1603,19 @@ type AddressedMessage struct {
 	OriginDomain      uint32 `scale:"compact"`
 	DestinationDomain uint32 `scale:"compact"`
 	Id                uint64 `scale:"compact"`
+}
+
+type InclusionFee struct {
+	BaseFee           Balance
+	LenFee            Balance
+	AdjustedWeightFee Balance
+}
+type FeeDetails struct {
+	InclusionFee prim.Option[InclusionFee]
+}
+
+type RuntimeDispatchInfo struct {
+	Weight     Weight
+	Class      DispatchClass
+	PartialFee Balance
 }

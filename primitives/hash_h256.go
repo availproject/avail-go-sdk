@@ -27,6 +27,10 @@ func (this H256) ToString() string {
 	return this.ToHexWith0x()
 }
 
+func (this H256) String() string {
+	return this.ToHexWith0x()
+}
+
 func (this H256) ToRpcParam() string {
 	return "\"" + this.ToHexWith0x() + "\""
 }
@@ -46,4 +50,12 @@ func NewH256FromByteSlice(array []byte) (H256, error) {
 	}
 
 	return H256{Value: [32]byte(array)}, nil
+}
+
+func NewBlockHashFromHexString(hexString string) (H256, error) {
+	return NewH256FromHexString(hexString)
+}
+
+func NewBlockHashFromByteSlice(array []byte) (H256, error) {
+	return NewH256FromByteSlice(array)
 }

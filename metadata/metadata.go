@@ -39,12 +39,13 @@ func (this *Metadata) PalletCallName(palletIndex uint8, callIndex uint8) (string
 
 	callId := pallet.Calls.Type.Int64()
 	if typ, ok := v14.EfficientLookup[callId]; ok {
-		if len(typ.Def.Variant.Variants) > 0 {
-			for _, vars := range typ.Def.Variant.Variants {
-				if uint8(vars.Index) != callIndex {
+		variants := typ.Def.Variant.Variants
+		if len(variants) > 0 {
+			for i := range variants {
+				if uint8(variants[i].Index) != callIndex {
 					continue
 				}
-				return string(pallet.Name), string(vars.Name), nil
+				return string(pallet.Name), string(variants[i].Name), nil
 			}
 		}
 	}
@@ -65,12 +66,13 @@ func (this *Metadata) PalletEventName(palletIndex uint8, eventIndex uint8) (stri
 
 	callId := pallet.Events.Type.Int64()
 	if typ, ok := v14.EfficientLookup[callId]; ok {
-		if len(typ.Def.Variant.Variants) > 0 {
-			for _, vars := range typ.Def.Variant.Variants {
-				if uint8(vars.Index) != eventIndex {
+		variants := typ.Def.Variant.Variants
+		if len(variants) > 0 {
+			for i := range variants {
+				if uint8(variants[i].Index) != eventIndex {
 					continue
 				}
-				return string(pallet.Name), string(vars.Name), nil
+				return string(pallet.Name), string(variants[i].Name), nil
 			}
 		}
 	}
@@ -80,9 +82,9 @@ func (this *Metadata) PalletEventName(palletIndex uint8, eventIndex uint8) (stri
 
 func (this *Metadata) FindPalletMetadata(palletIndex uint8) *gsrpcTypes.PalletMetadataV14 {
 	v14 := this.Value.AsMetadataV14
-	for _, pallet := range v14.Pallets {
-		if uint8(pallet.Index) == palletIndex {
-			return &pallet
+	for i := range v14.Pallets {
+		if uint8(v14.Pallets[i].Index) == palletIndex {
+			return &v14.Pallets[i]
 		}
 	}
 
@@ -106,12 +108,14 @@ func (this *Metadata) DecodeEvent(palletIndex uint8, eventIndex uint8, decoder *
 			return nil
 		}
 
-		for _, vars := range typ.Def.Variant.Variants {
-			if uint8(vars.Index) != uint8(eventIndex) {
+		variants := typ.Def.Variant.Variants
+		for i := range variants {
+			if uint8(variants[i].Index) != uint8(eventIndex) {
 				continue
 			}
-			for _, field := range vars.Fields {
-				if typ, ok1 := v14.EfficientLookup[field.Type.Int64()]; ok1 {
+			fields := variants[i].Fields
+			for j := range fields {
+				if typ, ok1 := v14.EfficientLookup[fields[j].Type.Int64()]; ok1 {
 					this.decodeMetadataValue(decoder, typ, false)
 				}
 			}
@@ -166,8 +170,8 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 
 	if value.Def.IsTuple {
 		tuple := value.Def.Tuple
-		for _, elem := range tuple {
-			callId := elem.Int64()
+		for i := range tuple {
+			callId := tuple[i].Int64()
 			if typ, ok := v14.EfficientLookup[callId]; ok {
 				this.decodeMetadataValue(decoder, typ, isCompact)
 			} else {
@@ -213,9 +217,9 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 	}
 
 	if value.Def.IsComposite {
-		com := value.Def.Composite
-		for _, field := range com.Fields {
-			callId := field.Type.Int64()
+		fields := value.Def.Composite.Fields
+		for i := range fields {
+			callId := fields[i].Type.Int64()
 			if typ, ok := v14.EfficientLookup[callId]; ok {
 				if err := this.decodeMetadataValue(decoder, typ, isCompact); err != nil {
 					return err
@@ -236,14 +240,15 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 		}
 
 		found := false
-		for _, variant := range defVariant.Variants {
-			if uint8(variant.Index) != index {
+		for i := range defVariant.Variants {
+			if uint8(defVariant.Variants[i].Index) != index {
 				continue
 			}
 			found = true
 
-			for _, field := range variant.Fields {
-				callId := field.Type.Int64()
+			fields := defVariant.Variants[i].Fields
+			for j := range fields {
+				callId := fields[j].Type.Int64()
 				if typ, ok := v14.EfficientLookup[callId]; ok {
 					if err := this.decodeMetadataValue(decoder, typ, isCompact); err != nil {
 						return err

@@ -1,6 +1,8 @@
 package primitives
 
 import (
+	"fmt"
+
 	"github.com/itering/scale.go/utiles/uint128"
 )
 
@@ -54,6 +56,22 @@ func (this Option[T]) IsNone() bool {
 	return !this.isSet
 }
 
+func (this Option[T]) String() string {
+	if this.isSet {
+		return fmt.Sprintf("%v", this.value)
+	} else {
+		return "None"
+	}
+}
+
+func (this Option[T]) ToString() string {
+	return this.String()
+}
+
+func (this Option[T]) ToHuman() string {
+	return this.String()
+}
+
 // This function does not panic when no value is set.
 //
 // If Set, returns set value.
@@ -70,7 +88,7 @@ func (this Option[T]) Unwrap() T {
 //
 // If Set, returns set value.
 // If Not Set, panics
-func (this Option[T]) SafeUnwrap() T {
+func (this Option[T]) UnsafeUnwrap() T {
 	if this.isSet == false {
 		panic("Option is not set.")
 	}

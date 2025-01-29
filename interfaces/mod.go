@@ -1,12 +1,6 @@
 package interfaces
 
-import (
-	"github.com/availproject/avail-go-sdk/primitives"
-)
-
-type CallDataT interface {
-	Decode(call primitives.Call) primitives.Option[interface{}]
-}
+import ()
 
 type EventT interface {
 	PalletIndex() uint8

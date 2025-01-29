@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"fmt"
 	"strconv"
 
 	prim "github.com/availproject/avail-go-sdk/primitives"
@@ -34,6 +35,25 @@ type RPCParams struct {
 
 func (this *RPCParams) Add(value string) {
 	this.Values = append(this.Values, value)
+}
+
+func (this *RPCParams) AddByteSlice(value []byte) {
+	if len(value) == 0 {
+		return
+	}
+
+	res := "["
+	for i := range value {
+		res += fmt.Sprintf("%v", value[i])
+
+		if i < (len(value) - 1) {
+			res += ","
+		}
+	}
+
+	res = res + "]"
+
+	this.Values = append(this.Values, res)
 }
 
 func (this *RPCParams) AddH256(value prim.H256) {

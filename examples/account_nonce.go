@@ -5,27 +5,24 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func Run_account_nonce() {
+func RunAccountNonce() {
 	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	// Via RPC
 	nonce, err := sdk.Client.Rpc.System.AccountNextIndex("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
+
 	println("RPC Nonce: ", nonce)
 
 	// Via Abstraction
 	accountId, err := metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
+
 	nonce2, err := SDK.Account.Nonce(sdk.Client, accountId)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
+
 	println("Abstraction Nonce: ", nonce2)
+
+	println("RunAccountNonce finished correctly.")
 }

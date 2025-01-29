@@ -8,7 +8,7 @@ import (
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
-func Run_data_submission() {
+func RunDataSubmission() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	if err != nil {
 		panic(err)
@@ -59,4 +59,6 @@ func Run_data_submission() {
 	event2 := SDK.EventFindFirst(events, daPallet.EventDataSubmitted{}).Unwrap()
 
 	println(fmt.Sprintf(`Who: %v, Datahash: %v`, event2.Who.ToHuman(), event2.DataHash.ToHexWith0x()))
+
+	println("RunDataSubmission finished correctly.")
 }

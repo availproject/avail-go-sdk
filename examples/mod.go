@@ -1,12 +1,29 @@
 package examples
 
+import "fmt"
+
 func Run() {
-	Run_account_nonce()
-	Run_account_balance()
-	Run_batch()
-	Run_block()
-	Run_data_submission()
-	Run_events()
-	Run_storage()
-	Run_rpc()
+	RunAccountNonce()
+	RunAccountBalance()
+	RunBatch()
+	RunBlock()
+	RunDataSubmission()
+	RunStorage()
+	RunRpc()
+	RunTransactionOptions()
+	RunTransactionPayment()
+	RunCustomTransaction()
+}
+
+// v1 is Actual value, v2 is Expected value
+func AssertEq[T comparable](v1 T, v2 T, message string) {
+	if v1 != v2 {
+		panic(fmt.Sprintf("Failure. Message: %v, Actual: %v, Expected: %v", message, v1, v2))
+	}
+}
+
+func PanicOnError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

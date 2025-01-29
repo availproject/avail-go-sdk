@@ -47,7 +47,7 @@ func (this *stateRPC) GetKeys(key string, at prim.Option[prim.H256]) ([]string, 
 
 	res := []string{}
 	if err := json.Unmarshal([]byte(value), &res); err != nil {
-		return nil, err
+		return nil, newError(err, ErrorCode002)
 	}
 
 	return res, nil
@@ -70,4 +70,15 @@ func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) (string, error) {
 	}
 
 	return this.client.Request("state_getStorage", params.Build())
+}
+
+func (this *stateRPC) Call(method string, data string, at prim.Option[prim.H256]) (string, error) {
+	params := RPCParams{}
+	params.Add("\"" + method + "\"")
+	params.Add("\"" + data + "\"")
+	if at.IsSome() {
+		params.AddH256(at.Unwrap())
+	}
+
+	return this.client.Request("state_call", params.Build())
 }
