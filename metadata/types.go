@@ -1610,8 +1610,11 @@ type InclusionFee struct {
 	LenFee            Balance
 	AdjustedWeightFee Balance
 }
+type FeeDetails struct {
+	InclusionFee prim.Option[InclusionFee]
+}
 
-type FeeInfo struct {
+type RuntimeDispatchInfo struct {
 	Weight     Weight
 	Class      DispatchClass
 	PartialFee Balance

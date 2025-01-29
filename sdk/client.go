@@ -18,6 +18,7 @@ type Client struct {
 	endpoint string
 	metadata *metadata.Metadata
 	Rpc      RPC
+	Call     RuntimeApi
 }
 
 func NewClient(endpoint string) *Client {
@@ -25,6 +26,7 @@ func NewClient(endpoint string) *Client {
 	client.client = new(http.Client)
 	client.endpoint = endpoint
 	client.Rpc = newRPC(client)
+	client.Call = newRuntimeAPi(client)
 
 	return client
 }
