@@ -14,17 +14,14 @@ func RunTransactionOptions() {
 
 func runAppId() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	appId := uint32(5)
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	options := SDK.NewTransactionOptions().WithAppId(appId)
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
+
 	if isSuc, err := res.IsSuccessful(); err != nil {
 		panic(err)
 	} else if !isSuc {
@@ -32,9 +29,7 @@ func runAppId() {
 	}
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
 	foundAppId := genTx.Signed().UnsafeUnwrap().AppId
@@ -45,15 +40,11 @@ func runAppId() {
 
 func runNonce() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	acc := SDK.Account.Alice()
 	currentNonce, err := SDK.Account.Nonce(sdk.Client, metadata.NewAccountIdFromKeyPair(acc))
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	options := SDK.NewTransactionOptions().WithNonce(currentNonce).WithAppId(5)
@@ -68,9 +59,7 @@ func runNonce() {
 	}
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
 	foundNonce := genTx.Signed().UnsafeUnwrap().Nonce

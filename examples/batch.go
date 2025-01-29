@@ -11,9 +11,7 @@ import (
 
 func RunBatch() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
 	acc := SDK.Account.Alice()
@@ -23,9 +21,7 @@ func RunBatch() {
 	// One way to create a suitable call for the batch transaction is to manually create the desired call and then convert it to a generic call
 	{
 		destBob, err := metadata.NewAccountIdFromAddress("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
 
 		call := baPallet.CallTransferKeepAlive{Dest: destBob.ToMultiAddress(), Value: SDK.OneAvail()}
 		callsToExecute = append(callsToExecute, call.ToCall())
@@ -49,9 +45,7 @@ func RunBatch() {
 	{
 		tx := sdk.Tx.Utility.Batch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
 
 		if isSuc, err := res.IsSuccessful(); err != nil {
 			panic(err)
@@ -80,9 +74,7 @@ func RunBatch() {
 	{
 		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
 
 		if isSuc, err := res.IsSuccessful(); err != nil {
 			panic(err)
@@ -111,9 +103,7 @@ func RunBatch() {
 	{
 		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
 
 		if isSuc, err := res.IsSuccessful(); err != nil {
 			panic(err)
@@ -145,9 +135,8 @@ func RunBatch() {
 	// The 3. is poisoned with a too high transfer amount
 	{
 		destEve, err := metadata.NewAccountIdFromAddress("5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw")
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		tx := sdk.Tx.Balances.TransferKeepAlive(destEve.ToMultiAddress(), SDK.OneAvail().Mul64(uint64(1_000_000_000)))
 		callsToExecute = append(callsToExecute, tx.Payload.Call)
 	}
@@ -155,9 +144,8 @@ func RunBatch() {
 	// The 4. call is a normal one
 	{
 		destDave, err := metadata.NewAccountIdFromAddress("5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy")
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		tx := sdk.Tx.Balances.TransferKeepAlive(destDave.ToMultiAddress(), SDK.OneAvail())
 		callsToExecute = append(callsToExecute, tx.Payload.Call)
 	}
@@ -166,9 +154,7 @@ func RunBatch() {
 	{
 		tx := sdk.Tx.Utility.Batch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
 
 		if isSuc, err := res.IsSuccessful(); err != nil {
 			panic(err)
@@ -199,9 +185,7 @@ func RunBatch() {
 	{
 		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
 
 		if isSuc, err := res.IsSuccessful(); err != nil {
 			panic(err)
@@ -224,9 +208,7 @@ func RunBatch() {
 	{
 		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
 
 		if isSuc, err := res.IsSuccessful(); err != nil {
 			panic(err)

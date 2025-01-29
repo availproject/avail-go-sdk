@@ -9,26 +9,18 @@ import (
 
 func RunAccountBalance() {
 	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	accountId, err := metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	// Via Storage RPC
 	storageAt, err := sdk.Client.StorageAt(primitives.NewNone[primitives.H256]())
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	storage := syPallet.StorageAccount{}
 	val, err := storage.Fetch(&storageAt, accountId)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	println("Free Balance: ", val.Value.AccountData.Free.ToHuman())
 	println("Reserved Balance: ", val.Value.AccountData.Reserved.ToHuman())
@@ -36,9 +28,8 @@ func RunAccountBalance() {
 
 	// Via Abstraction
 	balance, err := SDK.Account.Balance(sdk.Client, accountId)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
+
 	println("Free Balance: ", balance.Free.ToHuman())
 	println("Reserved Balance: ", balance.Reserved.ToHuman())
 	println("Frozen Balance: ", balance.Frozen.ToHuman())

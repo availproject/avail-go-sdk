@@ -11,26 +11,20 @@ import (
 
 func RunStorage() {
 	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	blockHash, err := prim.NewH256FromHexString("0x9e813bb85fca217f8f3967bd4b550b05f7d559412571ca1dd621aa37343b300b")
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
+
 	blockStorage, err := sdk.Client.StorageAt(prim.NewSome(blockHash))
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	// Simple Storage
 	{
 		storage := staPallet.StorageMinValidatorBond{}
 		val, err := storage.Fetch(&blockStorage)
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		println("Min Validator Bond: ", val.ToHuman())
 	}
 
@@ -38,9 +32,8 @@ func RunStorage() {
 	{
 		storage := staPallet.StorageCurrentEra{}
 		val, err := storage.Fetch(&blockStorage)
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		if val.IsSome() {
 			println("Current Era: ", val.Unwrap())
 		}
@@ -50,13 +43,11 @@ func RunStorage() {
 	{
 		storage := sysPallet.StorageAccount{}
 		acc, err := metadata.NewAccountIdFromAddress("5C869t2dWzmmYkE8NT1oocuEEdwqNnAm2XhvnuHcavNUcTTT")
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		val, err := storage.Fetch(&blockStorage, acc)
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		println("Account Key: ", val.Key.ToHuman())
 		println("Account Nonce: ", val.Value.Nonce)
 		println("Account Free Balance: ", val.Value.AccountData.Free.ToHuman())
@@ -66,9 +57,8 @@ func RunStorage() {
 	{
 		storage := idenPallet.StorageIdentityOf{}
 		val, err := storage.FetchAll(&blockStorage)
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		for i := 0; i < len(val); i++ {
 			println("Identity Key: ", val[i].Key.ToHuman())
 			println("Identity Deposit: ", val[i].Value.T0.Deposit.ToHuman())
@@ -84,13 +74,11 @@ func RunStorage() {
 		storage := staPallet.StorageErasValidatorPrefs{}
 		era := uint32(299)
 		acc, err := metadata.NewAccountIdFromAddress("5EFTSpRN2nMZDLjkniBYdmMxquMNm5CLVsrX2V3HHue6QFFF")
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		val, err := storage.Fetch(&blockStorage, era, acc)
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		println("Era: ", val.Key1)
 		println("Address: ", val.Key2.ToHuman())
 		println("Commission: ", val.Value.Commission.ToHuman())
@@ -102,9 +90,7 @@ func RunStorage() {
 		storage := staPallet.StorageErasValidatorPrefs{}
 		era := uint32(299)
 		val, err := storage.FetchAll(&blockStorage, era)
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
 
 		for i := 0; i < len(val); i++ {
 			println("Era: ", val[i].Key1)

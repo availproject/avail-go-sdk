@@ -35,9 +35,8 @@ func RunCustomTransaction() {
 	tx := SDK.NewTransaction(sdk.Client, pallets.ToPayload(customTx))
 
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), SDK.NewTransactionOptions())
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
+
 	if isSuc, err := res.IsSuccessful(); err != nil {
 		panic(err)
 	} else if !isSuc {
@@ -45,9 +44,7 @@ func RunCustomTransaction() {
 	}
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	genTx := block.TransactionByIndex(res.TxIndex).UnsafeUnwrap()
 

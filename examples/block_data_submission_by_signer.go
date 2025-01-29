@@ -22,12 +22,12 @@ func RunBlockDataSubmissionBySigner() {
 	accountId, err := metadata.NewAccountIdFromAddress("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
 	PanicOnError(err)
 
-	// Block Blobs filtered by App Id
+	// Block Blobs filtered by Signer
 	blobs := block.DataSubmissionBySigner(accountId)
 	println("Blob Count: ", len(blobs))
 	AssertEq(len(blobs), 1, "Data Submission count is not 1")
 
-	// Printout Block Blobs filtered by App Id
+	// Printout Block Blobs filtered by Signer
 	for _, blob := range blobs {
 		blobAccountId, err := metadata.NewAccountIdFromMultiAddress(blob.TxSigner)
 		PanicOnError(err)
