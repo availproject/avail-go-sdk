@@ -1,11 +1,13 @@
 package examples
 
 import (
+	"fmt"
+
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
 func RunTransactionPayment() {
-	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
 	PanicOnError(err)
 
 	acc := SDK.Account.Alice()
@@ -19,9 +21,9 @@ func RunTransactionPayment() {
 	AssertEq(feeDetails1.InclusionFee.IsSome(), true, "InclusionFee Must Exist")
 	if feeDetails1.InclusionFee.IsSome() {
 		InclusionFee := feeDetails1.InclusionFee.Unwrap()
-		println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee.ToHuman())
-		println("Len Fee:", InclusionFee.LenFee.ToHuman())
-		println("Base Fee:", InclusionFee.BaseFee.ToHuman())
+		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee.ToHuman())
+		fmt.Println("Len Fee:", InclusionFee.LenFee.ToHuman())
+		fmt.Println("Base Fee:", InclusionFee.BaseFee.ToHuman())
 	}
 
 	// PaymentQueryFeeDetails
@@ -31,29 +33,29 @@ func RunTransactionPayment() {
 	AssertEq(feeDetails1.InclusionFee.IsSome(), true, "InclusionFee Must Exist")
 	if feeDetails2.InclusionFee.IsSome() {
 		InclusionFee := feeDetails2.InclusionFee.Unwrap()
-		println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee.ToHuman())
-		println("Len Fee:", InclusionFee.LenFee.ToHuman())
-		println("Base Fee:", InclusionFee.BaseFee.ToHuman())
+		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee.ToHuman())
+		fmt.Println("Len Fee:", InclusionFee.LenFee.ToHuman())
+		fmt.Println("Base Fee:", InclusionFee.BaseFee.ToHuman())
 	}
 
 	// PaymentQueryCallFeeInfo
 	feeInfo1, err := tx.PaymentQueryCallFeeInfo()
 	PanicOnError(err)
 
-	println("ProofSize:", feeInfo1.Weight.ProofSize)
-	println("RefTime:", feeInfo1.Weight.RefTime)
-	println("Class:", feeInfo1.Class.ToHuman())
-	println("Partial Fee:", feeInfo1.PartialFee.ToHuman())
+	fmt.Println("ProofSize:", feeInfo1.Weight.ProofSize)
+	fmt.Println("RefTime:", feeInfo1.Weight.RefTime)
+	fmt.Println("Class:", feeInfo1.Class.ToHuman())
+	fmt.Println("Partial Fee:", feeInfo1.PartialFee.ToHuman())
 
 	// PaymentQueryFeeInfo
 	feeInfo, err := tx.PaymentQueryFeeInfo(acc, options)
 	PanicOnError(err)
 
-	println("ProofSize:", feeInfo.Weight.ProofSize)
-	println("RefTime:", feeInfo.Weight.RefTime)
-	println("Class:", feeInfo.Class.ToHuman())
-	println("Partial Fee:", feeInfo.PartialFee.ToHuman())
+	fmt.Println("ProofSize:", feeInfo.Weight.ProofSize)
+	fmt.Println("RefTime:", feeInfo.Weight.RefTime)
+	fmt.Println("Class:", feeInfo.Class.ToHuman())
+	fmt.Println("Partial Fee:", feeInfo.PartialFee.ToHuman())
 
-	println("RunTransactionPayment finished correctly.")
+	fmt.Println("RunTransactionPayment finished correctly.")
 
 }

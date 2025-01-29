@@ -1,6 +1,8 @@
 package examples
 
 import (
+	"fmt"
+
 	"github.com/availproject/avail-go-sdk/metadata/pallets"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
@@ -25,11 +27,9 @@ func (this CustomTransaction) CallIndex() uint8 {
 	return 1
 }
 
-func RunCustomTransaction() {
+func RunTransactionCustom() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
-	if err != nil {
-		panic(err)
-	}
+	PanicOnError(err)
 
 	customTx := CustomTransaction{Value: []byte("Hello World")}
 	tx := SDK.NewTransaction(sdk.Client, pallets.ToPayload(customTx))
@@ -37,22 +37,18 @@ func RunCustomTransaction() {
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), SDK.NewTransactionOptions())
 	PanicOnError(err)
 
-	if isSuc, err := res.IsSuccessful(); err != nil {
-		panic(err)
-	} else if !isSuc {
-		println("The transaction was unsuccessful")
-	}
+	isSuc, err := res.IsSuccessful()
+	PanicOnError(err)
+	AssertEq(isSuc, true, "Transaction needs to be successful")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
 
 	genTx := block.TransactionByIndex(res.TxIndex).UnsafeUnwrap()
-
 	foundTx := CustomTransaction{}
-	if isOk := pallets.Decode(&foundTx, genTx.Extrinsic); !isOk {
-		panic("Failed to Decode Custom Transaction")
-	}
-	println("Value:", string(foundTx.Value))
+	isOk := pallets.Decode(&foundTx, genTx.Extrinsic)
+	AssertEq(isOk, true, "Transaction needs to be decodable")
+	fmt.Println("Value:", string(foundTx.Value))
 
-	println("RunCustomTransaction finished correctly.")
+	fmt.Println("RunCustomTransaction finished correctly.")
 }

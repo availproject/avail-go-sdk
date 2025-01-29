@@ -27,7 +27,7 @@ func RunBlockEvents() {
 
 	// Printout All Block Events
 	for _, ev := range blockEvents {
-		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
 	}
 
 	// Convert from Block Transaction Event to Specific Transaction Event
@@ -36,14 +36,14 @@ func RunBlockEvents() {
 	AssertEq(len(baEvents), 2, "Event Transfer event count is not 2")
 
 	for _, ev := range baEvents {
-		println(fmt.Sprintf(`From: %v, To: %v, Amount: %v`, ev.From.ToHuman(), ev.To.ToHuman(), ev.Amount))
+		fmt.Println(fmt.Sprintf(`From: %v, To: %v, Amount: %v`, ev.From.ToHuman(), ev.To.ToHuman(), ev.Amount))
 	}
 
 	// Convert from Block Transaction Event to Specific Transaction Event
 	daEventMyb, err := SDK.EventFindFirstChecked(blockEvents, daPallet.EventApplicationKeyCreated{})
 	PanicOnError(err)
 	daEvent := daEventMyb.UnsafeUnwrap()
-	println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Id: %v, Key: %v, Owner: %v`, daEvent.PalletName(), daEvent.EventName(), daEvent.Id, string(daEvent.Key), daEvent.Owner.ToHuman()))
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Id: %v, Key: %v, Owner: %v`, daEvent.PalletName(), daEvent.EventName(), daEvent.Id, string(daEvent.Key), daEvent.Owner.ToHuman()))
 
 	// Check
 	AssertEq(len(SDK.EventFindAll(blockEvents, daPallet.EventDataSubmitted{})), 4, "Incorrect count of Data Submitted Event")
@@ -55,14 +55,14 @@ func RunBlockEvents() {
 
 	// Printout All Tx Events
 	for _, ev := range txEvents {
-		println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
 	}
 
 	// Convert from Block Transaction Event to Specific Transaction Event
 	syEventMyb, err := SDK.EventFindFirstChecked(blockEvents, syPallet.EventExtrinsicSuccess{})
 	PanicOnError(err)
 	syEvent := syEventMyb.UnsafeUnwrap()
-	println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Class: %v`, syEvent.PalletName(), syEvent.EventName(), syEvent.DispatchInfo.Class))
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Class: %v`, syEvent.PalletName(), syEvent.EventName(), syEvent.DispatchInfo.Class))
 
-	println("RunBlockEvents finished correctly.")
+	fmt.Println("RunBlockEvents finished correctly.")
 }

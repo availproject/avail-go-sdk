@@ -1,6 +1,8 @@
 package sdk
 
 import (
+	"fmt"
+
 	meta "github.com/availproject/avail-go-sdk/metadata"
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	prim "github.com/availproject/avail-go-sdk/primitives"
@@ -21,7 +23,7 @@ func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
 	events, err := client.EventsAt(prim.NewSome(blockHash))
 	blockEvents := prim.NewNone[EventRecords]()
 	if err != nil {
-		println(err.Error())
+		fmt.Println(err.Error())
 	} else {
 		blockEvents = prim.NewSome(events)
 	}

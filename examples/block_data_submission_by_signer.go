@@ -24,7 +24,7 @@ func RunBlockDataSubmissionBySigner() {
 
 	// Block Blobs filtered by Signer
 	blobs := block.DataSubmissionBySigner(accountId)
-	println("Blob Count: ", len(blobs))
+	fmt.Println("Blob Count: ", len(blobs))
 	AssertEq(len(blobs), 1, "Data Submission count is not 1")
 
 	// Printout Block Blobs filtered by Signer
@@ -33,8 +33,8 @@ func RunBlockDataSubmissionBySigner() {
 		PanicOnError(err)
 		AssertEq(blobAccountId.ToHuman(), accountId.ToHuman(), "Transaction Signers are not the same.")
 
-		println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, blobAccountId.ToHuman()))
+		fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, blobAccountId.ToHuman()))
 	}
 
-	println("RunBlockDataSubmissionBySigner finished correctly.")
+	fmt.Println("RunBlockDataSubmissionBySigner finished correctly.")
 }

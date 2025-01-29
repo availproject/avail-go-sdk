@@ -29,7 +29,7 @@ func RunBlockDataSubmissionByHash() {
 	// Printout Block Blobs filtered by Transaction Hash
 	accountId, err := metadata.NewAccountIdFromMultiAddress(blob.TxSigner)
 	PanicOnError(err)
-	println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
+	fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
 
-	println("RunBlockDataSubmissionByHash finished correctly.")
+	fmt.Println("RunBlockDataSubmissionByHash finished correctly.")
 }

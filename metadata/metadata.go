@@ -145,7 +145,7 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 	   		path += string(str) + " "
 	   	}
 	   	if path != "" {
-	   		println(path)
+	   		fmt.Println(path)
 	   	} */
 
 	if value.Def.IsPrimitive {

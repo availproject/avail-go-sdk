@@ -1,6 +1,8 @@
 package examples
 
 import (
+	"fmt"
+
 	"github.com/availproject/avail-go-sdk/metadata"
 	idenPallet "github.com/availproject/avail-go-sdk/metadata/pallets/identity"
 	staPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
@@ -25,7 +27,7 @@ func RunStorage() {
 		val, err := storage.Fetch(&blockStorage)
 		PanicOnError(err)
 
-		println("Min Validator Bond: ", val.ToHuman())
+		fmt.Println("Min Validator Bond: ", val.ToHuman())
 	}
 
 	// Simple Storage that returns Option
@@ -35,7 +37,7 @@ func RunStorage() {
 		PanicOnError(err)
 
 		if val.IsSome() {
-			println("Current Era: ", val.Unwrap())
+			fmt.Println("Current Era: ", val.Unwrap())
 		}
 	}
 
@@ -48,9 +50,9 @@ func RunStorage() {
 		val, err := storage.Fetch(&blockStorage, acc)
 		PanicOnError(err)
 
-		println("Account Key: ", val.Key.ToHuman())
-		println("Account Nonce: ", val.Value.Nonce)
-		println("Account Free Balance: ", val.Value.AccountData.Free.ToHuman())
+		fmt.Println("Account Key: ", val.Key.ToHuman())
+		fmt.Println("Account Nonce: ", val.Value.Nonce)
+		fmt.Println("Account Free Balance: ", val.Value.AccountData.Free.ToHuman())
 	}
 
 	// Fetch All Map Storage
@@ -58,11 +60,12 @@ func RunStorage() {
 		storage := idenPallet.StorageIdentityOf{}
 		val, err := storage.FetchAll(&blockStorage)
 		PanicOnError(err)
+		AssertTrue(len(val) > 0, "There need to be more than 0 values")
 
 		for i := 0; i < len(val); i++ {
-			println("Identity Key: ", val[i].Key.ToHuman())
-			println("Identity Deposit: ", val[i].Value.T0.Deposit.ToHuman())
-			println("Identity Display: ", val[i].Value.T0.Info.Display.ToHuman())
+			fmt.Println("Identity Key: ", val[i].Key.ToHuman())
+			fmt.Println("Identity Deposit: ", val[i].Value.T0.Deposit.ToHuman())
+			fmt.Println("Identity Display: ", val[i].Value.T0.Info.Display.ToHuman())
 			if i >= 2 {
 				break
 			}
@@ -79,10 +82,10 @@ func RunStorage() {
 		val, err := storage.Fetch(&blockStorage, era, acc)
 		PanicOnError(err)
 
-		println("Era: ", val.Key1)
-		println("Address: ", val.Key2.ToHuman())
-		println("Commission: ", val.Value.Commission.ToHuman())
-		println("Blocked: ", val.Value.Blocked)
+		fmt.Println("Era: ", val.Key1)
+		fmt.Println("Address: ", val.Key2.ToHuman())
+		fmt.Println("Commission: ", val.Value.Commission.ToHuman())
+		fmt.Println("Blocked: ", val.Value.Blocked)
 	}
 
 	// Fetch All Double Map Storage
@@ -91,17 +94,18 @@ func RunStorage() {
 		era := uint32(299)
 		val, err := storage.FetchAll(&blockStorage, era)
 		PanicOnError(err)
+		AssertTrue(len(val) > 0, "There need to be more than 0 values")
 
 		for i := 0; i < len(val); i++ {
-			println("Era: ", val[i].Key1)
-			println("Address: ", val[i].Key2.ToHuman())
-			println("Commission: ", val[i].Value.Commission.ToHuman())
-			println("Blocked: ", val[i].Value.Blocked)
+			fmt.Println("Era: ", val[i].Key1)
+			fmt.Println("Address: ", val[i].Key2.ToHuman())
+			fmt.Println("Commission: ", val[i].Value.Commission.ToHuman())
+			fmt.Println("Blocked: ", val[i].Value.Blocked)
 			if i >= 2 {
 				break
 			}
 		}
 	}
 
-	println("RunStorage finished correctly.")
+	fmt.Println("RunStorage finished correctly.")
 }

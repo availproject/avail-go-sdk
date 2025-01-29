@@ -61,14 +61,14 @@ func main() {
 	acc := SDK.Account.Ferdie()
 
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
-	println("Submitting new Transaction... Can take up to 20 seconds")
+	fmt.Println("Submitting new Transaction... Can take up to 20 seconds")
 	res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(1))
 	if err != nil {
 		panic(err)
 	}
 
 	// Transaction Details
-	println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
 }
 ```
 
