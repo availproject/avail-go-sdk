@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	examples.RunTransaction()
+	examples.Run()
 }

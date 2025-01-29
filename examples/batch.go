@@ -32,9 +32,8 @@ func RunBatch() {
 	// The other was it to create a transaction using the sdk api and then use the `call` field member
 	{
 		destCharlie, err := metadata.NewAccountIdFromAddress("5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y")
-		if err != nil {
-			panic(err)
-		}
+		PanicOnError(err)
+
 		tx := sdk.Tx.Balances.TransferKeepAlive(destCharlie.ToMultiAddress(), SDK.OneAvail())
 		callsToExecute = append(callsToExecute, tx.Payload.Call)
 	}
@@ -49,11 +48,9 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("The transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -78,11 +75,9 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("The transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -107,11 +102,9 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("The transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -158,11 +151,9 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("The transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -189,11 +180,9 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if isSuc {
-			panic("The transaction is supposed to fail")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, false, "Transaction is supposed to fail")
 
 		events := res.Events.Unwrap()
 
@@ -212,11 +201,9 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		if isSuc, err := res.IsSuccessful(); err != nil {
-			panic(err)
-		} else if !isSuc {
-			panic("We either failed to decode events or the transaction has failed")
-		}
+		isOk, err := res.IsSuccessful()
+		PanicOnError(err)
+		AssertEq(isOk, true, "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
