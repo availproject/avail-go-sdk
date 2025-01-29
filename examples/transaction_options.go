@@ -18,19 +18,21 @@ func runAppId() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	PanicOnError(err)
 
+	// Setting AppId and Executing Transaction
 	appId := uint32(5)
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	options := SDK.NewTransactionOptions().WithAppId(appId)
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
 
-	isSuc, err := res.IsSuccessful()
+	isOk, err := res.IsSuccessful()
 	PanicOnError(err)
-	AssertEq(isSuc, true, "Transaction needs to be successful")
+	AssertEq(isOk, true, "Transaction needs to be successful")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
 
+	// Checking is the App Id was used correctly
 	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
 	foundAppId := genTx.Signed().UnsafeUnwrap().AppId
 	AssertEq(appId, foundAppId, "App Ids are not the same")
@@ -40,22 +42,25 @@ func runNonce() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	PanicOnError(err)
 
+	// Getting Nonce
 	acc := SDK.Account.Alice()
 	currentNonce, err := SDK.Account.Nonce(sdk.Client, metadata.NewAccountIdFromKeyPair(acc))
 	PanicOnError(err)
 
+	// Executing Transaction
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	options := SDK.NewTransactionOptions().WithNonce(currentNonce).WithAppId(5)
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
 
-	isSuc, err := res.IsSuccessful()
+	isOk, err := res.IsSuccessful()
 	PanicOnError(err)
-	AssertEq(isSuc, true, "Transaction needs to be successful")
+	AssertEq(isOk, true, "Transaction needs to be successful")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
 
+	// Checking is the Nonce was used correctly
 	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
 	foundNonce := genTx.Signed().UnsafeUnwrap().Nonce
 	AssertEq(foundNonce, currentNonce, "Nonces are not the same")
