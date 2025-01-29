@@ -46,7 +46,7 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 			logrus.Debug(fmt.Sprintf("%v: Transaction was submitted. Account: %v, TxHash: %v", iden, account.SS58Address(42), txHash.ToHexWith0x()))
 		}
 
-		watcher := newWatcher(client, txHash, waitFor, blockTimeout, 3)
+		watcher := NewWatcher(client, txHash, waitFor, blockTimeout, 3)
 		maybeDetails, err := watcher.Run()
 		if err != nil {
 			return TransactionDetails{}, err

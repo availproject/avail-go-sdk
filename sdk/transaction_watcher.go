@@ -18,7 +18,7 @@ type Watcher struct {
 	sleepDuration      uint32
 }
 
-func newWatcher(client *Client, txHash prim.H256, waitFor uint8, blockTimeout uint32, sleepDuration uint32) Watcher {
+func NewWatcher(client *Client, txHash prim.H256, waitFor uint8, blockTimeout uint32, sleepDuration uint32) Watcher {
 	return Watcher{
 		client:             client,
 		txHash:             txHash,

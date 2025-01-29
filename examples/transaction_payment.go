@@ -21,9 +21,9 @@ func RunTransactionPayment() {
 	AssertEq(feeDetails1.InclusionFee.IsSome(), true, "InclusionFee Must Exist")
 	if feeDetails1.InclusionFee.IsSome() {
 		InclusionFee := feeDetails1.InclusionFee.Unwrap()
-		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee.ToHuman())
-		fmt.Println("Len Fee:", InclusionFee.LenFee.ToHuman())
-		fmt.Println("Base Fee:", InclusionFee.BaseFee.ToHuman())
+		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee)
+		fmt.Println("Len Fee:", InclusionFee.LenFee)
+		fmt.Println("Base Fee:", InclusionFee.BaseFee)
 	}
 
 	// PaymentQueryFeeDetails
@@ -33,9 +33,9 @@ func RunTransactionPayment() {
 	AssertEq(feeDetails1.InclusionFee.IsSome(), true, "InclusionFee Must Exist")
 	if feeDetails2.InclusionFee.IsSome() {
 		InclusionFee := feeDetails2.InclusionFee.Unwrap()
-		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee.ToHuman())
-		fmt.Println("Len Fee:", InclusionFee.LenFee.ToHuman())
-		fmt.Println("Base Fee:", InclusionFee.BaseFee.ToHuman())
+		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee)
+		fmt.Println("Len Fee:", InclusionFee.LenFee)
+		fmt.Println("Base Fee:", InclusionFee.BaseFee)
 	}
 
 	// PaymentQueryCallFeeInfo
@@ -44,8 +44,8 @@ func RunTransactionPayment() {
 
 	fmt.Println("ProofSize:", feeInfo1.Weight.ProofSize)
 	fmt.Println("RefTime:", feeInfo1.Weight.RefTime)
-	fmt.Println("Class:", feeInfo1.Class.ToHuman())
-	fmt.Println("Partial Fee:", feeInfo1.PartialFee.ToHuman())
+	fmt.Println("Class:", feeInfo1.Class)
+	fmt.Println("Partial Fee:", feeInfo1.PartialFee)
 
 	// PaymentQueryFeeInfo
 	feeInfo, err := tx.PaymentQueryFeeInfo(acc, options)
@@ -53,8 +53,8 @@ func RunTransactionPayment() {
 
 	fmt.Println("ProofSize:", feeInfo.Weight.ProofSize)
 	fmt.Println("RefTime:", feeInfo.Weight.RefTime)
-	fmt.Println("Class:", feeInfo.Class.ToHuman())
-	fmt.Println("Partial Fee:", feeInfo.PartialFee.ToHuman())
+	fmt.Println("Class:", feeInfo.Class)
+	fmt.Println("Partial Fee:", feeInfo.PartialFee)
 
 	fmt.Println("RunTransactionPayment finished correctly.")
 

@@ -10,10 +10,35 @@ func RunTransactionExecute() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	PanicOnError(err)
 
+	// Transaction will be signed and send.
+	//
+	// There is no guarantee that the transaction was executed at all. It might have been
+	// dropped or discarded for various reasons. The caller is responsible for querying future
+	// blocks in order to determine the execution status of that transaction.
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
 	txHash, err := tx.Execute(SDK.Account.Alice(), SDK.NewTransactionOptions().WithAppId(1))
 	PanicOnError(err)
 	fmt.Println("Tx Hash:", txHash)
+
+	// Checking if the transaction was included
+	//
+	// It's not necessary to use the builtin watcher. A custom watcher
+	// might yield better results in some cases.
+	watcher := SDK.NewWatcher(sdk.Client, txHash, SDK.Inclusion, 3, 3)
+	mybTxDetails, err := watcher.Run()
+	PanicOnError(err)
+	AssertEq(mybTxDetails.IsSome(), true, "Watcher must have found the status for our transaction")
+
+	// Printout Transaction Details
+	txDetails := mybTxDetails.Unwrap()
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
+
+	// Printout Transaction Events
+	AssertTrue(txDetails.Events.IsSome(), "We should be able to find events")
+	txEvents := txDetails.Events.Unwrap()
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
+	}
 
 	fmt.Println("RunTransactionExecute finished correctly.")
 }

@@ -42,18 +42,32 @@ func (this *Transaction) ToHex(account subkey.KeyPair, options TransactionOption
 	return tx.ToHexWith0x(), nil
 }
 
+// Transaction will be signed and send.
+//
+// There is no guarantee that the transaction was executed at all. It might have been
+// dropped or discarded for various reasons. The caller is responsible for querying future
+// blocks in order to determine the execution status of that transaction.
 func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOptions) (prim.H256, error) {
 	return TransactionSignAndSend(this.client, account, this.Payload, options)
 }
 
+// Transaction will be signed, send and watched
+//
+// Same as manually calling `Execute` plus running the Watcher
 func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, options TransactionOptions, blockTimeout uint32) (TransactionDetails, error) {
 	return TransactionSignSendWatch(this.client, account, this.Payload, waitFor, options, blockTimeout, 3)
 }
 
+// Transaction will be signed, send and watched
+//
+// Same as manually calling `Execute` plus running the Watcher
 func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
 	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options, 5, 3)
 }
 
+// Transaction will be signed, send and watched
+//
+// Same as manually calling `Execute` plus running the Watcher
 func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
 	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 3, 3)
 }
