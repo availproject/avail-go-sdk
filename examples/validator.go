@@ -50,7 +50,7 @@ func RunValidator() {
 	PanicOnError(err)
 
 	// Set Keys
-	tx = sdk.Tx.SessionTx.SetKeys(sessionKeys, []byte{})
+	tx = sdk.Tx.Session.SetKeys(sessionKeys, []byte{})
 	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions())
 	PanicOnError(err)
 	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction must be successful")

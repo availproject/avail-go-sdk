@@ -31,6 +31,27 @@ func NewClient(endpoint string) *Client {
 	return client
 }
 
+func (this *Client) BlockNumber(blockHash prim.H256) (uint32, error) {
+	header, err := this.Rpc.Chain.GetHeader(prim.NewSome(blockHash))
+	if err != nil {
+		return 0, err
+	}
+
+	return header.Number, nil
+}
+
+func (this *Client) BlockHash(blockNumber uint32) (prim.H256, error) {
+	return this.Rpc.Chain.GetBlockHash(prim.NewSome(blockNumber))
+}
+
+func (this *Client) FinalizedBlockHash() (prim.H256, error) {
+	return this.Rpc.Chain.GetFinalizedHead()
+}
+
+func (this *Client) BestBlockHash() (prim.H256, error) {
+	return this.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+}
+
 func (this *Client) EventsAt(at prim.Option[prim.H256]) (EventRecords, error) {
 	eventsRaw, err := this.Rpc.State.GetEvents(at)
 	if err != nil {

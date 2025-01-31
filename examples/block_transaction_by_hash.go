@@ -26,7 +26,8 @@ func RunBlockTransactionByHash() {
 	tx := block.TransactionByHash(txHash).UnsafeUnwrap()
 
 	// Printout Block Transaction
-	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v, Tx Signer: %v, App Id: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex(), tx.Signer(), tx.AppId()))
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
+	fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.Signer(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
 
 	// Convert from Block Transaction to Specific Transaction
 	baTx := baPallet.CallTransferKeepAlive{}

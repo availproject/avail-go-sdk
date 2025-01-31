@@ -1380,7 +1380,7 @@ func (this DispatchResult) ToString() string {
 	case 0:
 		return "Ok"
 	case 1:
-		return "Err"
+		return fmt.Sprintf(`Err: %v`, this.Err.Unwrap().ToHuman())
 	default:
 		panic("Unknown DispatchResult Variant Index")
 	}
@@ -1633,4 +1633,56 @@ type RuntimeDispatchInfo struct {
 	Weight     Weight
 	Class      DispatchClass
 	PartialFee Balance
+}
+
+type ProxyType struct {
+	VariantIndex uint8
+}
+
+func (this ProxyType) ToHuman() string {
+	return this.ToString()
+}
+
+func (this ProxyType) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Any"
+	case 1:
+		return "NonTransfer"
+	case 2:
+		return "Governance"
+	case 3:
+		return "Staking"
+	case 4:
+		return "IdentityJudgement"
+	case 5:
+		return "NominationPools"
+	default:
+		panic("Unknown ProxyType Variant Index")
+	}
+}
+
+func (this *ProxyType) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+}
+
+func (this *ProxyType) Decode(decoder *prim.Decoder) error {
+	*this = ProxyType{}
+
+	if err := decoder.Decode(&this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	default:
+		return errors.New("Unknown ProxyType Variant Index while Decoding")
+	}
+
+	return nil
 }

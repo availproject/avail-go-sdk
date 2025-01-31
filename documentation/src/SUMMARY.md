@@ -32,3 +32,4 @@
 - [Batch](./batch.md)
 - [RPC](./rpc.md)
 - [Validator](./validator.md)
+- [Proxy](./proxy.md)
