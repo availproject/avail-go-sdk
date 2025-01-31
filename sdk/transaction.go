@@ -1,8 +1,6 @@
 package sdk
 
 import (
-	"errors"
-
 	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/vedhavyas/go-subkey/v2"
 
@@ -118,26 +116,23 @@ type TransactionDetails struct {
 	Events      prim.Option[EventRecords]
 }
 
-// Returns an error if there was no way to determine the
+// Returns None if there was no way to determine the
 // success status of a transaction. Otherwise it returns
 // true or false.
-func (this *TransactionDetails) IsSuccessful() (bool, error) {
-	if this.Events.IsNone() {
-		return false, errors.New("No events were decoded.")
-	}
+func (this *TransactionDetails) IsSuccessful() prim.Option[bool] {
 	events := this.Events.Unwrap()
 
 	extFailedEvent := syPallet.EventExtrinsicFailed{}
+	extSuccessEvent := syPallet.EventExtrinsicSuccess{}
 
 	for i := range events {
-		if events[i].PalletIndex != extFailedEvent.PalletIndex() {
-			continue
+		if events[i].PalletIndex == extFailedEvent.PalletIndex() && events[i].EventIndex == extFailedEvent.EventIndex() {
+			return prim.NewSome(false)
 		}
-		if events[i].EventIndex != extFailedEvent.EventIndex() {
-			continue
+		if events[i].PalletIndex == extSuccessEvent.PalletIndex() && events[i].EventIndex == extSuccessEvent.EventIndex() {
+			return prim.NewSome(true)
 		}
-		return false, nil
 	}
 
-	return true, nil
+	return prim.NewNone[bool]()
 }

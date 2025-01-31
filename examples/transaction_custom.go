@@ -40,12 +40,11 @@ func RunTransactionCustom() {
 	txDetails, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), SDK.NewTransactionOptions())
 	PanicOnError(err)
 
-	// Returns an error if there was no way to determine the
+	// Returns None if there was no way to determine the
 	// success status of a transaction. Otherwise it returns
 	// true or false.
-	isOk, err := txDetails.IsSuccessful()
-	PanicOnError(err)
-	AssertEq(isOk, true, "Transaction needs to be successful")
+	isOk := txDetails.IsSuccessful()
+	AssertTrue(isOk.Unwrap(), "Transaction is supposed to succeed")
 
 	// Printout Transaction Details
 	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))

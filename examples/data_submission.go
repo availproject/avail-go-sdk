@@ -28,10 +28,11 @@ func RunDataSubmission() {
 		// Failed to submit transaction
 		panic(err)
 	}
-	if isSuc, err := res.IsSuccessful(); err != nil {
+	if isOk := res.IsSuccessful(); isOk.IsNone() {
+		// Failed to determine if the transaction was successful or if it failed.
 		panic(err)
-	} else if !isSuc {
-		fmt.Println("The transaction was unsuccessful")
+	} else if isOk.Unwrap() == false {
+		panic("The transaction was unsuccessful")
 	}
 
 	events := res.Events.Unwrap()
@@ -46,10 +47,11 @@ func RunDataSubmission() {
 		panic(err)
 	}
 
-	if isSuc, err := res.IsSuccessful(); err != nil {
+	if isOk := res.IsSuccessful(); isOk.IsNone() {
+		// Failed to determine if the transaction was successful or if it failed.
 		panic(err)
-	} else if !isSuc {
-		fmt.Println("The transaction was unsuccessful")
+	} else if isOk.Unwrap() == false {
+		panic("The transaction was unsuccessful")
 	}
 
 	// Transaction Details

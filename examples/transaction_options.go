@@ -25,9 +25,8 @@ func runAppId() {
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
 
-	isOk, err := res.IsSuccessful()
-	PanicOnError(err)
-	AssertEq(isOk, true, "Transaction needs to be successful")
+	isOk := res.IsSuccessful()
+	AssertTrue(isOk.Unwrap(), "Transaction is supposed to succeed")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
@@ -53,9 +52,8 @@ func runNonce() {
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
 
-	isOk, err := res.IsSuccessful()
-	PanicOnError(err)
-	AssertEq(isOk, true, "Transaction needs to be successful")
+	isOk := res.IsSuccessful()
+	AssertTrue(isOk.Unwrap(), "Transaction is supposed to succeed")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
