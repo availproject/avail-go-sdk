@@ -1380,7 +1380,7 @@ func (this DispatchResult) ToString() string {
 	case 0:
 		return "Ok"
 	case 1:
-		return "Err"
+		return fmt.Sprintf(`Err: %v`, this.Err.Unwrap().ToHuman())
 	default:
 		panic("Unknown DispatchResult Variant Index")
 	}
