@@ -3,14 +3,14 @@ package examples
 import "fmt"
 
 func Run() {
-	RunAccountNonce()
-	RunAccountBalance()
+	RunAccount()
 	RunBatch()
 	RunBlock()
 	RunDataSubmission()
 	RunStorage()
 	RunRpc()
 	RunTransaction()
+	RunValidator()
 }
 
 func AssertTrue(v bool, message string) {

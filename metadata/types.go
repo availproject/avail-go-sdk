@@ -485,6 +485,16 @@ type Perbill struct {
 	Value uint32
 }
 
+func NewPerbillFromU8(percent uint8) Perbill {
+	if percent > 100 {
+		panic("Percent cannot be more than 100")
+	}
+
+	value := 10_000_000 * uint32(percent)
+
+	return Perbill{Value: value}
+}
+
 func (this Perbill) ToString() string {
 	return this.ToHuman()
 }
@@ -524,6 +534,11 @@ func (this Perbill) ToHuman() string {
 	return result + "%"
 }
 
+// Variant 0: Staked
+// Variant 1: Stash
+// Variant 2: Controller
+// Variant 3: Account - Account field needs to be set up
+// Variant 4 Nonce
 type RewardDestination struct {
 	VariantIndex uint8
 	Account      prim.Option[AccountId]

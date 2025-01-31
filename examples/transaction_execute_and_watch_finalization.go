@@ -20,12 +20,10 @@ func RunTransactionExecuteAndWatchFinalization() {
 	txDetails, err := tx.ExecuteAndWatchFinalization(SDK.Account.Alice(), SDK.NewTransactionOptions().WithAppId(1))
 	PanicOnError(err)
 
-	// Returns an error if there was no way to determine the
+	// Returns None if there was no way to determine the
 	// success status of a transaction. Otherwise it returns
 	// true or false.
-	isOk, err := txDetails.IsSuccessful()
-	PanicOnError(err)
-	AssertEq(isOk, true, "Transaction failed")
+	AssertTrue(txDetails.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 	// Printout Transaction Details
 	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/availproject/avail-go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
 	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
@@ -26,7 +27,7 @@ func RunBatch() {
 		PanicOnError(err)
 
 		call := baPallet.CallTransferKeepAlive{Dest: destBob.ToMultiAddress(), Value: SDK.OneAvail()}
-		callsToExecute = append(callsToExecute, call.ToCall())
+		callsToExecute = append(callsToExecute, pallets.ToCall(call))
 	}
 
 	// The other was it to create a transaction using the sdk api and then use the `call` field member
@@ -47,10 +48,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.Batch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk, err := res.IsSuccessful()
-		PanicOnError(err)
-		AssertEq(isOk, true, "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -74,10 +72,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk, err := res.IsSuccessful()
-		PanicOnError(err)
-		AssertEq(isOk, true, "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -101,10 +96,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk, err := res.IsSuccessful()
-		PanicOnError(err)
-		AssertEq(isOk, true, "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -150,10 +142,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.Batch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk, err := res.IsSuccessful()
-		PanicOnError(err)
-		AssertEq(isOk, true, "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -180,9 +169,9 @@ func RunBatch() {
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
 
-		isOk, err := res.IsSuccessful()
-		PanicOnError(err)
-		AssertEq(isOk, false, "Transaction is supposed to fail")
+		isOk := res.IsSuccessful()
+		AssertTrue(isOk.IsSome(), "It should be possible to decode transaction events.")
+		AssertEq(isOk.Unwrap(), false, "Transaction is supposed to fail")
 
 		events := res.Events.Unwrap()
 
@@ -200,10 +189,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk, err := res.IsSuccessful()
-		PanicOnError(err)
-		AssertEq(isOk, true, "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 

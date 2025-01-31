@@ -17,6 +17,10 @@ func (accountT) NewKeyPair(uri string) (subkey.KeyPair, error) {
 	return subkey.DeriveKeyPair(sr25519.Scheme{}, uri)
 }
 
+func (accountT) GenerateAccount() (subkey.KeyPair, error) {
+	return sr25519.Scheme{}.Generate()
+}
+
 func (accountT) Alice() subkey.KeyPair {
 	val, err := Account.NewKeyPair("bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice")
 	if err != nil {

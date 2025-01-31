@@ -107,6 +107,23 @@ func TestPerbilDisplay(t *testing.T) {
 	perbill = Perbill{Value: 1}
 	assertEq(perbill.ToHuman(), "0.0000001%", "Perbill is not correctly displayed")
 
+	// NewU8
+	// uint8(0)
+	perbill = NewPerbillFromU8(0)
+	assertEq(perbill.ToHuman(), "0.0%", "Perbill is not correctly displayed")
+
+	// uint8(1)
+	perbill = NewPerbillFromU8(1)
+	assertEq(perbill.ToHuman(), "1.0%", "Perbill is not correctly displayed")
+
+	// uint8(55)
+	perbill = NewPerbillFromU8(55)
+	assertEq(perbill.ToHuman(), "55.0%", "Perbill is not correctly displayed")
+
+	// uint8(100)
+	perbill = NewPerbillFromU8(100)
+	assertEq(perbill.ToHuman(), "100.0%", "Perbill is not correctly displayed")
+
 }
 
 func assertTrue(v bool, message string) {

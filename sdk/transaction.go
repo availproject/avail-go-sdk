@@ -1,8 +1,6 @@
 package sdk
 
 import (
-	"errors"
-
 	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/vedhavyas/go-subkey/v2"
 
@@ -70,7 +68,7 @@ func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, 
 //
 // Waits for finalization to finalize the transaction.
 func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options, 5, 3)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options, 6, 3)
 }
 
 // Transaction will be signed, sent, and watched
@@ -80,7 +78,7 @@ func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, opt
 // Waits for transaction inclusion. Most of the time you would want to call `ExecuteAndWatchFinalization` as
 // inclusion doesn't mean that the transaction will be in the canonical chain.
 func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 3, 3)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 4, 3)
 }
 
 func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options TransactionOptions) (metadata.FeeDetails, error) {
@@ -118,26 +116,23 @@ type TransactionDetails struct {
 	Events      prim.Option[EventRecords]
 }
 
-// Returns an error if there was no way to determine the
+// Returns None if there was no way to determine the
 // success status of a transaction. Otherwise it returns
 // true or false.
-func (this *TransactionDetails) IsSuccessful() (bool, error) {
-	if this.Events.IsNone() {
-		return false, errors.New("No events were decoded.")
-	}
+func (this *TransactionDetails) IsSuccessful() prim.Option[bool] {
 	events := this.Events.Unwrap()
 
 	extFailedEvent := syPallet.EventExtrinsicFailed{}
+	extSuccessEvent := syPallet.EventExtrinsicSuccess{}
 
 	for i := range events {
-		if events[i].PalletIndex != extFailedEvent.PalletIndex() {
-			continue
+		if events[i].PalletIndex == extFailedEvent.PalletIndex() && events[i].EventIndex == extFailedEvent.EventIndex() {
+			return prim.NewSome(false)
 		}
-		if events[i].EventIndex != extFailedEvent.EventIndex() {
-			continue
+		if events[i].PalletIndex == extSuccessEvent.PalletIndex() && events[i].EventIndex == extSuccessEvent.EventIndex() {
+			return prim.NewSome(true)
 		}
-		return false, nil
 	}
 
-	return true, nil
+	return prim.NewNone[bool]()
 }

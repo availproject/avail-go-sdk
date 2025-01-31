@@ -1,8 +1,6 @@
 package sudo
 
 import (
-	"github.com/availproject/avail-go-sdk/metadata"
-	. "github.com/availproject/avail-go-sdk/metadata/pallets"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -25,18 +23,6 @@ func (this CallSudo) CallIndex() uint8 {
 
 func (this CallSudo) CallName() string {
 	return "sudo"
-}
-
-func (this *CallSudo) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSudo) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSudo) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Authenticates the sudo key and dispatches a function call with `Root` origin.
@@ -64,18 +50,6 @@ func (this CallSudoUncheckedWeight) CallName() string {
 	return "sudo_unchecked_weight"
 }
 
-func (this *CallSudoUncheckedWeight) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSudoUncheckedWeight) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSudoUncheckedWeight) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Authenticates the sudo key and dispatches a function call with `Signed` origin from
 // a given account.
 //
@@ -99,16 +73,4 @@ func (this CallSudoAs) CallIndex() uint8 {
 
 func (this CallSudoAs) CallName() string {
 	return "sudo_as"
-}
-
-func (this *CallSudoAs) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSudoAs) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSudoAs) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
