@@ -11,6 +11,7 @@ func Run() {
 	RunStorage()
 	RunRpc()
 	RunTransaction()
+	RunValidator()
 }
 
 func AssertTrue(v bool, message string) {

@@ -7,6 +7,7 @@ import (
 	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	npPallet "github.com/availproject/avail-go-sdk/metadata/pallets/nomination_pools"
+	sePallet "github.com/availproject/avail-go-sdk/metadata/pallets/session"
 	stPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
 	sdPallet "github.com/availproject/avail-go-sdk/metadata/pallets/sudo"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
@@ -109,14 +110,14 @@ type StakingTx struct {
 
 // Take the origin account as a stash and lock up `value` of its balance. `controller` will
 // be the account that controls it.
-func (this *StakingTx) Bond(value uint128.Uint128, payee metadata.RewardDestination) Transaction {
+func (this *StakingTx) Bond(value metadata.Balance, payee metadata.RewardDestination) Transaction {
 	call := stPallet.CallBond{Value: value, Payee: payee}
 	return NewTransaction(this.client, call.ToPayload())
 }
 
 // Add some extra amount that have appeared in the stash `free_balance` into the balance up
 // for staking.
-func (this *StakingTx) BondExtra(maxAdditional uint128.Uint128) Transaction {
+func (this *StakingTx) BondExtra(maxAdditional metadata.Balance) Transaction {
 	call := stPallet.CallBondExtra{MaxAdditional: maxAdditional}
 	return NewTransaction(this.client, call.ToPayload())
 }
@@ -124,7 +125,7 @@ func (this *StakingTx) BondExtra(maxAdditional uint128.Uint128) Transaction {
 // Schedule a portion of the stash to be unlocked ready for transfer out after the bond
 // period ends. If this leaves an amount actively bonded less than
 // T::Currency::minimum_balance(), then it is increased to the full amount.
-func (this *StakingTx) Unbond(value uint128.Uint128) Transaction {
+func (this *StakingTx) Unbond(value metadata.Balance) Transaction {
 	call := stPallet.CallUnbond{Value: value}
 	return NewTransaction(this.client, call.ToPayload())
 }
@@ -655,5 +656,30 @@ func (this *SudoTx) SudoUncheckedWeight(call prim.Call) Transaction {
 // The dispatch origin for this call must be _Signed_.
 func (this *SudoTx) SudoAs(who prim.MultiAddress, call prim.Call) Transaction {
 	c := sdPallet.CallSudoAs{Who: who, Call: call}
+	return NewTransaction(this.client, c.ToPayload())
+}
+
+type SessionTx struct {
+	client *Client
+}
+
+// Sets the session key(s) of the function caller to `keys`.
+// Allows an account to set its session key prior to becoming a validator.
+// This doesn't take effect until the next session..
+func (this *SessionTx) SetKeys(keys metadata.SessionKeys, proof []byte) Transaction {
+	c := sePallet.CallSetKeys{Keys: keys, Proof: proof}
+	return NewTransaction(this.client, c.ToPayload())
+}
+
+// Removes any session key(s) of the function caller.
+//
+// This doesn't take effect until the next session.
+//
+// The dispatch origin of this function must be Signed and the account must be either be
+// convertible to a validator ID using the chain's typical addressing system (this usually
+// means being a controller account) or directly convertible into a validator ID (which
+// usually means being a stash account).
+func (this *SessionTx) PurgeKeys() Transaction {
+	c := sePallet.CallPurgeKeys{}
 	return NewTransaction(this.client, c.ToPayload())
 }

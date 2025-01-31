@@ -47,9 +47,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.Batch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk := res.IsSuccessful()
-		AssertTrue(isOk.Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -73,9 +71,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk := res.IsSuccessful()
-		AssertTrue(isOk.Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -99,9 +95,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk := res.IsSuccessful()
-		AssertTrue(isOk.Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -147,9 +141,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.Batch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk := res.IsSuccessful()
-		AssertTrue(isOk.Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 
@@ -196,9 +188,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk := res.IsSuccessful()
-		AssertTrue(isOk.Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
 
 		events := res.Events.Unwrap()
 

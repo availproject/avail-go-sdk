@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"errors"
 	"github.com/itering/scale.go/utiles/uint128"
 
 	"math/big"
@@ -54,6 +55,7 @@ type transactions struct {
 	System           SystemTx
 	Vector           VectorTx
 	Sudo             SudoTx
+	SessionTx        SessionTx
 }
 
 func newTransactions(client *Client) transactions {
@@ -67,6 +69,7 @@ func newTransactions(client *Client) transactions {
 		System:           SystemTx{client: client},
 		Vector:           VectorTx{client: client},
 		Sudo:             SudoTx{client: client},
+		SessionTx:        SessionTx{client: client},
 	}
 }
 
@@ -78,3 +81,25 @@ func OneAvail() metadata.Balance {
 const LocalEndpoint = "http://127.0.0.1:9944"
 const TuringEndpoint = "https://turing-rpc.avail.so/rpc"
 const MainnetEndpoint = "https://mainnet-rpc.avail.so/rpc"
+
+func DeconstructSessionKeys(sessionKeys string) (metadata.SessionKeys, error) {
+	keys := prim.Hex.FromHex(sessionKeys)
+
+	if len(keys) != 128 {
+		return metadata.SessionKeys{}, errors.New("Failed to decode session keys.")
+	}
+
+	babe := [32]byte(keys[0:32])
+	grandpa := [32]byte(keys[32:64])
+	imOnline := [32]byte(keys[64:96])
+	authorityDiscovery := [32]byte(keys[96:128])
+
+	res := metadata.SessionKeys{
+		Babe:               prim.H256{Value: babe},
+		Grandpa:            prim.H256{Value: grandpa},
+		ImOnline:           prim.H256{Value: imOnline},
+		AuthorityDiscovery: prim.H256{Value: authorityDiscovery},
+	}
+
+	return res, nil
+}

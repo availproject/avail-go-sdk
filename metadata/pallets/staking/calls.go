@@ -11,7 +11,7 @@ import (
 // Take the origin account as a stash and lock up `value` of its balance. `controller` will
 // be the account that controls it.
 type CallBond struct {
-	Value uint128.Uint128 `scale:"compact"`
+	Value metadata.Balance `scale:"compact"`
 	Payee metadata.RewardDestination
 }
 
@@ -46,7 +46,7 @@ func (this *CallBond) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
 // Add some extra amount that have appeared in the stash `free_balance` into the balance up
 // for staking.
 type CallBondExtra struct {
-	MaxAdditional uint128.Uint128 `scale:"compact"`
+	MaxAdditional metadata.Balance `scale:"compact"`
 }
 
 func (this CallBondExtra) PalletIndex() uint8 {
@@ -81,7 +81,7 @@ func (this *CallBondExtra) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
 // period ends. If this leaves an amount actively bonded less than
 // T::Currency::minimum_balance(), then it is increased to the full amount.
 type CallUnbond struct {
-	Value uint128.Uint128 `scale:"compact"`
+	Value metadata.Balance `scale:"compact"`
 }
 
 func (this CallUnbond) PalletIndex() uint8 {
