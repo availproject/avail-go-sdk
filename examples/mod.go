@@ -11,6 +11,7 @@ func Run() {
 	RunRpc()
 	RunTransaction()
 	RunValidator()
+	RunProxy()
 }
 
 func AssertTrue(v bool, message string) {

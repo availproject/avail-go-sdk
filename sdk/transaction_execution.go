@@ -26,9 +26,9 @@ func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload meta
 }
 
 func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitFor uint8, options TransactionOptions, blockTimeout uint32, retryCount uint32) (TransactionDetails, error) {
-	if !checkPayloadAndOptionsValidity(&payload, &options) {
+	/* 	if !checkPayloadAndOptionsValidity(&payload, &options) {
 		return TransactionDetails{}, errors.New("Transaction is not compatible with non-zero AppIds")
-	}
+	} */
 
 	extra, additional, err := options.ToPrimitive(client, account.SS58Address(42))
 	if err != nil {
