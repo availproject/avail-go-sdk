@@ -8,6 +8,7 @@ import (
 	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	npPallet "github.com/availproject/avail-go-sdk/metadata/pallets/nomination_pools"
+	pxPallet "github.com/availproject/avail-go-sdk/metadata/pallets/proxy"
 	sePallet "github.com/availproject/avail-go-sdk/metadata/pallets/session"
 	stPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
 	sdPallet "github.com/availproject/avail-go-sdk/metadata/pallets/sudo"
@@ -668,8 +669,8 @@ type SessionTx struct {
 // Allows an account to set its session key prior to becoming a validator.
 // This doesn't take effect until the next session..
 func (this *SessionTx) SetKeys(keys metadata.SessionKeys, proof []byte) Transaction {
-	c := sePallet.CallSetKeys{Keys: keys, Proof: proof}
-	return NewTransaction(this.client, pallets.ToPayload(c))
+	call := sePallet.CallSetKeys{Keys: keys, Proof: proof}
+	return NewTransaction(this.client, pallets.ToPayload(call))
 }
 
 // Removes any session key(s) of the function caller.
@@ -681,6 +682,172 @@ func (this *SessionTx) SetKeys(keys metadata.SessionKeys, proof []byte) Transact
 // means being a controller account) or directly convertible into a validator ID (which
 // usually means being a stash account).
 func (this *SessionTx) PurgeKeys() Transaction {
-	c := sePallet.CallPurgeKeys{}
+	call := sePallet.CallPurgeKeys{}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+type ProxyTx struct {
+	client *Client
+}
+
+// Dispatch the given `call` from an account that the sender is authorised for through
+// `add_proxy`.
+//
+// The dispatch origin for this call must be _Signed_.
+//
+// Parameters:
+// - `Real`: The account that the proxy will make a call on behalf of.
+// - `ForceProxyType`: Specify the exact proxy type to be used and checked for this call.
+// - `Call`: The call to be made by the `real` account.
+func (this *ProxyTx) Proxy(real prim.MultiAddress, forceProxyType prim.Option[metadata.ProxyType], call prim.Call) Transaction {
+	c := pxPallet.CallProxy{Real: real, ForceProxyType: forceProxyType, Call: call}
+	return NewTransaction(this.client, pallets.ToPayload(c))
+}
+
+// Register a proxy account for the sender that is able to make calls on its behalf.
+//
+// The dispatch origin for this call must be _Signed_.
+//
+// Parameters:
+// - `Delegate`: The account that the `caller` would like to make a proxy.
+// - `ProxyType`: The permissions allowed for this proxy account.
+// - `Delay`: The announcement period required of the initial proxy. Will generally be
+// zero.
+func (this *ProxyTx) AddProxy(delegate prim.MultiAddress, proxyType metadata.ProxyType, delay uint32) Transaction {
+	call := pxPallet.CallAddProxy{Delegate: delegate, ProxyType: proxyType, Delay: delay}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+// Unregister a proxy account for the sender.
+//
+// The dispatch origin for this call must be _Signed_.
+//
+// Parameters:
+// - `Delegate`: The account that the `caller` would like to remove as a proxy.
+// - `ProxyType`: The permissions currently enabled for the removed proxy account.
+// - `Delay`:  Will generally be zero.
+func (this *ProxyTx) RemoveProxy(delegate prim.MultiAddress, proxyType metadata.ProxyType, delay uint32) Transaction {
+	call := pxPallet.CallRemoveProxy{Delegate: delegate, ProxyType: proxyType, Delay: delay}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+// Unregister all proxy accounts for the sender.
+//
+// The dispatch origin for this call must be _Signed_.
+//
+// WARNING: This may be called on accounts created by `pure`, however if done, then
+// the unreserved fees will be inaccessible. **All access to this account will be lost.**
+func (this *ProxyTx) RemoveProxies() Transaction {
+	call := pxPallet.CallRemoveProxies{}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+// Spawn a fresh new account that is guaranteed to be otherwise inaccessible, and
+// initialize it with a proxy of `proxy_type` for `origin` sender.
+//
+// Requires a `Signed` origin.
+//
+// - `ProxyType`: The type of the proxy that the sender will be registered as over the
+// new account. This will almost always be the most permissive `ProxyType` possible to
+// allow for maximum flexibility.
+// - `Index`: A disambiguation index, in case this is called multiple times in the same
+// transaction (e.g. with `utility::batch`). Unless you're using `batch` you probably just
+// want to use `0`.
+// - `Delay`: The announcement period required of the initial proxy. Will generally be
+// zero.
+//
+// Fails with `Duplicate` if this has already been called in this transaction, from the
+// same sender, with the same parameters.
+//
+// Fails if there are insufficient funds to pay for deposit.
+func (this *ProxyTx) CreatePure(proxyType metadata.ProxyType, delay uint32, index uint16) Transaction {
+	call := pxPallet.CallCreatePure{ProxyType: proxyType, Delay: delay, Index: index}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+// Removes a previously spawned pure proxy.
+//
+// WARNING: **All access to this account will be lost.** Any funds held in it will be
+// inaccessible.
+//
+// Requires a `Signed` origin, and the sender account must have been created by a call to
+// `pure` with corresponding parameters.
+//
+// - `Spawner`: The account that originally called `pure` to create this account.
+// - `Index`: The disambiguation index originally passed to `pure`. Probably `0`.
+// - `ProxyType`: The proxy type originally passed to `pure`.
+// - `Height`: The height of the chain when the call to `pure` was processed.
+// - `ExtIndex`: The extrinsic index in which the call to `pure` was processed.
+//
+// Fails with `NoPermission` in case the caller is not a previously created pure
+// account whose `pure` call has corresponding parameters.
+func (this *ProxyTx) KillPure(spawner prim.MultiAddress, proxyType metadata.ProxyType, index uint16, height uint32, extIndex uint32) Transaction {
+	call := pxPallet.CallKillPure{Spawner: spawner, ProxyType: proxyType, Index: index, Height: height, ExtIndex: extIndex}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+// Publish the hash of a proxy-call that will be made in the future.
+//
+// This must be called some number of blocks before the corresponding `proxy` is attempted
+// if the delay associated with the proxy relationship is greater than zero.
+//
+// No more than `MaxPending` announcements may be made at any one time.
+//
+// This will take a deposit of `AnnouncementDepositFactor` as well as
+// `AnnouncementDepositBase` if there are no other pending announcements.
+//
+// The dispatch origin for this call must be _Signed_ and a proxy of `real`.
+//
+// Parameters:
+// - `Real`: The account that the proxy will make a call on behalf of.
+// - `CallHash`: The hash of the call to be made by the `real` account.
+func (this *ProxyTx) Announce(real prim.MultiAddress, callHash prim.H256) Transaction {
+	call := pxPallet.CallAnnounce{Real: real, CallHash: callHash}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+// Remove a given announcement.
+//
+// May be called by a proxy account to remove a call they previously announced and return
+// the deposit.
+//
+// The dispatch origin for this call must be _Signed_.
+//
+// Parameters:
+// - `Real`: The account that the proxy will make a call on behalf of.
+// - `CallHash`: The hash of the call to be made by the `real` account.
+func (this *ProxyTx) RemoveAnnouncement(real prim.MultiAddress, callHash prim.H256) Transaction {
+	call := pxPallet.CallRemoveAnnouncement{Real: real, CallHash: callHash}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+// Remove the given announcement of a delegate.
+//
+// May be called by a target (proxied) account to remove a call that one of their delegates
+// (`delegate`) has announced they want to execute. The deposit is returned.
+//
+// The dispatch origin for this call must be _Signed_.
+//
+// Parameters:
+// - `Delegate`: The account that previously announced the call.
+// - `CallHash`: The hash of the call to be made.
+func (this *ProxyTx) RejectAnnouncement(delegate prim.MultiAddress, callHash prim.H256) Transaction {
+	call := pxPallet.CallRejectAnnouncement{Delegate: delegate, CallHash: callHash}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+// Dispatch the given `call` from an account that the sender is authorized for through
+// `add_proxy`.
+//
+// Removes any corresponding announcement(s).
+//
+// The dispatch origin for this call must be _Signed_.
+//
+// Parameters:
+// - `Real`: The account that the proxy will make a call on behalf of.
+// - `ForceProxyType`: Specify the exact proxy type to be used and checked for this call.
+// - `Call`: The call to be made by the `real` account.
+func (this *ProxyTx) ProxyAnnounced(delegate prim.MultiAddress, real prim.MultiAddress, forceProxyType prim.Option[metadata.ProxyType], call prim.Call) Transaction {
+	c := pxPallet.CallProxyAnnounced{Delegate: delegate, Real: real, ForceProxyType: forceProxyType, Call: call}
 	return NewTransaction(this.client, pallets.ToPayload(c))
 }

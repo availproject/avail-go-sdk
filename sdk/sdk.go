@@ -55,7 +55,8 @@ type transactions struct {
 	System           SystemTx
 	Vector           VectorTx
 	Sudo             SudoTx
-	SessionTx        SessionTx
+	Session          SessionTx
+	Proxy            ProxyTx
 }
 
 func newTransactions(client *Client) transactions {
@@ -69,7 +70,8 @@ func newTransactions(client *Client) transactions {
 		System:           SystemTx{client: client},
 		Vector:           VectorTx{client: client},
 		Sudo:             SudoTx{client: client},
-		SessionTx:        SessionTx{client: client},
+		Session:          SessionTx{client: client},
+		Proxy:            ProxyTx{client: client},
 	}
 }
 
