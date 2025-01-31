@@ -3,6 +3,7 @@ package primitives
 import (
 	"errors"
 
+	"github.com/itering/scale.go/utiles/uint128"
 	"golang.org/x/crypto/blake2b"
 )
 
@@ -18,6 +19,8 @@ type DecodedExtrinsicSigned struct {
 	Signature MultiSignature
 	Nonce     uint32
 	AppId     uint32
+	Tip       uint128.Uint128
+	Era       Era
 }
 
 func NewDecodedExtrinsic(extrinsic EncodedExtrinsic, txIndex uint32) (DecodedExtrinsic, error) {
@@ -67,6 +70,8 @@ func NewDecodedExtrinsic(extrinsic EncodedExtrinsic, txIndex uint32) (DecodedExt
 			Signature: multiSignature,
 			Nonce:     extra.Nonce,
 			AppId:     extra.AppId,
+			Tip:       extra.Tip,
+			Era:       extra.Era,
 		}
 
 		signedPart.Set(signedData)

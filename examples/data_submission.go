@@ -55,6 +55,7 @@ func RunDataSubmission() {
 	// Transaction Details
 	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
 
+	AssertTrue(res.Events.IsSome(), "Failed to decode events.")
 	events = res.Events.Unwrap()
 	event2 := SDK.EventFindFirst(events, daPallet.EventDataSubmitted{}).Unwrap()
 

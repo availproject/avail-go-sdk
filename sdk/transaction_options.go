@@ -3,20 +3,23 @@ package sdk
 import (
 	"github.com/itering/scale.go/utiles/uint128"
 
-	"math/big"
-
+	"github.com/availproject/avail-go-sdk/metadata"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 type TransactionOptions struct {
-	AppId prim.Option[uint32]
-	Nonce prim.Option[uint32]
+	AppId     prim.Option[uint32]
+	Nonce     prim.Option[uint32]
+	Mortality prim.Option[uint32]
+	Tip       prim.Option[metadata.Balance]
 }
 
 func NewTransactionOptions() TransactionOptions {
 	return TransactionOptions{
-		AppId: prim.NewNone[uint32](),
-		Nonce: prim.NewNone[uint32](),
+		AppId:     prim.NewNone[uint32](),
+		Nonce:     prim.NewNone[uint32](),
+		Mortality: prim.NewNone[uint32](),
+		Tip:       prim.NewNone[metadata.Balance](),
 	}
 }
 
@@ -27,6 +30,16 @@ func (this TransactionOptions) WithAppId(value uint32) TransactionOptions {
 
 func (this TransactionOptions) WithNonce(value uint32) TransactionOptions {
 	this.Nonce = prim.NewSome(value)
+	return this
+}
+
+func (this TransactionOptions) WithMortality(value uint32) TransactionOptions {
+	this.Mortality = prim.NewSome(value)
+	return this
+}
+
+func (this TransactionOptions) WithTip(value metadata.Balance) TransactionOptions {
+	this.Tip = prim.NewSome(value)
 	return this
 }
 
@@ -59,7 +72,7 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 
 	extra := prim.Extra{}
 	extra.AppId = this.AppId.UnwrapOr(uint32(0))
-	extra.Tip = uint128.FromBig(big.NewInt(0))
+	extra.Tip = this.Tip.UnwrapOr(metadata.Balance{Value: uint128.Zero}).Value
 	if this.Nonce.IsNone() {
 		extra.Nonce, err = client.Rpc.System.AccountNextIndex(accountAddress)
 		if err != nil {
@@ -68,7 +81,7 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	} else {
 		extra.Nonce = this.Nonce.Unwrap()
 	}
-	extra.Era = prim.NewEra(32, uint64(forBlockNumber))
+	extra.Era = prim.NewEra(uint64(this.Mortality.UnwrapOr(32)), uint64(forBlockNumber))
 
 	return extra, additional, nil
 }
@@ -84,7 +97,7 @@ func RegenerateEra(client *Client, extra *prim.Extra, additional *prim.Additiona
 	}
 
 	additional.ForkHash = forkHash
-	extra.Era = prim.NewEra(32, uint64(header.Number))
+	extra.Era = prim.NewEra(extra.Era.Period, uint64(header.Number))
 
 	return nil
 }

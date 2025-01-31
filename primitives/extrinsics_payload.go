@@ -50,14 +50,14 @@ func (this *Call) Decode(decoder *Decoder) error {
 
 // Do not change the order of field members.
 type Era struct {
-	period uint64
-	phase  uint64
+	Period uint64
+	Phase  uint64
 }
 
 func (this *Era) EncodeTo(dest *string) {
-	quantizeFactor := math.Max(float64(this.period>>12), 1)
-	trailingZeros := bits.TrailingZeros16(uint16(this.period))
-	encoded := uint16(float64(this.phase)/quantizeFactor)<<4 | uint16(math.Min(15, math.Max(1, float64(trailingZeros-1))))
+	quantizeFactor := math.Max(float64(this.Period>>12), 1)
+	trailingZeros := bits.TrailingZeros16(uint16(this.Period))
+	encoded := uint16(float64(this.Phase)/quantizeFactor)<<4 | uint16(math.Min(15, math.Max(1, float64(trailingZeros-1))))
 
 	first := byte(encoded & 0xff)
 	second := byte(encoded >> 8)
@@ -87,9 +87,9 @@ func (this *Era) Decode(decoder *Decoder) error {
 	trailingZeros := uint16(encoded&0xF) + 1 // Lower 4 bits + 1
 	quantizedPhase := encoded >> 4           // Upper 12 bits
 
-	quantizeFactor := math.Max(float64(this.period>>12), 1)
-	this.phase = uint64(float64(quantizedPhase) * quantizeFactor)
-	this.period = uint64(uint16(1 << trailingZeros))
+	quantizeFactor := math.Max(float64(this.Period>>12), 1)
+	this.Phase = uint64(float64(quantizedPhase) * quantizeFactor)
+	this.Period = uint64(uint16(1 << trailingZeros))
 
 	return nil
 }
@@ -109,8 +109,8 @@ func NewEra(period uint64, blockNumber uint64) Era {
 	quantized_phase := float64(phase) / quantize_factor * quantize_factor
 
 	return Era{
-		period: calPeriod,
-		phase:  uint64(quantized_phase),
+		Period: calPeriod,
+		Phase:  uint64(quantized_phase),
 	}
 }
 

@@ -8,20 +8,24 @@ import (
 )
 
 func RunTransactionOptions() {
-	runAppId()
-	runNonce()
+	RunTransactionOptionsAppId()
+	RunTransactionOptionsNonce()
+	RunTransactionOptionsMortality()
+	RunTransactionOptionsTip()
 
 	fmt.Println("RunTransactionOptions finished correctly.")
 }
 
-func runAppId() {
+func RunTransactionOptionsAppId() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	PanicOnError(err)
 
-	// Setting AppId and Executing Transaction
+	// Setting AppId
 	appId := uint32(5)
-	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	options := SDK.NewTransactionOptions().WithAppId(appId)
+
+	// Executing Transaction
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
 
@@ -34,9 +38,11 @@ func runAppId() {
 	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
 	foundAppId := genTx.Signed().UnsafeUnwrap().AppId
 	AssertEq(appId, foundAppId, "App Ids are not the same")
+
+	fmt.Println("RunTransactionOptionsAppId finished correctly.")
 }
 
-func runNonce() {
+func RunTransactionOptionsNonce() {
 	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
 	PanicOnError(err)
 
@@ -64,4 +70,56 @@ func runNonce() {
 	newNonce, err := SDK.Account.Nonce(sdk.Client, metadata.NewAccountIdFromKeyPair(acc))
 	PanicOnError(err)
 	AssertEq(newNonce, currentNonce+1, "New nonce and old nonce + 1 are not the same.")
+
+	fmt.Println("RunTransactionOptionsNonce finished correctly.")
+}
+
+func RunTransactionOptionsMortality() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Setting Mortality
+	mortality := uint32(16)
+	options := SDK.NewTransactionOptions().WithMortality(mortality).WithAppId(1)
+
+	// Executing Transaction
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
+	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+
+	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
+	PanicOnError(err)
+
+	// Checking if the Mortality is the same as the one expected
+	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
+	actualMortality := uint32(genTx.Signed().UnsafeUnwrap().Era.Period)
+	AssertEq(actualMortality, mortality, "Moartalities are not the same.")
+
+	fmt.Println("RunTransactionOptionsMortality finished correctly.")
+}
+
+func RunTransactionOptionsTip() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Setting Tip
+	tip := SDK.OneAvail()
+	options := SDK.NewTransactionOptions().WithTip(tip).WithAppId(1)
+
+	// Executing Transaction
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
+	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+
+	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
+	PanicOnError(err)
+
+	// Checking if the Tip is the same as the one expected
+	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
+	actualTip := genTx.Signed().UnsafeUnwrap().Tip
+	AssertEq(metadata.Balance{Value: actualTip}, tip, "Tips are not the same.")
+
+	fmt.Println("RunTransactionOptionsTip finished correctly.")
 }
