@@ -485,6 +485,16 @@ type Perbill struct {
 	Value uint32
 }
 
+func NewPerbillFromU8(percent uint8) Perbill {
+	if percent > 100 {
+		panic("Percent cannot be more than 100")
+	}
+
+	value := 10_000_000 * uint32(percent)
+
+	return Perbill{Value: value}
+}
+
 func (this Perbill) ToString() string {
 	return this.ToHuman()
 }

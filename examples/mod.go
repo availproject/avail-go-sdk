@@ -3,8 +3,7 @@ package examples
 import "fmt"
 
 func Run() {
-	RunAccountNonce()
-	RunAccountBalance()
+	RunAccount()
 	RunBatch()
 	RunBlock()
 	RunDataSubmission()

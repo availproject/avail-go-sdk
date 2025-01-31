@@ -68,7 +68,7 @@ func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, 
 //
 // Waits for finalization to finalize the transaction.
 func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options, 5, 3)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options, 6, 3)
 }
 
 // Transaction will be signed, sent, and watched
@@ -78,7 +78,7 @@ func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, opt
 // Waits for transaction inclusion. Most of the time you would want to call `ExecuteAndWatchFinalization` as
 // inclusion doesn't mean that the transaction will be in the canonical chain.
 func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 3, 3)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 4, 3)
 }
 
 func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options TransactionOptions) (metadata.FeeDetails, error) {

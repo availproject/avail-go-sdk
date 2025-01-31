@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	examples.RunValidator()
+	examples.Run()
 }
