@@ -35,7 +35,7 @@ just # Runs `go run .`
 
 just test # Run tests
 
-just book-serve # Builds and serve the documentation
+just book-serve # Build and serve the documentation
 
 just book-deploy # Deploys the documentation
 
