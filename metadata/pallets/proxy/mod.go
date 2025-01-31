@@ -15,7 +15,7 @@ package proxy
 // The "Child" can, if needed, break this bond and force the "Parent" to become childless.
 // The "Parent" can, if needed, break this bond and force the "Child" to become fatherless (an orphan).
 //
-// There are different types of Proxy account and in not of all has the "Parent" the same control options.
+// There are different types of Proxy account with different levels of authority.
 //
 // Pure Proxy accounts work in the opposite direction. If we designate the name "Parent" to our main account,
 // then the proxy account will be designated with the name "Child". The "Child" cannot do anything on it's own

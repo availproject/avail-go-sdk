@@ -6,6 +6,7 @@ import (
 
 	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	pxPallet "github.com/availproject/avail-go-sdk/metadata/pallets/proxy"
 	"github.com/availproject/avail-go-sdk/primitives"
@@ -27,7 +28,7 @@ import (
 // The "Child" can, if needed, break this bond and force the "Parent" to become childless.
 // The "Parent" can, if needed, break this bond and force the "Child" to become fatherless (an orphan).
 //
-// There are different types of Proxy account and in not of all has the "Parent" the same control options.
+// There are different types of Proxy account with different levels of authority.
 //
 // Pure Proxy accounts work in the opposite direction. If we designate the name "Parent" to our main account,
 // then the proxy account will be designated with the name "Child". The "Child" cannot do anything on it's own
@@ -35,8 +36,66 @@ import (
 // place thus forcing the "Child" to become an orphan that no will ever see again.
 
 func RunProxy() {
+	RunNormalProxy()
 	RunPureProxy()
+
 	fmt.Println("RunProxy finished correctly.")
+}
+
+func RunNormalProxy() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Bob is the "Parent" account
+	parent := SDK.Account.Bob()
+	parentMulti := metadata.NewAccountIdFromKeyPair(parent).ToMultiAddress()
+	// Ferdie is the "Child" account
+	child := SDK.Account.Ferdie()
+
+	// Let's create a proxy and make Bob the "Parent" and Ferdie the "Child"
+	proxyType := metadata.ProxyType{VariantIndex: 0} // Any Proxy
+	tx := sdk.Tx.Proxy.AddProxy(parentMulti, proxyType, 0)
+	res, err := tx.ExecuteAndWatchInclusion(child, SDK.NewTransactionOptions())
+	PanicOnError(err)
+
+	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction has to succeed")
+	AssertTrue(res.Events.IsSome(), "Events need to be decodable")
+
+	// Finding the Proxy Added Event
+	// In production you would use `EventFindFirstChecked`` instead of `EventFindFirst`.
+	event := SDK.EventFindFirst(res.Events.Unwrap(), pxPallet.EventProxyAdded{}).UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Delegatee: %v, Delegator %v, ProxyTpe %v, Delay: %v`, event.Delegatee.ToHuman(), event.Delegator.ToHuman(), event.ProxyTpe.ToHuman(), event.Delay))
+
+	// The "Child" account misbehaved so "Parent" decided to take his allowance. 1.0 Avail will be "taken"
+	realAddress := metadata.NewAccountIdFromKeyPair(child).ToMultiAddress()
+	call := pallets.ToCall(baPallet.CallTransferKeepAlive{Dest: parentMulti, Value: SDK.OneAvail()})
+
+	tx = sdk.Tx.Proxy.Proxy(realAddress, primitives.NewNone[metadata.ProxyType](), call)
+	res, err = tx.ExecuteAndWatchInclusion(parent, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction has to succeed")
+
+	// Checking for EventProxyExecuted event.
+	// In production you would use `EventFindFirstChecked`` instead of `EventFindFirst`.
+	event2 := SDK.EventFindFirst(res.Events.Unwrap(), pxPallet.EventProxyExecuted{}).UnsafeUnwrap()
+	AssertEq(event2.Result.VariantIndex, 0, "Event must OK")
+	fmt.Println(fmt.Sprintf(`Dispatch Result: %v`, event2.Result.ToString()))
+
+	// "Child" is angry at "Parent" so he decides to cut all the dies with him
+	tx = sdk.Tx.Proxy.RemoveProxy(parentMulti, proxyType, 0)
+	res, err = tx.ExecuteAndWatchInclusion(child, SDK.NewTransactionOptions())
+	PanicOnError(err)
+
+	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction has to succeed")
+	AssertTrue(res.Events.IsSome(), "Events need to be decodable")
+
+	// Checking for EventProxyExecuted event.
+	// In production you would use `EventFindFirstChecked`` instead of `EventFindFirst`.
+	event3 := SDK.EventFindFirst(res.Events.Unwrap(), pxPallet.EventProxyRemoved{}).UnsafeUnwrap()
+	AssertEq(event2.Result.VariantIndex, 0, "Event must OK")
+	fmt.Println(fmt.Sprintf(`Delegatee: %v, Delegator %v, ProxyTpe %v, Delay: %v`, event3.Delegatee.ToHuman(), event3.Delegator.ToHuman(), event3.ProxyTpe.ToHuman(), event3.Delay))
+
+	fmt.Println("RunNormalProxy finished correctly.")
 }
 
 func RunPureProxy() {
@@ -57,16 +116,10 @@ func RunPureProxy() {
 	AssertTrue(res.Events.IsSome(), "Events need to be decodable")
 
 	// Finding the Pure Created Event
-	eventMyb, err := SDK.EventFindFirstChecked(res.Events.Unwrap(), pxPallet.EventPureCreated{})
-	PanicOnError(err)
-	AssertTrue(eventMyb.IsSome(), "Event must be found")
-
-	// Finding "Child"
-	event := eventMyb.Unwrap()
+	// In production you would use `EventFindFirstChecked`` instead of `EventFindFirst`.
+	event := SDK.EventFindFirst(res.Events.Unwrap(), pxPallet.EventPureCreated{}).UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pure: %v, Who %v, ProxyType %v, Index: %v`, event.Pure.ToHuman(), event.Who.ToHuman(), event.ProxyTpe.ToHuman(), event.DisambiguationIndex))
 	child := event.Pure
-	/* 	childHeight := res.BlockNumber
-	   	childExtIndex := res.TxIndex */
 
 	// Forcing "Child" to create an application key
 	key := fmt.Sprintf("MyKey%v", rand.Uint32())
@@ -74,27 +127,13 @@ func RunPureProxy() {
 	tx = sdk.Tx.Proxy.Proxy(child.ToMultiAddress(), primitives.NewNone[metadata.ProxyType](), call)
 	res, err = tx.ExecuteAndWatchInclusion(parent, SDK.NewTransactionOptions())
 	PanicOnError(err)
-
 	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction has to succeed")
-	AssertTrue(res.Events.IsSome(), "Events need to be decodable")
 
 	// Finding the Proxy Executed Event
-	eventMyb2, err := SDK.EventFindFirstChecked(res.Events.Unwrap(), pxPallet.EventProxyExecuted{})
-	PanicOnError(err)
-	AssertTrue(eventMyb2.IsSome(), "Event must be found")
-
-	event2 := eventMyb2.Unwrap()
+	// In production you would use `EventFindFirstChecked`` instead of `EventFindFirst`.
+	event2 := SDK.EventFindFirst(res.Events.Unwrap(), pxPallet.EventProxyExecuted{}).UnsafeUnwrap()
 	AssertEq(event2.Result.VariantIndex, 0, "Event must OK")
 	fmt.Println(fmt.Sprintf(`Dispatch Result: %v`, event2.Result.ToString()))
-
-	/* 	// "Parent" decides that the "Child" should become fatherless.
-	   	accountId := metadata.NewAccountIdFromKeyPair(parent)
-	   	tx = sdk.Tx.Proxy.KillPure(accountId.ToMultiAddress(), proxyType, index, childHeight, childExtIndex)
-	   	res, err = tx.ExecuteAndWatchInclusion(parent, SDK.NewTransactionOptions())
-	   	PanicOnError(err)
-
-	   	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction has to succeed")
-	   	AssertTrue(res.Events.IsSome(), "Events need to be decodable") */
 
 	fmt.Println("RunPureProxy finished correctly.")
 }

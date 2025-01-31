@@ -28,3 +28,16 @@ And run go command with `LOG_LEVEL` set to debug
 ```bash
 LOG_LEVEL=debug go run .
 ```
+
+# Commands
+```bash
+just # Runs `go run .`
+
+just test # Run tests
+
+just book-serve # Builds and serve the documentation
+
+just book-deploy # Deploys the documentation
+
+just fmt # formats files
+```
