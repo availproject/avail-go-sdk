@@ -2,8 +2,6 @@ package session
 
 import (
 	"github.com/availproject/avail-go-sdk/metadata"
-	. "github.com/availproject/avail-go-sdk/metadata/pallets"
-	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 // Sets the session key(s) of the function caller to `keys`.
@@ -30,18 +28,6 @@ func (this CallSetKeys) CallName() string {
 	return "set_keys"
 }
 
-func (this *CallSetKeys) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSetKeys) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSetKeys) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Removes any session key(s) of the function caller.
 //
 // This doesn't take effect until the next session.
@@ -66,16 +52,4 @@ func (this CallPurgeKeys) CallIndex() uint8 {
 
 func (this CallPurgeKeys) CallName() string {
 	return "purge_keys"
-}
-
-func (this *CallPurgeKeys) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallPurgeKeys) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallPurgeKeys) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }

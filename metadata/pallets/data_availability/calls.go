@@ -1,10 +1,6 @@
 package data_availability
 
-import (
-	"github.com/availproject/avail-go-sdk/metadata"
-	. "github.com/availproject/avail-go-sdk/metadata/pallets"
-	prim "github.com/availproject/avail-go-sdk/primitives"
-)
+import ()
 
 // Do not add, remove or change any of the field members.
 type CallCreateApplicationKey struct {
@@ -27,18 +23,6 @@ func (this CallCreateApplicationKey) CallName() string {
 	return "create_application_key"
 }
 
-func (this *CallCreateApplicationKey) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallCreateApplicationKey) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallCreateApplicationKey) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Do not add, remove or change any of the field members.
 type CallSubmitData struct {
 	Data []uint8
@@ -58,16 +42,4 @@ func (this CallSubmitData) CallIndex() uint8 {
 
 func (this CallSubmitData) CallName() string {
 	return "submit_data"
-}
-
-func (this *CallSubmitData) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSubmitData) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSubmitData) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }

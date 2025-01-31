@@ -2,7 +2,6 @@ package utility
 
 import (
 	"github.com/availproject/avail-go-sdk/metadata"
-	. "github.com/availproject/avail-go-sdk/metadata/pallets"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -27,18 +26,6 @@ func (this CallBatch) CallIndex() uint8 {
 
 func (this CallBatch) CallName() string {
 	return "batch"
-}
-
-func (this *CallBatch) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallBatch) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallBatch) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 func (this *CallBatch) AddCall(value prim.Call) {
@@ -79,18 +66,6 @@ func (this CallAsDerivate) CallName() string {
 	return "AsDerivate"
 }
 
-func (this *CallAsDerivate) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallAsDerivate) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallAsDerivate) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Send a batch of dispatch calls and atomically execute them.
 // The whole transaction will rollback and fail if any of the calls failed.
 //
@@ -115,18 +90,6 @@ func (this CallBatchAll) CallName() string {
 	return "BatchAll"
 }
 
-func (this *CallBatchAll) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallBatchAll) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallBatchAll) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Send a batch of dispatch calls.
 // Unlike `batch`, it allows errors and won't interrupt.
 //
@@ -149,16 +112,4 @@ func (this CallForceBatch) CallIndex() uint8 {
 
 func (this CallForceBatch) CallName() string {
 	return "ForceBatch"
-}
-
-func (this *CallForceBatch) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallForceBatch) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallForceBatch) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }

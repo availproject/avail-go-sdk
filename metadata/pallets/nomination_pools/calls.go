@@ -2,7 +2,6 @@ package nomination_pools
 
 import (
 	"github.com/availproject/avail-go-sdk/metadata"
-	. "github.com/availproject/avail-go-sdk/metadata/pallets"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 
 	"github.com/itering/scale.go/utiles/uint128"
@@ -39,18 +38,6 @@ func (this CallJoin) CallName() string {
 	return "join"
 }
 
-func (this *CallJoin) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallJoin) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallJoin) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Bond `extra` more funds from `origin` into the pool to which they already belong.
 //
 // Additional funds can come from either the free balance of the account, of from the
@@ -78,18 +65,6 @@ func (this CallBondExtra) CallName() string {
 	return "bond_extra"
 }
 
-func (this *CallBondExtra) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallBondExtra) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallBondExtra) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // A bonded member can use this to claim their payout based on the rewards that the pool
 // has accumulated since their last claimed payout (OR since joining if this is their first
 // time claiming rewards). The payout will be transferred to the member's account.
@@ -114,18 +89,6 @@ func (this CallClaimPayout) CallIndex() uint8 {
 
 func (this CallClaimPayout) CallName() string {
 	return "claim_payout"
-}
-
-func (this *CallClaimPayout) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallClaimPayout) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallClaimPayout) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Unbond up to `unbonding_points` of the `member_account`'s funds from the pool. It
@@ -180,18 +143,6 @@ func (this CallUnbond) CallName() string {
 	return "unbond"
 }
 
-func (this *CallUnbond) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallUnbond) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallUnbond) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Call `withdraw_unbonded` for the pools account. This call can be made by any account.
 //
 // This is useful if there are too many unlocking chunks to call `unbond`, and some
@@ -217,18 +168,6 @@ func (this CallPoolWithdrawUnbonded) CallIndex() uint8 {
 
 func (this CallPoolWithdrawUnbonded) CallName() string {
 	return "pool_withdraw_unbonded"
-}
-
-func (this *CallPoolWithdrawUnbonded) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallPoolWithdrawUnbonded) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallPoolWithdrawUnbonded) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Withdraw unbonded funds from `member_account`. If no bonded funds can be unbonded, an
@@ -271,18 +210,6 @@ func (this CallWithdrawUnbonded) CallName() string {
 	return "withdraw_unbonded"
 }
 
-func (this *CallWithdrawUnbonded) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallWithdrawUnbonded) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallWithdrawUnbonded) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Create a new delegation pool.
 //
 // # Arguments
@@ -323,18 +250,6 @@ func (this CallCreate) CallName() string {
 	return "create"
 }
 
-func (this *CallCreate) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallCreate) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallCreate) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Create a new delegation pool with a previously used pool id
 //
 // # Arguments
@@ -365,18 +280,6 @@ func (this CallCreateWithPoolId) CallName() string {
 	return "create_with_pool_id"
 }
 
-func (this *CallCreateWithPoolId) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallCreateWithPoolId) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallCreateWithPoolId) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Nominate on behalf of the pool.
 //
 // The dispatch origin of this call must be signed by the pool nominator or the pool
@@ -403,18 +306,6 @@ func (this CallNominate) CallIndex() uint8 {
 
 func (this CallNominate) CallName() string {
 	return "nominate"
-}
-
-func (this *CallNominate) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallNominate) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallNominate) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Set a new state for the pool.
@@ -448,18 +339,6 @@ func (this CallSetState) CallName() string {
 	return "set_state"
 }
 
-func (this *CallSetState) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSetState) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSetState) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Set a new metadata for the pool.
 //
 // The dispatch origin of this call must be signed by the bouncer, or the root role of the
@@ -483,18 +362,6 @@ func (this CallSetMetadata) CallIndex() uint8 {
 
 func (this CallSetMetadata) CallName() string {
 	return "set_metadata"
-}
-
-func (this *CallSetMetadata) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSetMetadata) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSetMetadata) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Update the roles of the pool.
@@ -527,18 +394,6 @@ func (this CallUpdateRoles) CallName() string {
 	return "update_roles"
 }
 
-func (this *CallUpdateRoles) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallUpdateRoles) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallUpdateRoles) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Chill on behalf of the pool.
 //
 // The dispatch origin of this call must be signed by the pool nominator or the pool
@@ -564,18 +419,6 @@ func (this CallChill) CallIndex() uint8 {
 
 func (this CallChill) CallName() string {
 	return "chill"
-}
-
-func (this *CallChill) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallChill) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallChill) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // `origin` bonds funds from `extra` for some pool member `member` into their respective
@@ -606,18 +449,6 @@ func (this CallBondExtraOther) CallIndex() uint8 {
 
 func (this CallBondExtraOther) CallName() string {
 	return "bond_extra_other"
-}
-
-func (this *CallBondExtraOther) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallBondExtraOther) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallBondExtraOther) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Allows a pool member to set a claim permission to allow or disallow permissionless
@@ -652,18 +483,6 @@ func (this CallSetClaimPermission) CallName() string {
 	return "set_claim_permission"
 }
 
-func (this *CallSetClaimPermission) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSetClaimPermission) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSetClaimPermission) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // `origin` can claim payouts on some pool member `other`'s behalf.
 //
 // Pool member `other` must have a `PermissionlessAll` or `PermissionlessWithdraw` in order
@@ -686,18 +505,6 @@ func (this CallClaimPayoutOther) CallIndex() uint8 {
 
 func (this CallClaimPayoutOther) CallName() string {
 	return "claim_payout_other"
-}
-
-func (this *CallClaimPayoutOther) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallClaimPayoutOther) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallClaimPayoutOther) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Set the commission of a pool.
@@ -727,18 +534,6 @@ func (this CallSetCommission) CallName() string {
 	return "set_commission"
 }
 
-func (this *CallSetCommission) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSetCommission) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSetCommission) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Set the maximum commission of a pool.
 //
 //   - Initial max can be set to any `Perbill`, and only smaller values thereafter.
@@ -763,18 +558,6 @@ func (this CallSetCommissionMax) CallIndex() uint8 {
 
 func (this CallSetCommissionMax) CallName() string {
 	return "set_commission_max"
-}
-
-func (this *CallSetCommissionMax) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSetCommissionMax) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSetCommissionMax) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Set the commission change rate for a pool.
@@ -802,18 +585,6 @@ func (this CallSetCommissionChangeRate) CallName() string {
 	return "set_commission_change_rate"
 }
 
-func (this *CallSetCommissionChangeRate) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSetCommissionChangeRate) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSetCommissionChangeRate) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Claim pending commission.
 //
 // The dispatch origin of this call must be signed by the `root` role of the pool. Pending
@@ -837,18 +608,6 @@ func (this CallClaimCommission) CallIndex() uint8 {
 
 func (this CallClaimCommission) CallName() string {
 	return "claim_commission"
-}
-
-func (this *CallClaimCommission) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallClaimCommission) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallClaimCommission) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
 
 // Top up the deficit or withdraw the excess ED from the pool.
@@ -878,18 +637,6 @@ func (this CallAdjustPoolDeposit) CallName() string {
 	return "adjust_pool_deposit"
 }
 
-func (this *CallAdjustPoolDeposit) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallAdjustPoolDeposit) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallAdjustPoolDeposit) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
-}
-
 // Set or remove a pool's commission claim permission.
 //
 // Determines who can claim the pool's pending commission. Only the `Root` role of the pool
@@ -913,16 +660,4 @@ func (this CallSetCommissionClaimPermission) CallIndex() uint8 {
 
 func (this CallSetCommissionClaimPermission) CallName() string {
 	return "set_commission_claim_permission"
-}
-
-func (this *CallSetCommissionClaimPermission) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSetCommissionClaimPermission) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSetCommissionClaimPermission) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
