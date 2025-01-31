@@ -88,3 +88,30 @@ func (this *BlockTransaction) AppId() prim.Option[uint32] {
 
 	return prim.NewSome(signed.Unwrap().AppId)
 }
+
+func (this *BlockTransaction) Tip() prim.Option[metadata.Balance] {
+	signed := this.Signed()
+	if signed.IsNone() {
+		return prim.NewNone[metadata.Balance]()
+	}
+
+	return prim.NewSome(metadata.Balance{Value: signed.Unwrap().Tip})
+}
+
+func (this *BlockTransaction) Mortality() prim.Option[uint32] {
+	signed := this.Signed()
+	if signed.IsNone() {
+		return prim.NewNone[uint32]()
+	}
+
+	return prim.NewSome(uint32(signed.Unwrap().Era.Period))
+}
+
+func (this *BlockTransaction) Nonce() prim.Option[uint32] {
+	signed := this.Signed()
+	if signed.IsNone() {
+		return prim.NewNone[uint32]()
+	}
+
+	return prim.NewSome(signed.Unwrap().Nonce)
+}

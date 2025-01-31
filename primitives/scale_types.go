@@ -58,7 +58,7 @@ func (this Option[T]) IsNone() bool {
 
 func (this Option[T]) String() string {
 	if this.isSet {
-		return fmt.Sprintf("%v", this.value)
+		return fmt.Sprintf("Some(%v)", this.value)
 	} else {
 		return "None"
 	}
