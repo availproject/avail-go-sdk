@@ -3,7 +3,7 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/primitives"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
@@ -29,14 +29,15 @@ func RunTransactionOptionsAppId() {
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
 
-	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
 
 	// Checking is the App Id was used correctly
-	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
-	foundAppId := genTx.Signed().UnsafeUnwrap().AppId
+	blockTxs := block.Transactions(SDK.Filter{}.WTxHash(res.TxHash))
+	AssertEq(len(blockTxs), 1, "")
+	foundAppId := blockTxs[0].AppId().UnsafeUnwrap()
 	AssertEq(appId, foundAppId, "App Ids are not the same")
 
 	fmt.Println("RunTransactionOptionsAppId finished correctly.")
@@ -48,7 +49,7 @@ func RunTransactionOptionsNonce() {
 
 	// Getting Nonce
 	acc := SDK.Account.Alice()
-	currentNonce, err := SDK.Account.Nonce(sdk.Client, metadata.NewAccountIdFromKeyPair(acc))
+	currentNonce, err := SDK.Account.Nonce(sdk.Client, primitives.NewAccountIdFromKeyPair(acc))
 	PanicOnError(err)
 
 	// Executing Transaction
@@ -57,17 +58,18 @@ func RunTransactionOptionsNonce() {
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
 
-	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
 
 	// Checking is the Nonce was used correctly
-	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
-	foundNonce := genTx.Signed().UnsafeUnwrap().Nonce
+	blockTxs := block.Transactions(SDK.Filter{}.WTxHash(res.TxHash))
+	AssertEq(len(blockTxs), 1, "")
+	foundNonce := blockTxs[0].Nonce().UnsafeUnwrap()
 	AssertEq(foundNonce, currentNonce, "Nonces are not the same")
 
-	newNonce, err := SDK.Account.Nonce(sdk.Client, metadata.NewAccountIdFromKeyPair(acc))
+	newNonce, err := SDK.Account.Nonce(sdk.Client, primitives.NewAccountIdFromKeyPair(acc))
 	PanicOnError(err)
 	AssertEq(newNonce, currentNonce+1, "New nonce and old nonce + 1 are not the same.")
 
@@ -86,15 +88,16 @@ func RunTransactionOptionsMortality() {
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
-	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
 
 	// Checking if the Mortality is the same as the one expected
-	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
-	actualMortality := uint32(genTx.Signed().UnsafeUnwrap().Era.Period)
-	AssertEq(actualMortality, mortality, "Moartalities are not the same.")
+	blockTxs := block.Transactions(SDK.Filter{}.WTxHash(res.TxHash))
+	AssertEq(len(blockTxs), 1, "")
+	actualMortality := uint32(blockTxs[0].Mortality().UnsafeUnwrap().Period)
+	AssertEq(actualMortality, mortality, "Mortalities are not the same.")
 
 	fmt.Println("RunTransactionOptionsMortality finished correctly.")
 }
@@ -111,15 +114,16 @@ func RunTransactionOptionsTip() {
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
-	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
 	PanicOnError(err)
 
 	// Checking if the Tip is the same as the one expected
-	genTx := block.TransactionByHash(res.TxHash).UnsafeUnwrap()
-	actualTip := genTx.Signed().UnsafeUnwrap().Tip
-	AssertEq(metadata.Balance{Value: actualTip}, tip, "Tips are not the same.")
+	blockTxs := block.Transactions(SDK.Filter{}.WTxHash(res.TxHash))
+	AssertEq(len(blockTxs), 1, "")
+	actualTip := blockTxs[0].Tip().UnsafeUnwrap()
+	AssertEq(actualTip, tip, "Tips are not the same.")
 
 	fmt.Println("RunTransactionOptionsTip finished correctly.")
 }

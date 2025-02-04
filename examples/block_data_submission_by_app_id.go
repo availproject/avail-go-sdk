@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/availproject/avail-go-sdk/primitives"
 
 	SDK "github.com/availproject/avail-go-sdk/sdk"
@@ -20,15 +19,15 @@ func RunBlockDataSubmissionByAppId() {
 	PanicOnError(err)
 
 	// Block Blobs filtered by App Id
-	blobs := block.DataSubmissionByAppId(2)
-	fmt.Println("Blob Count: ", len(blobs))
+	appId := uint32(2)
+	blobs := block.DataSubmissions(SDK.Filter{}.WAppId(appId))
 	AssertEq(len(blobs), 2, "Data Submission count is not 2")
 
 	// Printout Block Blobs filtered by App Id
 	for _, blob := range blobs {
-		AssertEq(blob.AppId, 2, "Transaction App Ids are not the same.")
+		AssertEq(blob.AppId, appId, "Transaction App Ids are not the same.")
 
-		accountId, err := metadata.NewAccountIdFromMultiAddress(blob.TxSigner)
+		accountId, err := primitives.NewAccountIdFromMultiAddress(blob.TxSigner)
 		PanicOnError(err)
 
 		fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))

@@ -27,8 +27,8 @@ func (this *StorageActiveEra) Fetch(blockStorage interfaces.BlockStorageT) (prim
 //
 //
 
-type StorageBondedKey = AccountId
-type StorageBondedValue = AccountId
+type StorageBondedKey = prim.AccountId
+type StorageBondedValue = prim.AccountId
 type StorageBondedEntry = StorageEntry[StorageBondedKey, StorageBondedValue]
 
 type StorageBonded struct{}
@@ -116,7 +116,7 @@ func (this *StorageChillThreshold) Fetch(blockStorage interfaces.BlockStorageT) 
 //
 
 type StorageClaimedRewardsKey1 = uint32
-type StorageClaimedRewardsKey2 = AccountId
+type StorageClaimedRewardsKey2 = prim.AccountId
 type StorageClaimedRewardsValue = []uint32
 type StorageClaimedRewardsEntry = StorageEntryDoubleMap[StorageClaimedRewardsKey1, StorageClaimedRewardsKey2, StorageClaimedRewardsValue]
 type StorageClaimedRewards struct{}
@@ -231,7 +231,7 @@ type StorageErasRewardPointsEntry = StorageEntry[StorageErasRewardPointsKey, Sto
 
 type StorageErasRewardPoints struct {
 	Total      uint32
-	Individual []Tuple2[AccountId, uint32]
+	Individual []Tuple2[prim.AccountId, uint32]
 }
 
 func (this *StorageErasRewardPoints) PalletName() string {
@@ -261,10 +261,10 @@ func (this *StorageErasRewardPoints) FetchAll(blockStorage interfaces.BlockStora
 //
 
 type StorageErasStakersKey1 = uint32
-type StorageErasStakersKey2 = AccountId
+type StorageErasStakersKey2 = prim.AccountId
 type StorageErasStakersEntry = StorageEntryDoubleMap[StorageErasStakersKey1, StorageErasStakersKey2, StorageErasStakers]
 type StorageErasStakers struct {
-	AccountId AccountId
+	AccountId prim.AccountId
 	Balance   Balance
 }
 
@@ -361,7 +361,7 @@ func (this *StorageErasTotalStake) FetchAll(blockStorage interfaces.BlockStorage
 //
 
 type StorageErasValidatorPrefsKey1 = uint32
-type StorageErasValidatorPrefsKey2 = AccountId
+type StorageErasValidatorPrefsKey2 = prim.AccountId
 type StorageErasValidatorPrefsValue = ValidatorPrefs
 type StorageErasValidatorPrefsEntry = StorageEntryDoubleMap[StorageErasValidatorPrefsKey1, StorageErasValidatorPrefsKey2, StorageErasValidatorPrefsValue]
 type StorageErasValidatorPrefs struct{}
@@ -430,7 +430,7 @@ func (this *StorageErasValidatorReward) FetchAll(blockStorage interfaces.BlockSt
 //
 //
 
-type StorageInvulnerablesValue = []AccountId
+type StorageInvulnerablesValue = []prim.AccountId
 type StorageInvulnerables struct{}
 
 func (this *StorageInvulnerables) PalletName() string {
@@ -450,11 +450,11 @@ func (this *StorageInvulnerables) Fetch(blockStorage interfaces.BlockStorageT) (
 //
 //
 
-type StorageLedgerKey = AccountId
+type StorageLedgerKey = prim.AccountId
 type StorageLedgerEntry = StorageEntry[StorageLedgerKey, StorageLedger]
 
 type StorageLedger struct {
-	Stash                AccountId
+	Stash                prim.AccountId
 	Total                Balance `scale:"compact"`
 	Active               Balance `scale:"compact"`
 	Unlocking            []UnlockChunk
@@ -625,7 +625,7 @@ func (this *StorageMinimumValidatorCount) Fetch(blockStorage interfaces.BlockSto
 //
 
 type StorageNominatorSlashInEraKey1 = uint32
-type StorageNominatorSlashInEraKey2 = AccountId
+type StorageNominatorSlashInEraKey2 = prim.AccountId
 type StorageNominatorSlashInEraValue = Balance
 type StorageNominatorSlashInEraEntry = StorageEntryDoubleMap[StorageNominatorSlashInEraKey1, StorageNominatorSlashInEraKey2, StorageNominatorSlashInEraValue]
 type StorageNominatorSlashInEra struct{}
@@ -658,11 +658,11 @@ func (this *StorageNominatorSlashInEra) FetchAll(blockStorage interfaces.BlockSt
 //
 //
 
-type StorageNominatorsKey = AccountId
+type StorageNominatorsKey = prim.AccountId
 type StorageNominatorsEntry = StorageEntry[StorageNominatorsKey, StorageNominators]
 
 type StorageNominators struct {
-	Targets     []AccountId
+	Targets     []prim.AccountId
 	SubmittedIn uint32
 	Suppressed  bool
 }
@@ -712,7 +712,7 @@ func (this *StorageOffendingValidators) Fetch(blockStorage interfaces.BlockStora
 //
 //
 
-type StoragePayeeKey = AccountId
+type StoragePayeeKey = prim.AccountId
 type StoragePayeeValue = RewardDestination
 type StoragePayeeEntry = StorageEntry[StoragePayeeKey, StoragePayeeValue]
 
@@ -762,7 +762,7 @@ func (this *StorageSlashRewardFraction) Fetch(blockStorage interfaces.BlockStora
 //
 //
 
-type StorageSlashingSpansKey = AccountId
+type StorageSlashingSpansKey = prim.AccountId
 type StorageSlashingSpansEntry = StorageEntry[StoragePayeeKey, StorageSlashingSpans]
 
 type StorageSlashingSpans struct {
@@ -797,7 +797,7 @@ func (this *StorageSlashingSpans) FetchAll(blockStorage interfaces.BlockStorageT
 //
 //
 
-type StorageSpanSlashKey = Tuple2[AccountId, uint32]
+type StorageSpanSlashKey = Tuple2[prim.AccountId, uint32]
 type StorageSpanSlashEntry = StorageEntry[StorageSpanSlashKey, StorageSpanSlash]
 
 type StorageSpanSlash struct {
@@ -835,10 +835,10 @@ type StorageUnappliedSlashesValue = []StorageUnappliedSlashes
 type StorageUnappliedSlashesEntry = StorageEntry[StorageUnappliedSlashesKey, StorageUnappliedSlashesValue]
 
 type StorageUnappliedSlashes struct {
-	Validator AccountId
+	Validator prim.AccountId
 	Own       Balance
-	Others    []Tuple2[AccountId, Balance]
-	Reporters []AccountId
+	Others    []Tuple2[prim.AccountId, Balance]
+	Reporters []prim.AccountId
 	Payout    Balance
 }
 
@@ -888,7 +888,7 @@ func (this *StorageValidatorCount) Fetch(blockStorage interfaces.BlockStorageT) 
 //
 
 type StorageValidatorSlashInEraKey1 = uint32
-type StorageValidatorSlashInEraKey2 = AccountId
+type StorageValidatorSlashInEraKey2 = prim.AccountId
 type StorageValidatorSlashInEraValue = Tuple2[Perbill, Balance]
 type StorageValidatorSlashInEraEntry = StorageEntryDoubleMap[StorageValidatorSlashInEraKey1, StorageValidatorSlashInEraKey2, StorageValidatorSlashInEraValue]
 type StorageValidatorSlashInEra struct{}
@@ -921,7 +921,7 @@ func (this *StorageValidatorSlashInEra) FetchAll(blockStorage interfaces.BlockSt
 //
 //
 
-type StorageValidatorsKey = AccountId
+type StorageValidatorsKey = prim.AccountId
 type StorageValidatorsValue = ValidatorPrefs
 type StorageValidatorsEntry = StorageEntry[StorageValidatorsKey, StorageValidatorsValue]
 

@@ -1,6 +1,7 @@
 package primitives
 
 import (
+	"fmt"
 	"math"
 	"math/bits"
 
@@ -50,11 +51,32 @@ func (this *Call) Decode(decoder *Decoder) error {
 
 // Do not change the order of field members.
 type Era struct {
-	Period uint64
-	Phase  uint64
+	IsImmortal bool
+	Period     uint64
+	Phase      uint64
+}
+
+func (this Era) ToHuman() string {
+	return this.String()
+}
+
+func (this Era) ToString() string {
+	return this.String()
+}
+func (this Era) String() string {
+	if this.IsImmortal {
+		return fmt.Sprintf("Immortal")
+	}
+
+	return fmt.Sprintf("Mortal: {period: %v, phase: %v}", this.Period, this.Phase)
 }
 
 func (this *Era) EncodeTo(dest *string) {
+	if this.IsImmortal {
+		Encoder.EncodeTo(uint8(0), dest)
+		return
+	}
+
 	quantizeFactor := math.Max(float64(this.Period>>12), 1)
 	trailingZeros := bits.TrailingZeros16(uint16(this.Period))
 	encoded := uint16(float64(this.Phase)/quantizeFactor)<<4 | uint16(math.Min(15, math.Max(1, float64(trailingZeros-1))))
@@ -67,16 +89,18 @@ func (this *Era) EncodeTo(dest *string) {
 }
 
 func (this *Era) Decode(decoder *Decoder) error {
-	isImmortal := uint8(0)
-	if err := decoder.Decode(&isImmortal); err != nil {
+	*this = Era{}
+
+	first := uint8(0)
+	if err := decoder.Decode(&first); err != nil {
 		return err
 	}
 
-	if isImmortal == 0 {
+	if first == 0 {
+		this.IsImmortal = true
 		return nil
 	}
 
-	first := isImmortal
 	second := uint8(0)
 	if err := decoder.Decode(&second); err != nil {
 		return err

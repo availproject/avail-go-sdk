@@ -46,7 +46,7 @@ func (this *StorageDisabledValidators) Fetch(blockStorage interfaces.BlockStorag
 //
 
 type StorageKeyOwnerKey = Tuple2[[4]byte, []byte]
-type StorageKeyOwnerValue = AccountId
+type StorageKeyOwnerValue = prim.AccountId
 type StorageKeyOwnerEntry = StorageEntry[StorageKeyOwnerKey, StorageKeyOwnerValue]
 
 type StorageKeyOwner struct{}
@@ -76,7 +76,7 @@ func (this *StorageKeyOwner) FetchAll(blockStorage interfaces.BlockStorageT) ([]
 //
 //
 
-type StorageNextKeysKey = AccountId
+type StorageNextKeysKey = prim.AccountId
 type StorageNextKeysValue = SessionKeys
 type StorageNextKeysEntry = StorageEntry[StorageNextKeysKey, StorageNextKeysValue]
 
@@ -126,7 +126,7 @@ func (this *StorageQueuedChanged) Fetch(blockStorage interfaces.BlockStorageT) (
 //
 //
 
-type StorageQueuedKeysValue = []Tuple2[AccountId, SessionKeys]
+type StorageQueuedKeysValue = []Tuple2[prim.AccountId, SessionKeys]
 type StorageQueuedKeys struct{}
 
 func (this *StorageQueuedKeys) PalletName() string {
@@ -146,7 +146,7 @@ func (this *StorageQueuedKeys) Fetch(blockStorage interfaces.BlockStorageT) (Sto
 //
 //
 
-type StorageValidatorsValue = []AccountId
+type StorageValidatorsValue = []prim.AccountId
 type StorageValidators struct{}
 
 func (this *StorageValidators) PalletName() string {

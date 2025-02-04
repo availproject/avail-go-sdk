@@ -26,7 +26,7 @@ func CreateSigned(call Call, extra Extra, additional Additional, kp subkey.KeyPa
 	if err != nil {
 		return EncodedExtrinsic{}, err
 	}
-	multiAddress := NewMultiAddressId(accountId)
+	multiAddress := NewMultiAddressId(AccountId{Value: accountId})
 	multiSignature := NewMultiSignatureSr(signature)
 	encodedTransaction := NewEncodedExtrinsic(&unsignedEncodedPayload.Extra, &unsignedEncodedPayload.Call, multiAddress, multiSignature)
 	return encodedTransaction, nil

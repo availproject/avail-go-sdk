@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/availproject/avail-go-sdk/primitives"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
@@ -32,11 +31,11 @@ func RunAccountCreation() {
 	fmt.Println("Ferdie Address: " + acc.SS58Address(42))
 
 	// AccountId can be created from Keypair...
-	accountId := metadata.NewAccountIdFromKeyPair(acc)
+	accountId := primitives.NewAccountIdFromKeyPair(acc)
 	fmt.Println("Ferdie Address: " + accountId.ToHuman())
 
 	// ...or from SS58 address
-	accountId, err = metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	accountId, err = primitives.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
 	PanicOnError(err)
 	fmt.Println("Alice Address: " + accountId.ToHuman())
 	fmt.Println("Alice Account Id: " + accountId.ToString())
@@ -45,10 +44,14 @@ func RunAccountCreation() {
 	multiAddress := accountId.ToMultiAddress()
 	AssertEq(multiAddress.VariantIndex, 0, "Variant Index needs to be 0")
 	AssertTrue(multiAddress.Id.IsSome(), "ID needs to be populated")
-	AssertEq(multiAddress.Id.Unwrap(), accountId.Value, "multiAddress and accountId need to have the same value")
+	AssertEq(multiAddress.Id.UnsafeUnwrap(), accountId, "multiAddress and accountId need to have the same value")
+
+	// MultiAddress can be converted to AccountId
+	accountId2 := multiAddress.ToAccountId()
+	AssertTrue(accountId2.IsSome(), "")
 
 	// Non-init AccountId has `5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM` as the SS58 address
-	accountId = metadata.AccountId{Value: primitives.H256{}}
+	accountId = primitives.AccountId{Value: primitives.H256{}}
 	fmt.Println("Address: " + accountId.ToHuman())
 	AssertEq(accountId.ToHuman(), "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM", "Non-init account id ss58 address is not correct.")
 

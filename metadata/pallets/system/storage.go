@@ -6,7 +6,7 @@ import (
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
-type StorageAccountKey = AccountId
+type StorageAccountKey = prim.AccountId
 type StorageAccountEntry = StorageEntry[StorageAccountKey, StorageAccount]
 
 type StorageAccount struct {

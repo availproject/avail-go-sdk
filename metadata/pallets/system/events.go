@@ -2,6 +2,7 @@ package system
 
 import (
 	meta "github.com/availproject/avail-go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/primitives"
 )
 
 // An extrinsic completed successfully.
@@ -49,7 +50,7 @@ func (this EventExtrinsicFailed) EventName() string {
 
 // A new account was created.
 type EventNewAccount struct {
-	Account meta.AccountId
+	Account primitives.AccountId
 }
 
 func (this EventNewAccount) PalletIndex() uint8 {

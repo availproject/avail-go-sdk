@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	"github.com/availproject/avail-go-sdk/primitives"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
@@ -13,7 +12,7 @@ func RunAccountBalance() {
 	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
 	PanicOnError(err)
 
-	accountId, err := metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	accountId, err := primitives.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
 	PanicOnError(err)
 
 	// Via Storage RPC

@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/availproject/avail-go-sdk/metadata/pallets"
 	"github.com/availproject/avail-go-sdk/primitives"
 
@@ -21,19 +20,19 @@ func RunBlockTransactionBySigner() {
 	block, err := SDK.NewBlock(sdk.Client, blockHash)
 	PanicOnError(err)
 
-	accountId, err := metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	accountId, err := primitives.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
 	PanicOnError(err)
 
 	// All Transaction filtered by Signer
-	blockTxs := block.TransactionBySigner(accountId)
+	blockTxs := block.Transactions(SDK.Filter{}.WTxSigner(accountId))
 	fmt.Println("Transaction Count: ", len(blockTxs))
 	AssertEq(len(blockTxs), 5, "Transaction count is not 5")
 
 	// Printout Block Transactions made by Signer
 	for _, tx := range blockTxs {
+		AssertEq(tx.SS58Address().UnsafeUnwrap(), accountId.ToHuman(), "Signer is not the correct one")
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
-		fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.Signer(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
-		AssertEq(tx.Signer().UnsafeUnwrap(), accountId.ToHuman(), "Signer is not the correct one")
+		fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.SS58Address(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
 	}
 
 	// Convert from Block Transaction to Specific Transaction
@@ -47,11 +46,12 @@ func RunBlockTransactionBySigner() {
 	AssertEq(len(txEvents), 7, "Events count is not 7")
 
 	for _, ev := range txEvents {
-		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Convert from Block Transaction Event to Specific Transaction Event
-	event := SDK.EventFindFirst(txEvents, daPallet.EventApplicationKeyCreated{}).UnsafeUnwrap()
+	// Convert from Generic Transaction Event to Specific Transaction Event
+	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventApplicationKeyCreated{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Owner: %v, Key: %v, AppId: %v`, event.PalletName(), event.EventName(), event.Owner.ToHuman(), string(event.Key), event.Id))
 
 	fmt.Println("RunBlockTransactionBySigner finished correctly.")

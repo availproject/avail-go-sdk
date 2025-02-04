@@ -2,11 +2,12 @@ package balances
 
 import (
 	"github.com/availproject/avail-go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/primitives"
 )
 
 // An account was created with some free balance.
 type EventEndowed struct {
-	Account     metadata.AccountId
+	Account     primitives.AccountId
 	FreeBalance metadata.Balance
 }
 
@@ -28,7 +29,7 @@ func (this EventEndowed) EventName() string {
 
 // An account was removed whose balance was non-zero but below ExistentialDeposit, resulting in an outright loss.
 type EventDustLost struct {
-	Account metadata.AccountId
+	Account primitives.AccountId
 	Amount  metadata.Balance
 }
 
@@ -50,8 +51,8 @@ func (this EventDustLost) EventName() string {
 
 // Transfer succeeded.
 type EventTransfer struct {
-	From   metadata.AccountId
-	To     metadata.AccountId
+	From   primitives.AccountId
+	To     primitives.AccountId
 	Amount metadata.Balance
 }
 
@@ -73,7 +74,7 @@ func (this EventTransfer) EventName() string {
 
 // Some amount was deposited (e.g. for transaction fees).
 type EventDeposit struct {
-	Who    metadata.AccountId
+	Who    primitives.AccountId
 	Amount metadata.Balance
 }
 
@@ -95,7 +96,7 @@ func (this EventDeposit) EventName() string {
 
 // Some amount was withdrawn from the account (e.g. for transaction fees).
 type EventWithdraw struct {
-	Who    metadata.AccountId
+	Who    primitives.AccountId
 	Amount metadata.Balance
 }
 

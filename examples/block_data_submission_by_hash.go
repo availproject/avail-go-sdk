@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/availproject/avail-go-sdk/primitives"
 
 	SDK "github.com/availproject/avail-go-sdk/sdk"
@@ -23,11 +22,13 @@ func RunBlockDataSubmissionByHash() {
 	txHash, err := primitives.NewH256FromHexString("0xe7efa71363d11bce370fe71a33e5ff296775f37507075c49316132131420f793")
 	PanicOnError(err)
 
-	blob := block.DataSubmissionByHash(txHash).UnsafeUnwrap()
+	blobs := block.DataSubmissions(SDK.Filter{}.WTxHash(txHash))
+	AssertEq(len(blobs), 1, "")
+	blob := &blobs[0]
 	AssertEq(blob.TxHash.ToHuman(), txHash.ToHuman(), "Transaction Hash are not the same.")
 
 	// Printout Block Blobs filtered by Transaction Hash
-	accountId, err := metadata.NewAccountIdFromMultiAddress(blob.TxSigner)
+	accountId, err := primitives.NewAccountIdFromMultiAddress(blob.TxSigner)
 	PanicOnError(err)
 	fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
 

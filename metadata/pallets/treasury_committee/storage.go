@@ -6,7 +6,7 @@ import (
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
-type StorageMembersValue = []AccountId
+type StorageMembersValue = []prim.AccountId
 type StorageMembers struct{}
 
 func (this *StorageMembers) PalletName() string {
@@ -26,7 +26,7 @@ func (this *StorageMembers) Fetch(blockStorage interfaces.BlockStorageT) (Storag
 //
 //
 
-type StoragePrimeValue = AccountId
+type StoragePrimeValue = prim.AccountId
 type StoragePrime struct{}
 
 func (this *StoragePrime) PalletName() string {

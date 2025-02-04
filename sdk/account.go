@@ -66,7 +66,7 @@ func (accountT) Ferdie() subkey.KeyPair {
 	return val
 }
 
-func (accountT) Balance(client *Client, accountId metadata.AccountId) (metadata.AccountData, error) {
+func (accountT) Balance(client *Client, accountId primitives.AccountId) (metadata.AccountData, error) {
 	storageAt, err := client.StorageAt(primitives.NewNone[primitives.H256]())
 	if err != nil {
 		return metadata.AccountData{}, err
@@ -77,7 +77,7 @@ func (accountT) Balance(client *Client, accountId metadata.AccountId) (metadata.
 	return val.Value.AccountData, err
 }
 
-func (accountT) Nonce(client *Client, accountId metadata.AccountId) (uint32, error) {
+func (accountT) Nonce(client *Client, accountId primitives.AccountId) (uint32, error) {
 	storageAt, err := client.StorageAt(primitives.NewNone[primitives.H256]())
 	if err != nil {
 		return uint32(0), err

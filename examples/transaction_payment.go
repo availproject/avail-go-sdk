@@ -20,7 +20,7 @@ func RunTransactionPayment() {
 
 	AssertEq(feeDetails1.InclusionFee.IsSome(), true, "InclusionFee Must Exist")
 	if feeDetails1.InclusionFee.IsSome() {
-		InclusionFee := feeDetails1.InclusionFee.Unwrap()
+		InclusionFee := feeDetails1.InclusionFee.UnsafeUnwrap()
 		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee)
 		fmt.Println("Len Fee:", InclusionFee.LenFee)
 		fmt.Println("Base Fee:", InclusionFee.BaseFee)
@@ -32,7 +32,7 @@ func RunTransactionPayment() {
 
 	AssertEq(feeDetails1.InclusionFee.IsSome(), true, "InclusionFee Must Exist")
 	if feeDetails2.InclusionFee.IsSome() {
-		InclusionFee := feeDetails2.InclusionFee.Unwrap()
+		InclusionFee := feeDetails2.InclusionFee.UnsafeUnwrap()
 		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee)
 		fmt.Println("Len Fee:", InclusionFee.LenFee)
 		fmt.Println("Base Fee:", InclusionFee.BaseFee)

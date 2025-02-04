@@ -46,7 +46,7 @@ func (this *StorageInactiveIssuance) Fetch(blockStorage interfaces.BlockStorageT
 //
 //
 
-type StorageLocksKey = AccountId
+type StorageLocksKey = prim.AccountId
 type StorageLocksEntry = StorageEntry[StorageLocksKey, StorageLocks]
 
 type StorageLocks struct {

@@ -6,7 +6,7 @@ import (
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
-type StorageKeyValue = AccountId
+type StorageKeyValue = prim.AccountId
 type StorageKey struct{}
 
 func (this *StorageKey) PalletName() string {

@@ -3,11 +3,10 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/availproject/avail-go-sdk/metadata/pallets"
 	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
-	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
 	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
+	"github.com/availproject/avail-go-sdk/primitives"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
@@ -23,7 +22,7 @@ func RunBatch() {
 
 	// One way to create a suitable call for the batch transaction is to manually create the desired call and then convert it to a generic call
 	{
-		destBob, err := metadata.NewAccountIdFromAddress("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
+		destBob, err := primitives.NewAccountIdFromAddress("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
 		PanicOnError(err)
 
 		call := baPallet.CallTransferKeepAlive{Dest: destBob.ToMultiAddress(), Value: SDK.OneAvail()}
@@ -32,7 +31,7 @@ func RunBatch() {
 
 	// The other was it to create a transaction using the sdk api and then use the `call` field member
 	{
-		destCharlie, err := metadata.NewAccountIdFromAddress("5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y")
+		destCharlie, err := primitives.NewAccountIdFromAddress("5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y")
 		PanicOnError(err)
 
 		tx := sdk.Tx.Balances.TransferKeepAlive(destCharlie.ToMultiAddress(), SDK.OneAvail())
@@ -48,21 +47,15 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.Batch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
-		events := res.Events.Unwrap()
+		events := res.Events.UnsafeUnwrap()
 
-		if SDK.EventFindFirst(events, utPallet.EventBatchCompleted{}).IsSome() {
-			fmt.Println("Batch was successfully completed")
-		} else {
-			panic("Batch call failed")
-		}
+		event := SDK.EventFindFirst(events, utPallet.EventBatchCompleted{})
+		AssertTrue(event.IsSome(), "BatchCompleted event must be present.")
 
-		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 2 {
-			fmt.Println("All batch items completed")
-		} else {
-			panic("No all items were completed")
-		}
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 2, "ItemCompleted events must be produced twice")
 
 		fmt.Println("Batch call done")
 	}
@@ -72,21 +65,15 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
-		events := res.Events.Unwrap()
+		events := res.Events.UnsafeUnwrap()
 
-		if SDK.EventFindFirst(events, utPallet.EventBatchCompleted{}).IsSome() {
-			fmt.Println("Batch was successfully completed")
-		} else {
-			panic("Batch All call failed")
-		}
+		event := SDK.EventFindFirst(events, utPallet.EventBatchCompleted{})
+		AssertTrue(event.IsSome(), "BatchCompleted event must be present.")
 
-		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 2 {
-			fmt.Println("All batch items completed")
-		} else {
-			panic("No all items were completed")
-		}
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 2, "ItemCompleted events must be produced twice")
 
 		fmt.Println("Batch All call done")
 	}
@@ -96,21 +83,15 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
-		events := res.Events.Unwrap()
+		events := res.Events.UnsafeUnwrap()
 
-		if SDK.EventFindFirst(events, utPallet.EventBatchCompleted{}).IsSome() {
-			fmt.Println("Batch was successfully completed")
-		} else {
-			panic("Batch All call failed")
-		}
+		event := SDK.EventFindFirst(events, utPallet.EventBatchCompleted{})
+		AssertTrue(event.IsSome(), "BatchCompleted event must be present.")
 
-		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 2 {
-			fmt.Println("All batch items completed")
-		} else {
-			panic("No all items were completed")
-		}
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 2, "ItemCompleted events must be produced twice")
 
 		fmt.Println("Force Batch call done")
 	}
@@ -121,7 +102,7 @@ func RunBatch() {
 
 	// The 3. is poisoned with a too high transfer amount
 	{
-		destEve, err := metadata.NewAccountIdFromAddress("5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw")
+		destEve, err := primitives.NewAccountIdFromAddress("5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw")
 		PanicOnError(err)
 
 		tx := sdk.Tx.Balances.TransferKeepAlive(destEve.ToMultiAddress(), SDK.OneAvail().Mul64(uint64(1_000_000_000)))
@@ -130,7 +111,7 @@ func RunBatch() {
 
 	// The 4. call is a normal one
 	{
-		destDave, err := metadata.NewAccountIdFromAddress("5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy")
+		destDave, err := primitives.NewAccountIdFromAddress("5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy")
 		PanicOnError(err)
 
 		tx := sdk.Tx.Balances.TransferKeepAlive(destDave.ToMultiAddress(), SDK.OneAvail())
@@ -142,23 +123,18 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.Batch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
-		events := res.Events.Unwrap()
+		events := res.Events.UnsafeUnwrap()
 
-		if event := SDK.EventFindFirst(events, utPallet.EventBatchInterrupted{}); event.IsSome() {
-			ev := event.Unwrap()
-			fmt.Println("Batch was interrupted. Reason: ", ev.Error.ToHuman())
-			fmt.Println("Tx Index that caused failure: ", ev.Index)
-		} else {
-			panic("Failed to find EventBatchInterrupted event.")
-		}
+		event := SDK.EventFindFirst(events, utPallet.EventBatchInterrupted{})
+		AssertTrue(event.IsSome(), "BatchInterrupted event must be present.")
 
-		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 2 {
-			fmt.Println("Some batch items completed")
-		} else {
-			panic("Cannot be more than 2")
-		}
+		event2 := SDK.EventFindFirst(events, utPallet.EventBatchCompleted{})
+		AssertTrue(event2.IsNone(), "BatchCompleted event must NOT be present.")
+
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 2, "ItemCompleted events must be produced twice")
 
 		fmt.Println("Batch call done")
 	}
@@ -168,18 +144,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-
-		isOk := res.IsSuccessful()
-		AssertTrue(isOk.IsSome(), "It should be possible to decode transaction events.")
-		AssertEq(isOk.Unwrap(), false, "Transaction is supposed to fail")
-
-		events := res.Events.Unwrap()
-
-		if event := SDK.EventFindFirst(events, syPallet.EventExtrinsicFailed{}); event.IsSome() {
-			fmt.Println("Batch was interrupted. Reason: ", event.Unwrap().DispatchError.ToHuman())
-		} else {
-			panic("Failed to find EventExtrinsicFailed event.")
-		}
+		AssertEq(res.IsSuccessful(), prim.NewSome(false), "Transaction is supposed to fail")
 
 		fmt.Println("Batch All call done")
 	}
@@ -189,27 +154,18 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-		AssertTrue(res.IsSuccessful().Unwrap(), "Transaction is supposed to succeed")
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
-		events := res.Events.Unwrap()
+		events := res.Events.UnsafeUnwrap()
 
-		if SDK.EventFindFirst(events, utPallet.EventBatchCompletedWithErrors{}).IsSome() {
-			fmt.Println("Batch completed with errors")
-		} else {
-			panic("Failed to find EventBatchCompletedWithErrors")
-		}
+		event := SDK.EventFindFirst(events, utPallet.EventBatchCompletedWithErrors{})
+		AssertTrue(event.IsSome(), "BatchCompletedWithErrors event must be present.")
 
-		if len(SDK.EventFindAll(events, utPallet.EventItemCompleted{})) == 3 {
-			fmt.Println("3 of out 4 items completed")
-		} else {
-			panic("3 items must be completed")
-		}
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 3, "ItemCompleted events must be produced thrice")
 
-		if event := SDK.EventFindFirst(events, utPallet.EventItemFailed{}); event.IsSome() {
-			fmt.Println("Item failed. Reason: ", event.Unwrap().Error.ToHuman())
-		} else {
-			panic("Failed to find EventItemFailed")
-		}
+		event_count2 := len(SDK.EventFind(events, utPallet.EventItemFailed{}))
+		AssertEq(event_count2, 1, "ItemFailed events must be produced once")
 
 		fmt.Println("Force Batch call done")
 	}

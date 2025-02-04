@@ -1,14 +1,14 @@
 package transaction_payment
 
 import (
-	meta "github.com/availproject/avail-go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/primitives"
 
 	"github.com/itering/scale.go/utiles/uint128"
 )
 
 // A transaction fee `actual_fee`, of which `tip` was added to the minimum inclusion fee, has been paid by `who`.
 type EventTransactionFeePaid struct {
-	Who       meta.AccountId
+	Who       primitives.AccountId
 	ActualFee uint128.Uint128
 	Tip       uint128.Uint128
 }

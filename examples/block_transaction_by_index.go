@@ -22,11 +22,14 @@ func RunBlockTransactionByIndex() {
 	PanicOnError(err)
 
 	// Transaction filtered by Transaction index
-	tx := block.TransactionByIndex(1).UnsafeUnwrap()
+	txIndex := uint32(1)
+	txs := block.Transactions(SDK.Filter{}.WTxIndex(txIndex))
+	AssertEq(len(txs), 1, "")
+	tx := &txs[0]
 
-	// Printout Block Transaction
+	// Printout Block Transaction filtered by Tx Index
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
-	fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.Signer(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
+	fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.SS58Address(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
 
 	// Convert from Block Transaction to Specific Transaction
 	baTx := baPallet.CallTransferKeepAlive{}
@@ -39,11 +42,12 @@ func RunBlockTransactionByIndex() {
 	AssertEq(len(txEvents), 9, "Events count is not 9")
 
 	for _, ev := range txEvents {
-		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position))
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Convert from Block Transaction Event to Specific Transaction Event
-	event := SDK.EventFindFirst(txEvents, syPallet.EventNewAccount{}).UnsafeUnwrap()
+	// Convert from Generic Transaction Event to Specific Transaction Event
+	eventMyb := SDK.EventFindFirst(txEvents, syPallet.EventNewAccount{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Account: %v`, event.PalletName(), event.EventName(), event.Account.ToHuman()))
 
 	fmt.Println("RunBlockTransactionByIndex finished correctly.")

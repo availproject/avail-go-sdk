@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	idenPallet "github.com/availproject/avail-go-sdk/metadata/pallets/identity"
 	staPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
 	sysPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
@@ -44,7 +43,7 @@ func RunStorage() {
 	// Fetch Map Storage
 	{
 		storage := sysPallet.StorageAccount{}
-		acc, err := metadata.NewAccountIdFromAddress("5C869t2dWzmmYkE8NT1oocuEEdwqNnAm2XhvnuHcavNUcTTT")
+		acc, err := prim.NewAccountIdFromAddress("5C869t2dWzmmYkE8NT1oocuEEdwqNnAm2XhvnuHcavNUcTTT")
 		PanicOnError(err)
 
 		val, err := storage.Fetch(&blockStorage, acc)
@@ -76,7 +75,7 @@ func RunStorage() {
 	{
 		storage := staPallet.StorageErasValidatorPrefs{}
 		era := uint32(299)
-		acc, err := metadata.NewAccountIdFromAddress("5EFTSpRN2nMZDLjkniBYdmMxquMNm5CLVsrX2V3HHue6QFFF")
+		acc, err := prim.NewAccountIdFromAddress("5EFTSpRN2nMZDLjkniBYdmMxquMNm5CLVsrX2V3HHue6QFFF")
 		PanicOnError(err)
 
 		val, err := storage.Fetch(&blockStorage, era, acc)

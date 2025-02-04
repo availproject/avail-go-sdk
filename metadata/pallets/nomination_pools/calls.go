@@ -289,7 +289,7 @@ func (this CallCreateWithPoolId) CallName() string {
 // account.
 type CallNominate struct {
 	PoolId     uint32
-	Validators []metadata.AccountId
+	Validators []prim.AccountId
 }
 
 func (this CallNominate) PalletIndex() uint8 {
@@ -488,7 +488,7 @@ func (this CallSetClaimPermission) CallName() string {
 // Pool member `other` must have a `PermissionlessAll` or `PermissionlessWithdraw` in order
 // for this call to be successful.
 type CallClaimPayoutOther struct {
-	Other metadata.AccountId
+	Other prim.AccountId
 }
 
 func (this CallClaimPayoutOther) PalletIndex() uint8 {
@@ -515,7 +515,7 @@ func (this CallClaimPayoutOther) CallName() string {
 // - If a `None` is supplied to `new_commission`, existing commission will be removed.
 type CallSetCommission struct {
 	PoolId        uint32
-	NewCommission prim.Option[metadata.Tuple2[metadata.Perbill, metadata.AccountId]]
+	NewCommission prim.Option[metadata.Tuple2[metadata.Perbill, prim.AccountId]]
 }
 
 func (this CallSetCommission) PalletIndex() uint8 {

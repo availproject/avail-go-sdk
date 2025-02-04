@@ -3,7 +3,7 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/primitives"
 	SDK "github.com/availproject/avail-go-sdk/sdk"
 )
 
@@ -18,7 +18,7 @@ func RunAccountNonce() {
 	fmt.Println("RPC Nonce: ", nonce)
 
 	// Via Abstraction
-	accountId, err := metadata.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	accountId, err := primitives.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
 	PanicOnError(err)
 
 	nonce2, err := SDK.Account.Nonce(sdk.Client, accountId)

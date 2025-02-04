@@ -3,10 +3,36 @@ package sdk
 import (
 	"fmt"
 
-	meta "github.com/availproject/avail-go-sdk/metadata"
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
+
+type Filter struct {
+	AppId    prim.Option[uint32]
+	TxHash   prim.Option[prim.H256]
+	TxIndex  prim.Option[uint32]
+	TxSigner prim.Option[prim.AccountId]
+}
+
+func (this Filter) WAppId(value uint32) Filter {
+	this.AppId = prim.NewSome(value)
+	return this
+}
+
+func (this Filter) WTxHash(value prim.H256) Filter {
+	this.TxHash = prim.NewSome(value)
+	return this
+}
+
+func (this Filter) WTxIndex(value uint32) Filter {
+	this.TxIndex = prim.NewSome(value)
+	return this
+}
+
+func (this Filter) WTxSigner(value prim.AccountId) Filter {
+	this.TxSigner = prim.NewSome(value)
+	return this
+}
 
 type Block struct {
 	client *Client
@@ -51,23 +77,38 @@ func NewFinalizedBlock(client *Client) (Block, error) {
 	return NewBlock(client, hash)
 }
 
-func (this *Block) TransactionAll() []BlockTransaction {
+func (this *Block) Transactions(filter Filter) []BlockTransaction {
 	extrinsics := this.Block.Extrinsics
 	result := []BlockTransaction{}
 	for i := range this.Block.Extrinsics {
-		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
-		result = append(result, NewBlockTransaction(this.client, &extrinsics[i], txEvents))
-	}
+		ext := &extrinsics[i]
 
-	return result
-}
+		if filter.AppId.IsSome() {
+			if ext.Signed.IsNone() {
+				continue
+			}
+			var signed = ext.Signed.Unwrap()
+			if signed.AppId != filter.AppId.Unwrap() {
+				continue
+			}
+		}
 
-func (this *Block) TransactionBySigner(accountId meta.AccountId) []BlockTransaction {
-	extrinsics := this.Block.Extrinsics
-	result := []BlockTransaction{}
-	for i := range extrinsics {
-		if !sameSignature(&extrinsics[i], accountId) {
-			continue
+		if filter.TxHash.IsSome() {
+			if ext.TxHash != filter.TxHash.Unwrap() {
+				continue
+			}
+		}
+
+		if filter.TxIndex.IsSome() {
+			if ext.TxIndex != filter.TxIndex.Unwrap() {
+				continue
+			}
+		}
+
+		if filter.TxSigner.IsSome() {
+			if !sameSignature(ext, filter.TxSigner.Unwrap()) {
+				continue
+			}
 		}
 
 		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
@@ -77,120 +118,41 @@ func (this *Block) TransactionBySigner(accountId meta.AccountId) []BlockTransact
 	return result
 }
 
-func (this *Block) TransactionByIndex(txIndex uint32) prim.Option[BlockTransaction] {
-	extrinsics := this.Block.Extrinsics
-	for i := range extrinsics {
-		if extrinsics[i].TxIndex != txIndex {
-			continue
-		}
-
-		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
-		return prim.NewSome(NewBlockTransaction(this.client, &extrinsics[i], txEvents))
-	}
-
-	return prim.NewNone[BlockTransaction]()
-}
-
-func (this *Block) TransactionByHash(txHash prim.H256) prim.Option[BlockTransaction] {
-	extrinsics := this.Block.Extrinsics
-	for i := range extrinsics {
-		if extrinsics[i].TxHash != txHash {
-			continue
-		}
-		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
-		return prim.NewSome(NewBlockTransaction(this.client, &extrinsics[i], txEvents))
-	}
-
-	return prim.NewNone[BlockTransaction]()
-}
-
-func (this *Block) TransactionByAppId(appId uint32) []BlockTransaction {
-	extrinsics := this.Block.Extrinsics
-	result := []BlockTransaction{}
-	for i := range extrinsics {
-		if extrinsics[i].Signed.IsNone() {
-			continue
-		}
-		var signed = extrinsics[i].Signed.Unwrap()
-		if signed.AppId != appId {
-			continue
-		}
-
-		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
-		result = append(result, NewBlockTransaction(this.client, &extrinsics[i], txEvents))
-	}
-
-	return result
-}
-
-func (this *Block) DataSubmissionAll() []DataSubmission {
+func (this *Block) DataSubmissions(filter Filter) []DataSubmission {
 	extrinsics := this.Block.Extrinsics
 	result := []DataSubmission{}
 	for i := range extrinsics {
-		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
-			result = append(result, res)
-		}
-	}
+		ext := &extrinsics[i]
 
-	return result
-}
-
-func (this *Block) DataSubmissionBySigner(accountId meta.AccountId) []DataSubmission {
-	extrinsics := this.Block.Extrinsics
-	result := []DataSubmission{}
-	for i := range extrinsics {
-		if !sameSignature(&extrinsics[i], accountId) {
-			continue
+		if filter.AppId.IsSome() {
+			if ext.Signed.IsNone() {
+				continue
+			}
+			var signed = ext.Signed.Unwrap()
+			if signed.AppId != filter.AppId.Unwrap() {
+				continue
+			}
 		}
 
-		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
-			result = append(result, res)
+		if filter.TxHash.IsSome() {
+			if ext.TxHash != filter.TxHash.Unwrap() {
+				continue
+			}
 		}
-	}
 
-	return result
-}
+		if filter.TxIndex.IsSome() {
+			if ext.TxIndex != filter.TxIndex.Unwrap() {
+				continue
+			}
+		}
 
-func (this *Block) DataSubmissionByIndex(txIndex uint32) prim.Option[DataSubmission] {
-	extrinsics := this.Block.Extrinsics
-	for i := range extrinsics {
-		if extrinsics[i].TxIndex != txIndex {
-			continue
+		if filter.TxSigner.IsSome() {
+			if !sameSignature(ext, filter.TxSigner.Unwrap()) {
+				continue
+			}
 		}
-		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
-			return prim.NewSome(res)
-		}
-	}
 
-	return prim.NewNone[DataSubmission]()
-}
-
-func (this *Block) DataSubmissionByHash(txHash prim.H256) prim.Option[DataSubmission] {
-	extrinsics := this.Block.Extrinsics
-	for i := range extrinsics {
-		if extrinsics[i].TxHash != txHash {
-			continue
-		}
-		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
-			return prim.NewSome(res)
-		}
-	}
-
-	return prim.NewNone[DataSubmission]()
-}
-
-func (this *Block) DataSubmissionByAppId(appId uint32) []DataSubmission {
-	extrinsics := this.Block.Extrinsics
-	result := []DataSubmission{}
-	for i := range extrinsics {
-		if extrinsics[i].Signed.IsNone() {
-			continue
-		}
-		var signed = extrinsics[i].Signed.Unwrap()
-		if signed.AppId != appId {
-			continue
-		}
-		if res, ok := NewDataSubmission(&extrinsics[i]); ok {
+		if res, ok := NewDataSubmission(ext); ok {
 			result = append(result, res)
 		}
 	}
@@ -225,9 +187,9 @@ func (this *Block) Events() prim.Option[EventRecords] {
 	return this.events
 }
 
-func sameSignature(tx *prim.DecodedExtrinsic, accountId meta.AccountId) bool {
+func sameSignature(tx *prim.DecodedExtrinsic, accountId prim.AccountId) bool {
 	txAccountId := tx.Signed.Unwrap().Address.Id.Unwrap()
-	if accountId.Value != txAccountId {
+	if accountId != txAccountId {
 		return false
 	}
 

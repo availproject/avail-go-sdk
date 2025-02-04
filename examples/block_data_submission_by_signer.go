@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/availproject/avail-go-sdk/primitives"
 
 	SDK "github.com/availproject/avail-go-sdk/sdk"
@@ -19,17 +18,16 @@ func RunBlockDataSubmissionBySigner() {
 	block, err := SDK.NewBlock(sdk.Client, blockHash)
 	PanicOnError(err)
 
-	accountId, err := metadata.NewAccountIdFromAddress("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
+	accountId, err := primitives.NewAccountIdFromAddress("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
 	PanicOnError(err)
 
 	// Block Blobs filtered by Signer
-	blobs := block.DataSubmissionBySigner(accountId)
-	fmt.Println("Blob Count: ", len(blobs))
+	blobs := block.DataSubmissions(SDK.Filter{}.WTxSigner(accountId))
 	AssertEq(len(blobs), 1, "Data Submission count is not 1")
 
 	// Printout Block Blobs filtered by Signer
 	for _, blob := range blobs {
-		blobAccountId, err := metadata.NewAccountIdFromMultiAddress(blob.TxSigner)
+		blobAccountId := blob.TxSigner.ToAccountId().UnsafeUnwrap()
 		PanicOnError(err)
 		AssertEq(blobAccountId.ToHuman(), accountId.ToHuman(), "Transaction Signers are not the same.")
 

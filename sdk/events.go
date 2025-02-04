@@ -3,6 +3,8 @@ package sdk
 import (
 	"errors"
 	"fmt"
+	"slices"
+
 	"github.com/availproject/avail-go-sdk/interfaces"
 	meta "github.com/availproject/avail-go-sdk/metadata"
 	prim "github.com/availproject/avail-go-sdk/primitives"
@@ -139,6 +141,14 @@ type EventRecord struct {
 	Topics   []prim.H256
 }
 
+func (this *EventRecord) TxIndex() prim.Option[uint32] {
+	if this.Phase.ApplyExtrinsic.IsNone() {
+		return prim.NewNone[uint32]()
+	}
+
+	return prim.NewSome(this.Phase.ApplyExtrinsic.Unwrap())
+}
+
 func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metadata) (EventRecord, error) {
 	var eventRecord = EventRecord{}
 
@@ -203,44 +213,9 @@ func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metad
 	return eventRecord, nil
 }
 
-func EventFindFirst[T interfaces.EventT](eventRecords EventRecords, target T) prim.Option[T] {
-	event, err := EventFindFirstChecked(eventRecords, target)
-	if err != nil {
-		return prim.NewNone[T]()
-	}
-	return event
-}
-
-func EventFindFirstChecked[T interfaces.EventT](eventRecords EventRecords, target T) (prim.Option[T], error) {
-	for i := range eventRecords {
-		if eventRecords[i].PalletIndex != target.PalletIndex() {
-			continue
-		}
-		if eventRecords[i].EventIndex != target.EventIndex() {
-			continue
-		}
-
-		var t T
-		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
-		if err := decoder.Decode(&t); err != nil {
-			return prim.NewNone[T](), newError(err, ErrorCode004)
-		}
-
-		return prim.NewSome(t), nil
-	}
-
-	return prim.NewNone[T](), nil
-}
-
-func EventFindAll[T interfaces.EventT](eventRecords EventRecords, target T) []T {
-	events, err := EventFindAllChecked(eventRecords, target)
-	if err != nil {
-		return []T{}
-	}
-	return events
-}
-
-func EventFindAllChecked[T interfaces.EventT](eventRecords EventRecords, target T) ([]T, error) {
+// Returns an array of E. Events that failed to decode are discarded.
+// Use EventFindChecked if discarded events are necessary.
+func EventFind[T interfaces.EventT](eventRecords EventRecords, target T) []T {
 	var t T
 	var result = []T{}
 	for i := range eventRecords {
@@ -253,32 +228,83 @@ func EventFindAllChecked[T interfaces.EventT](eventRecords EventRecords, target 
 
 		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
 		if err := decoder.Decode(&t); err != nil {
-			return []T{}, newError(err, ErrorCode004)
+			continue
 		}
 		result = append(result, t)
 	}
 
-	return result, nil
+	return result
 }
 
-func EventFindLast[T interfaces.EventT](eventRecords EventRecords, target T) prim.Option[T] {
-	event, err := EventFindLastChecked(eventRecords, target)
-	if err != nil {
-		return prim.NewNone[T]()
+// Returns an array of E.
+// Some([]E) means we were able to decode all E events
+// None means we failed to decode some E events.
+func EventFindChecked[E interfaces.EventT](eventRecords EventRecords, target E) prim.Option[[]E] {
+	var t E
+	var result = []E{}
+	for i := range eventRecords {
+		if eventRecords[i].PalletIndex != target.PalletIndex() {
+			continue
+		}
+		if eventRecords[i].EventIndex != target.EventIndex() {
+			continue
+		}
+
+		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
+		if err := decoder.Decode(&t); err != nil {
+			return prim.NewNone[[]E]()
+		}
+
+		result = append(result, t)
 	}
-	return event
+
+	return prim.NewSome(result)
 }
 
-func EventFindLastChecked[T interfaces.EventT](eventRecords EventRecords, target T) (prim.Option[T], error) {
-	result, err := EventFindAllChecked(eventRecords, target)
-	if err != nil {
-		return prim.NewNone[T](), err
-	}
-	if len(result) == 0 {
-		return prim.NewNone[T](), nil
+// Return None if the event has not been found.
+// Returns Some(None) if the event has been found but we failed to decode it.
+// Returns Some(E) if the event has been found and we decoded it.
+func EventFindFirst[E interfaces.EventT](eventRecords EventRecords, target E) prim.Option[prim.Option[E]] {
+	for i := range eventRecords {
+		if eventRecords[i].PalletIndex != target.PalletIndex() {
+			continue
+		}
+		if eventRecords[i].EventIndex != target.EventIndex() {
+			continue
+		}
+
+		var t E
+		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
+		if err := decoder.Decode(&t); err != nil {
+			return prim.NewSome(prim.NewNone[E]())
+		}
+		return prim.NewSome(prim.NewSome(t))
 	}
 
-	return prim.NewSome(result[len(result)-1]), nil
+	return prim.NewNone[prim.Option[E]]()
+}
+
+// Return None if the event has not been found.
+// Returns Some(None) if the event has been found but we failed to decode it.
+// Returns Some(e) if the event has been found and we decoded it.
+func EventFindLast[E interfaces.EventT](eventRecords EventRecords, target E) prim.Option[prim.Option[E]] {
+	for i := range slices.Backward(eventRecords) {
+		if eventRecords[i].PalletIndex != target.PalletIndex() {
+			continue
+		}
+		if eventRecords[i].EventIndex != target.EventIndex() {
+			continue
+		}
+
+		var t E
+		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
+		if err := decoder.Decode(&t); err != nil {
+			return prim.NewSome(prim.NewNone[E]())
+		}
+		return prim.NewSome(prim.NewSome(t))
+	}
+
+	return prim.NewNone[prim.Option[E]]()
 }
 
 func EventFilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecords {

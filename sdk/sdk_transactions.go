@@ -188,7 +188,7 @@ func (this *StakingTx) SetController() Transaction {
 //
 // - `validator_stash` is the stash account of the validator.
 // - `era` may be any era between `[current_era - history_depth; current_era]`.
-func (this *StakingTx) PayoutStakers(validatorStash metadata.AccountId, era uint32) Transaction {
+func (this *StakingTx) PayoutStakers(validatorStash prim.AccountId, era uint32) Transaction {
 	call := stPallet.CallPayoutStakers{ValidatorStash: validatorStash, Era: era}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
@@ -211,7 +211,7 @@ func (this *StakingTx) Rebond(value uint128.Uint128) Transaction {
 // It can be called by anyone, as long as `stash` meets the above requirements.
 //
 // Refunds the transaction fees upon successful execution.
-func (this *StakingTx) ReapStash(stash metadata.AccountId, numSlashingSpans uint32) Transaction {
+func (this *StakingTx) ReapStash(stash prim.AccountId, numSlashingSpans uint32) Transaction {
 	call := stPallet.CallReapStash{Stash: stash, NumSlashingSpans: numSlashingSpans}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
@@ -250,7 +250,7 @@ func (this *StakingTx) Kick(who []prim.MultiAddress) Transaction {
 //
 // This can be helpful if bond requirements are updated, and we need to remove old users
 // who do not satisfy these requirements.
-func (this *StakingTx) ChillOther(stash metadata.AccountId) Transaction {
+func (this *StakingTx) ChillOther(stash prim.AccountId) Transaction {
 	call := stPallet.CallChillOther{Stash: stash}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
@@ -258,7 +258,7 @@ func (this *StakingTx) ChillOther(stash metadata.AccountId) Transaction {
 // Force a validator to have at least the minimum commission. This will not affect a
 // validator who already has a commission greater than or equal to the minimum. Any account
 // can call this.
-func (this *StakingTx) ForceApplyMinCommission(validatorStash metadata.AccountId) Transaction {
+func (this *StakingTx) ForceApplyMinCommission(validatorStash prim.AccountId) Transaction {
 	call := stPallet.CallForceApplyMinCommission{ValidatorStash: validatorStash}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
@@ -280,7 +280,7 @@ func (this *StakingTx) ForceApplyMinCommission(validatorStash metadata.AccountId
 // backing a validator to receive the reward. The nominators are not sorted across pages
 // and so it should not be assumed the highest staker would be on the topmost page and vice
 // versa. If rewards are not claimed in [`Config::HistoryDepth`] eras, they are lost.
-func (this *StakingTx) PayoutStakersByPage(validatorStash metadata.AccountId, era uint32, page uint32) Transaction {
+func (this *StakingTx) PayoutStakersByPage(validatorStash prim.AccountId, era uint32, page uint32) Transaction {
 	call := stPallet.CallPayoutStakersByPage{ValidatorStash: validatorStash, Era: era, Page: page}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
@@ -291,7 +291,7 @@ func (this *StakingTx) PayoutStakersByPage(validatorStash metadata.AccountId, er
 // Effects will be felt instantly (as soon as this function is completed successfully).
 //
 // This will waive the transaction fee if the `payee` is successfully migrated.
-func (this *StakingTx) UpdatePayee(controller metadata.AccountId) Transaction {
+func (this *StakingTx) UpdatePayee(controller prim.AccountId) Transaction {
 	call := stPallet.CallUpdatePayee{Controller: controller}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
@@ -451,7 +451,7 @@ func (this *NominationPoolsTx) CreateWithPoolId(amount metadata.Balance, root pr
 //
 // This directly forward the call to the staking pallet, on behalf of the pool bonded
 // account.
-func (this *NominationPoolsTx) Nominate(poolId uint32, validators []metadata.AccountId) Transaction {
+func (this *NominationPoolsTx) Nominate(poolId uint32, validators []prim.AccountId) Transaction {
 	call := npPallet.CallNominate{PoolId: poolId, Validators: validators}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
@@ -539,7 +539,7 @@ func (this *NominationPoolsTx) SetClaimPermission(permission metadata.PoolClaimP
 //
 // Pool member `other` must have a `PermissionlessAll` or `PermissionlessWithdraw` in order
 // for this call to be successful.
-func (this *NominationPoolsTx) ClaimPayoutOther(other metadata.AccountId) Transaction {
+func (this *NominationPoolsTx) ClaimPayoutOther(other prim.AccountId) Transaction {
 	call := npPallet.CallClaimPayoutOther{Other: other}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
@@ -550,7 +550,7 @@ func (this *NominationPoolsTx) ClaimPayoutOther(other metadata.AccountId) Transa
 // tuple. Where a `current` of `None` is provided, any current commission will be removed.
 //
 // - If a `None` is supplied to `new_commission`, existing commission will be removed.
-func (this *NominationPoolsTx) SetCommission(poolId uint32, newCommission prim.Option[metadata.Tuple2[metadata.Perbill, metadata.AccountId]]) Transaction {
+func (this *NominationPoolsTx) SetCommission(poolId uint32, newCommission prim.Option[metadata.Tuple2[metadata.Perbill, prim.AccountId]]) Transaction {
 	call := npPallet.CallSetCommission{PoolId: poolId, NewCommission: newCommission}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }

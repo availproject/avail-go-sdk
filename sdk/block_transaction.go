@@ -66,18 +66,39 @@ func (this *BlockTransaction) Events() prim.Option[EventRecords] {
 	return this.events
 }
 
-func (this *BlockTransaction) Signer() prim.Option[string] {
+func (this *BlockTransaction) MultiAddress() prim.Option[prim.MultiAddress] {
 	signed := this.Signed()
 	if signed.IsNone() {
-		return prim.NewNone[string]()
+		return prim.NewNone[prim.MultiAddress]()
 	}
 
 	address := signed.Unwrap().Address
-	if address.Id.IsNone() {
-		return prim.NewSome("Not Decoded")
+
+	return prim.NewSome(address)
+}
+
+func (this *BlockTransaction) AccountId() prim.Option[prim.AccountId] {
+	multiMyb := this.MultiAddress()
+	if multiMyb.IsNone() {
+		return prim.NewNone[prim.AccountId]()
 	}
 
-	return prim.NewSome(metadata.AccountId{Value: address.Id.Unwrap()}.ToHuman())
+	multi := multiMyb.Unwrap()
+
+	if multi.Id.IsNone() {
+		return prim.NewNone[prim.AccountId]()
+	}
+
+	return prim.NewSome(multi.Id.Unwrap())
+}
+
+func (this *BlockTransaction) SS58Address() prim.Option[string] {
+	accountId := this.AccountId()
+	if accountId.IsNone() {
+		return prim.NewNone[string]()
+	}
+
+	return prim.NewSome(accountId.Unwrap().ToHuman())
 }
 
 func (this *BlockTransaction) AppId() prim.Option[uint32] {
@@ -98,13 +119,13 @@ func (this *BlockTransaction) Tip() prim.Option[metadata.Balance] {
 	return prim.NewSome(metadata.Balance{Value: signed.Unwrap().Tip})
 }
 
-func (this *BlockTransaction) Mortality() prim.Option[uint32] {
+func (this *BlockTransaction) Mortality() prim.Option[prim.Era] {
 	signed := this.Signed()
 	if signed.IsNone() {
-		return prim.NewNone[uint32]()
+		return prim.NewNone[prim.Era]()
 	}
 
-	return prim.NewSome(uint32(signed.Unwrap().Era.Period))
+	return prim.NewSome(signed.Unwrap().Era)
 }
 
 func (this *BlockTransaction) Nonce() prim.Option[uint32] {

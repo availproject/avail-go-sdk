@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/availproject/avail-go-sdk/metadata"
 	"github.com/availproject/avail-go-sdk/primitives"
 
 	SDK "github.com/availproject/avail-go-sdk/sdk"
@@ -20,11 +19,14 @@ func RunBlockDataSubmissionByIndex() {
 	PanicOnError(err)
 
 	// Block Blobs filtered by Transaction Index
-	blob := block.DataSubmissionByIndex(6).UnsafeUnwrap()
-	AssertEq(blob.TxIndex, 6, "Transaction Indices are not the same.")
+	txIndex := uint32(6)
+	blobs := block.DataSubmissions(SDK.Filter{}.WTxIndex(txIndex))
+	AssertEq(len(blobs), 1, "")
+	blob := &blobs[0]
+	AssertEq(blob.TxIndex, txIndex, "Transaction Indices are not the same.")
 
 	// Printout Block Blobs filtered by Transaction Index
-	accountId, err := metadata.NewAccountIdFromMultiAddress(blob.TxSigner)
+	accountId, err := primitives.NewAccountIdFromMultiAddress(blob.TxSigner)
 	PanicOnError(err)
 	fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
 

@@ -1,14 +1,13 @@
 package data_availability
 
 import (
-	"github.com/availproject/avail-go-sdk/metadata"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
 // A new application key was created.
 type EventApplicationKeyCreated struct {
 	Key   []uint8
-	Owner metadata.AccountId
+	Owner prim.AccountId
 	Id    uint32 `scale:"compact"`
 }
 
@@ -30,7 +29,7 @@ func (this EventApplicationKeyCreated) EventName() string {
 
 // New Data was submitted.
 type EventDataSubmitted struct {
-	Who      metadata.AccountId
+	Who      prim.AccountId
 	DataHash prim.H256
 }
 

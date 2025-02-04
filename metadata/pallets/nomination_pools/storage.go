@@ -43,7 +43,7 @@ func (this *StorageBondedPools) FetchAll(blockStorage interfaces.BlockStorageT) 
 //
 //
 
-type StorageClaimPermissionsKey = AccountId
+type StorageClaimPermissionsKey = prim.AccountId
 type StorageClaimPermissionsValue = PoolClaimPermission
 type StorageClaimPermissionsEntry = StorageEntry[StorageClaimPermissionsKey, StorageClaimPermissionsValue]
 
@@ -358,7 +358,7 @@ func (this *StorageMinJoinBond) Fetch(blockStorage interfaces.BlockStorageT) (St
 //
 //
 
-type StoragePoolMembersKey = AccountId
+type StoragePoolMembersKey = prim.AccountId
 type StoragePoolMembersEntry = StorageEntry[StoragePoolMembersKey, StoragePoolMembers]
 
 type StoragePoolMembers struct {
@@ -392,7 +392,7 @@ func (this *StoragePoolMembers) FetchAll(blockStorage interfaces.BlockStorageT) 
 //
 //
 
-type StorageReversePoolIdLookupKey = AccountId
+type StorageReversePoolIdLookupKey = prim.AccountId
 type StorageReversePoolIdLookupValue = uint32
 type StorageReversePoolIdLookupEntry = StorageEntry[StorageReversePoolIdLookupKey, StorageReversePoolIdLookupValue]
 

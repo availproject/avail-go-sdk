@@ -35,7 +35,7 @@ type StorageAppKeysKey = []byte
 type StorageAppKeysEntry = StorageEntry[StorageAppKeysKey, StorageAppKeys]
 
 type StorageAppKeys struct {
-	Owner AccountId
+	Owner prim.AccountId
 	AppId uint32 `scale:"compact"`
 }
 

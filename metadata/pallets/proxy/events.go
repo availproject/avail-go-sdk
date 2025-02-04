@@ -29,8 +29,8 @@ func (this EventProxyExecuted) EventName() string {
 // A pure account has been created by new proxy with given
 // disambiguation index and proxy type.
 type EventPureCreated struct {
-	Pure                metadata.AccountId
-	Who                 metadata.AccountId
+	Pure                primitives.AccountId
+	Who                 primitives.AccountId
 	ProxyTpe            metadata.ProxyType
 	DisambiguationIndex uint16
 }
@@ -53,8 +53,8 @@ func (this EventPureCreated) EventName() string {
 
 // An announcement was placed to make a call in the future.
 type EventAnnounced struct {
-	Real     metadata.AccountId
-	Proxy    metadata.AccountId
+	Real     primitives.AccountId
+	Proxy    primitives.AccountId
 	CallHash primitives.H256
 }
 
@@ -76,8 +76,8 @@ func (this EventAnnounced) EventName() string {
 
 // A proxy was added.
 type EventProxyAdded struct {
-	Delegator metadata.AccountId
-	Delegatee metadata.AccountId
+	Delegator primitives.AccountId
+	Delegatee primitives.AccountId
 	ProxyTpe  metadata.ProxyType
 	Delay     uint32
 }
@@ -100,8 +100,8 @@ func (this EventProxyAdded) EventName() string {
 
 // A proxy was removed.
 type EventProxyRemoved struct {
-	Delegator metadata.AccountId
-	Delegatee metadata.AccountId
+	Delegator primitives.AccountId
+	Delegatee primitives.AccountId
 	ProxyTpe  metadata.ProxyType
 	Delay     uint32
 }

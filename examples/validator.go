@@ -18,11 +18,11 @@ func RunValidator() {
 	PanicOnError(err)
 
 	// Sending funds to that account.
-	dest := metadata.NewAccountIdFromKeyPair(acc).ToMultiAddress()
+	dest := primitives.NewAccountIdFromKeyPair(acc).ToMultiAddress()
 	tx := sdk.Tx.Balances.TransferKeepAlive(dest, SDK.OneAvail().Mul64(uint64(250_000)))
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), SDK.NewTransactionOptions())
 	PanicOnError(err)
-	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction must be successful")
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
 
 	// Fetching Min Validator Bond storage
 	blockStorage, err := sdk.Client.StorageAt(primitives.NewNone[primitives.H256]())
@@ -41,7 +41,7 @@ func RunValidator() {
 	tx = sdk.Tx.Staking.Bond(bondValue, payee)
 	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions())
 	PanicOnError(err)
-	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction must be successful")
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
 
 	// Generate Session Keys
 	keysRaw, err := sdk.Client.Rpc.Author.RotateKeys()
@@ -53,7 +53,7 @@ func RunValidator() {
 	tx = sdk.Tx.Session.SetKeys(sessionKeys, []byte{})
 	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions())
 	PanicOnError(err)
-	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction must be successful")
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
 
 	// Validate
 	commission := metadata.NewPerbillFromU8(10) // 10.0%
@@ -62,7 +62,7 @@ func RunValidator() {
 	tx = sdk.Tx.Staking.Validate(pref)
 	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions())
 	PanicOnError(err)
-	AssertTrue(res.IsSuccessful().Unwrap(), "Transaction must be successful")
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
 
 	fmt.Println("RunValidator finished correctly.")
 

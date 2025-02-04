@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/itering/scale.go/utiles/uint128"
-	"github.com/vedhavyas/go-subkey/v2"
 
 	"errors"
 
@@ -144,62 +143,6 @@ func removeTrailingZeros(s string) string {
 		s = s[:len(s)-1]
 	}
 	return s
-}
-
-// Do not add, remove or change any of the field members.
-type AccountId struct {
-	Value prim.H256
-}
-
-func (this AccountId) ToSS58() string {
-	return subkey.SS58Encode(this.Value.Value[:], 42)
-}
-
-func (this AccountId) ToAddress() string {
-	return this.ToSS58()
-}
-
-func (this AccountId) ToHuman() string {
-	return this.ToSS58()
-}
-
-func (this AccountId) ToString() string {
-	return this.Value.ToHex()
-}
-
-func (this AccountId) ToMultiAddress() prim.MultiAddress {
-	return prim.NewMultiAddressId(this.Value)
-}
-
-func NewAccountIdFromKeyPair(keyPair subkey.KeyPair) AccountId {
-	h256, err := prim.NewH256FromByteSlice(keyPair.AccountID())
-	if err != nil {
-		// This should never happen
-		panic(err)
-	}
-
-	return AccountId{Value: h256}
-}
-
-func NewAccountIdFromAddress(address string) (AccountId, error) {
-	var _, accountBytes, err = subkey.SS58Decode(address)
-	if err != nil {
-		return AccountId{}, err
-	}
-	h256, err := prim.NewH256FromByteSlice(accountBytes)
-	if err != nil {
-		return AccountId{}, err
-	}
-	res := AccountId{Value: h256}
-	return res, nil
-}
-
-func NewAccountIdFromMultiAddress(address prim.MultiAddress) (AccountId, error) {
-	if address.Id.IsNone() {
-		return AccountId{}, errors.New("Cannot decode multiaddress")
-	}
-
-	return AccountId{Value: address.Id.Unwrap()}, nil
 }
 
 // Do not add, remove or change any of the field members.
@@ -541,7 +484,7 @@ func (this Perbill) ToHuman() string {
 // Variant 4 Nonce
 type RewardDestination struct {
 	VariantIndex uint8
-	Account      prim.Option[AccountId]
+	Account      prim.Option[prim.AccountId]
 }
 
 func (this RewardDestination) ToHuman() string {
@@ -585,7 +528,7 @@ func (this *RewardDestination) Decode(decoder *prim.Decoder) error {
 	case 1:
 	case 2:
 	case 3:
-		var t AccountId
+		var t prim.AccountId
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
@@ -612,7 +555,7 @@ type SessionKeys struct {
 
 type CommissionClaimPermission struct {
 	VariantIndex uint8
-	Account      prim.Option[AccountId]
+	Account      prim.Option[prim.AccountId]
 }
 
 func (this CommissionClaimPermission) ToHuman() string {
@@ -648,7 +591,7 @@ func (this *CommissionClaimPermission) Decode(decoder *prim.Decoder) error {
 	switch this.VariantIndex {
 	case 0:
 	case 1:
-		var t AccountId
+		var t prim.AccountId
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
@@ -661,10 +604,10 @@ func (this *CommissionClaimPermission) Decode(decoder *prim.Decoder) error {
 }
 
 type PoolRoles struct {
-	Depositor AccountId
-	Root      prim.Option[AccountId]
-	Nominator prim.Option[AccountId]
-	Bouncer   prim.Option[AccountId]
+	Depositor prim.AccountId
+	Root      prim.Option[prim.AccountId]
+	Nominator prim.Option[prim.AccountId]
+	Bouncer   prim.Option[prim.AccountId]
 }
 
 type PoolState struct {
@@ -711,7 +654,7 @@ func (this *PoolState) Decode(decoder *prim.Decoder) error {
 }
 
 type PoolCommission struct {
-	Current         prim.Option[Tuple2[Perbill, AccountId]]
+	Current         prim.Option[Tuple2[Perbill, prim.AccountId]]
 	Max             prim.Option[Perbill]
 	ChangeRate      prim.Option[PoolCommissionChangeRate]
 	ThrottleFrom    prim.Option[uint32]
@@ -1468,7 +1411,7 @@ func (this *PoolBondExtra) Decode(decoder *prim.Decoder) error {
 
 type PoolRoleConfig struct {
 	VariantIndex uint8
-	Set          prim.Option[AccountId]
+	Set          prim.Option[prim.AccountId]
 }
 
 func (this PoolRoleConfig) ToHuman() string {
@@ -1506,7 +1449,7 @@ func (this *PoolRoleConfig) Decode(decoder *prim.Decoder) error {
 	switch this.VariantIndex {
 	case 0:
 	case 1:
-		var t AccountId
+		var t prim.AccountId
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}

@@ -6,7 +6,7 @@ import (
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
-type StorageIdentityOfKey = AccountId
+type StorageIdentityOfKey = prim.AccountId
 type StorageIdentityOfValue = Tuple2[Registration, prim.Option[[]byte]]
 type StorageIdentityOfEntry = StorageEntry[StorageIdentityOfKey, StorageIdentityOfValue]
 

@@ -218,7 +218,7 @@ func (this CallSetController) CallName() string {
 // - `validator_stash` is the stash account of the validator.
 // - `era` may be any era between `[current_era - history_depth; current_era]`.
 type CallPayoutStakers struct {
-	ValidatorStash metadata.AccountId
+	ValidatorStash prim.AccountId
 	Era            uint32
 }
 
@@ -272,7 +272,7 @@ func (this CallRebond) CallName() string {
 //
 // Refunds the transaction fees upon successful execution.
 type CallReapStash struct {
-	Stash            metadata.AccountId
+	Stash            prim.AccountId
 	NumSlashingSpans uint32
 }
 
@@ -342,7 +342,7 @@ func (this CallKick) CallName() string {
 // This can be helpful if bond requirements are updated, and we need to remove old users
 // who do not satisfy these requirements.
 type CallChillOther struct {
-	Stash metadata.AccountId
+	Stash prim.AccountId
 }
 
 func (this CallChillOther) PalletIndex() uint8 {
@@ -365,7 +365,7 @@ func (this CallChillOther) CallName() string {
 // validator who already has a commission greater than or equal to the minimum. Any account
 // can call this.
 type CallForceApplyMinCommission struct {
-	ValidatorStash metadata.AccountId
+	ValidatorStash prim.AccountId
 }
 
 func (this CallForceApplyMinCommission) PalletIndex() uint8 {
@@ -402,7 +402,7 @@ func (this CallForceApplyMinCommission) CallName() string {
 // and so it should not be assumed the highest staker would be on the topmost page and vice
 // versa. If rewards are not claimed in [`Config::HistoryDepth`] eras, they are lost.
 type CallPayoutStakersByPage struct {
-	ValidatorStash metadata.AccountId
+	ValidatorStash prim.AccountId
 	Era            uint32
 	Page           uint32
 }
@@ -430,7 +430,7 @@ func (this CallPayoutStakersByPage) CallName() string {
 //
 // This will waive the transaction fee if the `payee` is successfully migrated.
 type CallUpdatePayee struct {
-	Controller metadata.AccountId
+	Controller prim.AccountId
 }
 
 func (this CallUpdatePayee) PalletIndex() uint8 {
