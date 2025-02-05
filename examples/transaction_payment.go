@@ -39,7 +39,7 @@ func RunTransactionPayment() {
 	}
 
 	// PaymentQueryCallFeeInfo
-	feeInfo1, err := tx.PaymentQueryCallFeeInfo()
+	feeInfo1, err := tx.PaymentQueryCallInfo()
 	PanicOnError(err)
 
 	fmt.Println("ProofSize:", feeInfo1.Weight.ProofSize)
@@ -48,7 +48,7 @@ func RunTransactionPayment() {
 	fmt.Println("Partial Fee:", feeInfo1.PartialFee)
 
 	// PaymentQueryFeeInfo
-	feeInfo, err := tx.PaymentQueryFeeInfo(acc, options)
+	feeInfo, err := tx.PaymentQueryInfo(acc, options)
 	PanicOnError(err)
 
 	fmt.Println("ProofSize:", feeInfo.Weight.ProofSize)

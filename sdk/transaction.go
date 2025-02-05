@@ -81,6 +81,15 @@ func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, option
 	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 4, 3)
 }
 
+func (this *Transaction) PaymentQueryInfo(account subkey.KeyPair, options TransactionOptions) (metadata.RuntimeDispatchInfo, error) {
+	val, err := this.ToHex(account, options)
+	if err != nil {
+		return metadata.RuntimeDispatchInfo{}, err
+	}
+
+	return this.client.Call.TransactionPaymentApi_queryInfo(val, prim.NewNone[prim.H256]())
+}
+
 func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options TransactionOptions) (metadata.FeeDetails, error) {
 	val, err := this.ToHex(account, options)
 	if err != nil {
@@ -90,21 +99,12 @@ func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options 
 	return this.client.Call.TransactionPaymentApi_queryFeeDetails(val, prim.NewNone[prim.H256]())
 }
 
-func (this *Transaction) PaymentQueryFeeInfo(account subkey.KeyPair, options TransactionOptions) (metadata.RuntimeDispatchInfo, error) {
-	val, err := this.ToHex(account, options)
-	if err != nil {
-		return metadata.RuntimeDispatchInfo{}, err
-	}
-
-	return this.client.Call.TransactionPaymentApi_queryInfo(val, prim.NewNone[prim.H256]())
+func (this *Transaction) PaymentQueryCallInfo() (metadata.RuntimeDispatchInfo, error) {
+	return this.client.Call.TransactionPaymentCallApi_queryCallInfo(this.CallToHex(), prim.NewNone[prim.H256]())
 }
 
 func (this *Transaction) PaymentQueryCallFeeDetails() (metadata.FeeDetails, error) {
 	return this.client.Call.TransactionPaymentCallApi_queryCallFeeDetails(this.CallToHex(), prim.NewNone[prim.H256]())
-}
-
-func (this *Transaction) PaymentQueryCallFeeInfo() (metadata.RuntimeDispatchInfo, error) {
-	return this.client.Call.TransactionPaymentCallApi_queryCallInfo(this.CallToHex(), prim.NewNone[prim.H256]())
 }
 
 type TransactionDetails struct {

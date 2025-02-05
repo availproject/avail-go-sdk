@@ -28,7 +28,6 @@ func RunTransactionOptionsAppId() {
 	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
 	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
 	PanicOnError(err)
-
 	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
 	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)

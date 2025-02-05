@@ -48,7 +48,7 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	if err != nil {
 		return prim.Extra{}, prim.Additional{}, err
 	}
-	forkHash, err := client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+	forkHash, err := client.Rpc.Chain.GetFinalizedHead()
 	if err != nil {
 		return prim.Extra{}, prim.Additional{}, err
 	}
