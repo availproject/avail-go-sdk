@@ -99,6 +99,16 @@ func (this *BalancesTx) ForceTransfer(dest prim.MultiAddress, amount metadata.Ba
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
 
+// Transfer the entire transferable balance from the caller account.
+//
+// NOTE: This function only attempts to transfer _transferable_ balances. This means that
+// any locked, reserved, or existential deposits (when `keep_alive` is `true`), will not be
+// transferred by this function.
+func (this *BalancesTx) TransferAll(dest prim.MultiAddress, keepAlive bool) Transaction {
+	call := baPallet.CallTransferAll{Dest: dest, KeepAlive: keepAlive}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
 // Same as the `TransferAlowDeath` call, but with a check that the transfer will not
 // kill the origin account.
 func (this *BalancesTx) TransferKeepAlive(dest prim.MultiAddress, amount metadata.Balance) Transaction {
