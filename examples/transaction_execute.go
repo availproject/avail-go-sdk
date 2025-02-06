@@ -25,7 +25,7 @@ func RunTransactionExecute() {
 	//
 	// It's not necessary to use the builtin watcher. A custom watcher
 	// might yield better results in some cases.
-	watcher := SDK.NewWatcher(sdk.Client, txHash, SDK.Inclusion, 3, 3)
+	watcher := SDK.NewWatcher(sdk.Client, txHash).WaitFor(SDK.Inclusion)
 	mybTxDetails, err := watcher.Run()
 	PanicOnError(err)
 	AssertEq(mybTxDetails.IsSome(), true, "Watcher must have found the status for our transaction")

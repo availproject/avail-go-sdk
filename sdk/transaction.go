@@ -53,22 +53,9 @@ func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOpti
 // If the transaction was dropped or never executed, the system will retry it
 // for 2 more times using the same nonce and app id.
 //
-// Param `waitFor` can be either `SDK.Inclusion` or `SDK.Finalization`
-// Param `blockTimeout` defines how many blocks will the watcher explore before determining
-// that the transaction was not executed.
-//
-// Most likely you would want to call `ExecuteAndWatchFinalization` or `ExecuteAndWatchInclusion`
-func (this *Transaction) ExecuteAndWatch(account subkey.KeyPair, waitFor uint8, options TransactionOptions, blockTimeout uint32) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, waitFor, options, blockTimeout, 3)
-}
-
-// Transaction will be signed, sent, and watched
-// If the transaction was dropped or never executed, the system will retry it
-// for 2 more times using the same nonce and app id.
-//
 // Waits for finalization to finalize the transaction.
 func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options, 6, 3)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options)
 }
 
 // Transaction will be signed, sent, and watched
@@ -78,7 +65,7 @@ func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, opt
 // Waits for transaction inclusion. Most of the time you would want to call `ExecuteAndWatchFinalization` as
 // inclusion doesn't mean that the transaction will be in the canonical chain.
 func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options, 4, 3)
+	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options)
 }
 
 func (this *Transaction) PaymentQueryInfo(account subkey.KeyPair, options TransactionOptions) (metadata.RuntimeDispatchInfo, error) {
@@ -87,7 +74,7 @@ func (this *Transaction) PaymentQueryInfo(account subkey.KeyPair, options Transa
 		return metadata.RuntimeDispatchInfo{}, err
 	}
 
-	return this.client.Call.TransactionPaymentApi_queryInfo(val, prim.NewNone[prim.H256]())
+	return this.client.Call.TransactionPaymentApi_queryInfo(val, prim.None[prim.H256]())
 }
 
 func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options TransactionOptions) (metadata.FeeDetails, error) {
@@ -96,15 +83,15 @@ func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options 
 		return metadata.FeeDetails{}, err
 	}
 
-	return this.client.Call.TransactionPaymentApi_queryFeeDetails(val, prim.NewNone[prim.H256]())
+	return this.client.Call.TransactionPaymentApi_queryFeeDetails(val, prim.None[prim.H256]())
 }
 
 func (this *Transaction) PaymentQueryCallInfo() (metadata.RuntimeDispatchInfo, error) {
-	return this.client.Call.TransactionPaymentCallApi_queryCallInfo(this.CallToHex(), prim.NewNone[prim.H256]())
+	return this.client.Call.TransactionPaymentCallApi_queryCallInfo(this.CallToHex(), prim.None[prim.H256]())
 }
 
 func (this *Transaction) PaymentQueryCallFeeDetails() (metadata.FeeDetails, error) {
-	return this.client.Call.TransactionPaymentCallApi_queryCallFeeDetails(this.CallToHex(), prim.NewNone[prim.H256]())
+	return this.client.Call.TransactionPaymentCallApi_queryCallFeeDetails(this.CallToHex(), prim.None[prim.H256]())
 }
 
 type TransactionDetails struct {
@@ -127,12 +114,12 @@ func (this *TransactionDetails) IsSuccessful() prim.Option[bool] {
 
 	for i := range events {
 		if events[i].PalletIndex == extFailedEvent.PalletIndex() && events[i].EventIndex == extFailedEvent.EventIndex() {
-			return prim.NewSome(false)
+			return prim.Some(false)
 		}
 		if events[i].PalletIndex == extSuccessEvent.PalletIndex() && events[i].EventIndex == extSuccessEvent.EventIndex() {
-			return prim.NewSome(true)
+			return prim.Some(true)
 		}
 	}
 
-	return prim.NewNone[bool]()
+	return prim.None[bool]()
 }

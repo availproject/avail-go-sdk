@@ -15,22 +15,22 @@ type Filter struct {
 }
 
 func (this Filter) WAppId(value uint32) Filter {
-	this.AppId = prim.NewSome(value)
+	this.AppId = prim.Some(value)
 	return this
 }
 
 func (this Filter) WTxHash(value prim.H256) Filter {
-	this.TxHash = prim.NewSome(value)
+	this.TxHash = prim.Some(value)
 	return this
 }
 
 func (this Filter) WTxIndex(value uint32) Filter {
-	this.TxIndex = prim.NewSome(value)
+	this.TxIndex = prim.Some(value)
 	return this
 }
 
 func (this Filter) WTxSigner(value prim.AccountId) Filter {
-	this.TxSigner = prim.NewSome(value)
+	this.TxSigner = prim.Some(value)
 	return this
 }
 
@@ -41,17 +41,17 @@ type Block struct {
 }
 
 func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
-	block, err := client.RPCBlockAt(prim.NewSome(blockHash))
+	block, err := client.RPCBlockAt(prim.Some(blockHash))
 	if err != nil {
 		return Block{}, err
 	}
 
-	events, err := client.EventsAt(prim.NewSome(blockHash))
-	blockEvents := prim.NewNone[EventRecords]()
+	events, err := client.EventsAt(prim.Some(blockHash))
+	blockEvents := prim.None[EventRecords]()
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
-		blockEvents = prim.NewSome(events)
+		blockEvents = prim.Some(events)
 	}
 
 	return Block{
@@ -62,7 +62,7 @@ func NewBlock(client *Client, blockHash prim.H256) (Block, error) {
 }
 
 func NewBestBlock(client *Client) (Block, error) {
-	hash, err := client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+	hash, err := client.Rpc.Chain.GetBlockHash(prim.None[uint32]())
 	if err != nil {
 		return Block{}, err
 	}
@@ -164,11 +164,11 @@ func (this *Block) EventsForTransaction(txIndex uint32) prim.Option[EventRecords
 	extrinsics := this.Block.Extrinsics
 
 	if txIndex >= uint32(len(extrinsics)) {
-		return prim.NewNone[EventRecords]()
+		return prim.None[EventRecords]()
 	}
 
 	if this.events.IsNone() {
-		return prim.NewNone[EventRecords]()
+		return prim.None[EventRecords]()
 	}
 
 	for i := range extrinsics {
@@ -177,10 +177,10 @@ func (this *Block) EventsForTransaction(txIndex uint32) prim.Option[EventRecords
 		}
 		allEvents := this.events.Unwrap()
 		txEvents := EventFilterByTxIndex(allEvents, txIndex)
-		return prim.NewSome(txEvents)
+		return prim.Some(txEvents)
 	}
 
-	return prim.NewNone[EventRecords]()
+	return prim.None[EventRecords]()
 }
 
 func (this *Block) Events() prim.Option[EventRecords] {

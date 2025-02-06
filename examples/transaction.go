@@ -4,7 +4,6 @@ import "fmt"
 
 func RunTransaction() {
 	RunTransactionExecute()
-	RunTransactionExecuteAndWatch()
 	RunTransactionExecuteAndWatchFinalization()
 	RunTransactionExecuteAndWatchInclusion()
 	RunTransactionCustom()

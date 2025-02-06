@@ -144,7 +144,7 @@ func RunBatch() {
 		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
 		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
 		PanicOnError(err)
-		AssertEq(res.IsSuccessful(), prim.NewSome(false), "Transaction is supposed to fail")
+		AssertEq(res.IsSuccessful(), prim.Some(false), "Transaction is supposed to fail")
 
 		fmt.Println("Batch All call done")
 	}

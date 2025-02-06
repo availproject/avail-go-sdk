@@ -55,7 +55,7 @@ func RunBlockEvents() {
 
 	// Printout All Tx Events
 	for _, ev := range txEvents {
-		AssertEq(ev.TxIndex(), prim.NewSome(txIndex), "Tx Index is not the same")
+		AssertEq(ev.TxIndex(), prim.Some(txIndex), "Tx Index is not the same")
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 

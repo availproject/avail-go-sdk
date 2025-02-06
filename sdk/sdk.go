@@ -28,7 +28,7 @@ func (this *SDK) UpdateMetadata(blockHash prim.Option[prim.H256]) error {
 //
 // The metadata can be updated on fly by calling sdk.UpdateMetadata(blockHash)
 func NewSDK(endpoint string) (SDK, error) {
-	return NewSDKWithMetadata(endpoint, prim.NewNone[prim.H256]())
+	return NewSDKWithMetadata(endpoint, prim.None[prim.H256]())
 }
 
 // Same as NewSDK but allows passing the block hash from which the metadata will be

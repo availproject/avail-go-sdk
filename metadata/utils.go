@@ -158,45 +158,45 @@ func GenericFetch[V any, S StorageT](blockStorage interfaces.BlockStorageT, stor
 	storageKey := storageKeyEncode(storage)
 	encoded, err := blockStorage.Fetch(storageKey)
 	if err != nil {
-		return prim.NewNone[V](), err
+		return prim.None[V](), err
 	}
 
 	if encoded == "" {
-		return prim.NewNone[V](), nil
+		return prim.None[V](), nil
 	}
 
 	var t V
 	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded), 0)
 	if err := decoder.Decode(&t); err != nil {
-		return prim.NewNone[V](), err
+		return prim.None[V](), err
 	}
 
-	return prim.NewSome(t), nil
+	return prim.Some(t), nil
 }
 
 func GenericMapFetch[V any, K any, S StorageMapT](blockStorage interfaces.BlockStorageT, mapKey K, storage S) (prim.Option[StorageEntry[K, V]], error) {
-	storageKey := storageMapKeyEncode(storage, prim.NewSome(mapKey))
+	storageKey := storageMapKeyEncode(storage, prim.Some(mapKey))
 	encoded, err := blockStorage.Fetch(storageKey)
 	if err != nil {
-		return prim.NewNone[StorageEntry[K, V]](), err
+		return prim.None[StorageEntry[K, V]](), err
 	}
 
 	if encoded == "" {
-		return prim.NewNone[StorageEntry[K, V]](), nil
+		return prim.None[StorageEntry[K, V]](), nil
 	}
 
 	var t V
 	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded), 0)
 	if err := decoder.Decode(&t); err != nil {
-		return prim.NewNone[StorageEntry[K, V]](), err
+		return prim.None[StorageEntry[K, V]](), err
 	}
 
-	res := prim.NewSome(StorageEntry[K, V]{Key: mapKey, Value: t})
+	res := prim.Some(StorageEntry[K, V]{Key: mapKey, Value: t})
 	return res, nil
 }
 
 func GenericMapKeysFetch[V any, K any, S StorageMapT](blockStorage interfaces.BlockStorageT, storage S) ([]StorageEntry[K, V], error) {
-	storageKey := storageMapKeyEncode(storage, prim.NewNone[K]())
+	storageKey := storageMapKeyEncode(storage, prim.None[K]())
 	storageKeys, err := blockStorage.FetchKeys(storageKey)
 	if err != nil {
 		return nil, err
@@ -229,28 +229,28 @@ func GenericMapKeysFetch[V any, K any, S StorageMapT](blockStorage interfaces.Bl
 }
 
 func GenericDoubleMapFetch[V any, K1 any, K2 any, S StorageDoubleMapT](blockStorage interfaces.BlockStorageT, mapKey1 K1, mapKey2 K2, storage S) (prim.Option[StorageEntryDoubleMap[K1, K2, V]], error) {
-	storageKey := storageDoubleMapKeyEncode(storage, prim.NewSome(mapKey1), prim.NewSome(mapKey2))
+	storageKey := storageDoubleMapKeyEncode(storage, prim.Some(mapKey1), prim.Some(mapKey2))
 	encoded, err := blockStorage.Fetch(storageKey)
 	if err != nil {
-		return prim.NewNone[StorageEntryDoubleMap[K1, K2, V]](), err
+		return prim.None[StorageEntryDoubleMap[K1, K2, V]](), err
 	}
 
 	if encoded == "" {
-		return prim.NewNone[StorageEntryDoubleMap[K1, K2, V]](), nil
+		return prim.None[StorageEntryDoubleMap[K1, K2, V]](), nil
 	}
 
 	var t V
 	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded), 0)
 	if err := decoder.Decode(&t); err != nil {
-		return prim.NewNone[StorageEntryDoubleMap[K1, K2, V]](), err
+		return prim.None[StorageEntryDoubleMap[K1, K2, V]](), err
 	}
 
-	res := prim.NewSome(StorageEntryDoubleMap[K1, K2, V]{Key1: mapKey1, Key2: mapKey2, Value: t})
+	res := prim.Some(StorageEntryDoubleMap[K1, K2, V]{Key1: mapKey1, Key2: mapKey2, Value: t})
 	return res, nil
 }
 
 func GenericDoubleMapKeysFetch[V any, K1 any, K2 any, S StorageDoubleMapT](blockStorage interfaces.BlockStorageT, mapKey1 K1, storage S) ([]StorageEntryDoubleMap[K1, K2, V], error) {
-	storageKey := storageDoubleMapKeyEncode(storage, prim.NewSome(mapKey1), prim.NewNone[K2]())
+	storageKey := storageDoubleMapKeyEncode(storage, prim.Some(mapKey1), prim.None[K2]())
 	storageKeys, err := blockStorage.FetchKeys(storageKey)
 	if err != nil {
 		return nil, err

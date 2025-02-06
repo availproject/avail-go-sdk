@@ -677,7 +677,7 @@ type SessionTx struct {
 
 // Sets the session key(s) of the function caller to `keys`.
 // Allows an account to set its session key prior to becoming a validator.
-// This doesn't take effect until the next session..
+// This doesn't take effect until the next session.
 func (this *SessionTx) SetKeys(keys metadata.SessionKeys, proof []byte) Transaction {
 	call := sePallet.CallSetKeys{Keys: keys, Proof: proof}
 	return NewTransaction(this.client, pallets.ToPayload(call))

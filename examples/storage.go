@@ -17,7 +17,7 @@ func RunStorage() {
 	blockHash, err := prim.NewH256FromHexString("0x9e813bb85fca217f8f3967bd4b550b05f7d559412571ca1dd621aa37343b300b")
 	PanicOnError(err)
 
-	blockStorage, err := sdk.Client.StorageAt(prim.NewSome(blockHash))
+	blockStorage, err := sdk.Client.StorageAt(prim.Some(blockHash))
 	PanicOnError(err)
 
 	// Simple Storage

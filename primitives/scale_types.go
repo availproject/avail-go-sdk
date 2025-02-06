@@ -106,13 +106,13 @@ func (this Option[T]) UnwrapOr(elseValue T) T {
 	return this.value
 }
 
-func NewSome[T any](value T) Option[T] {
+func Some[T any](value T) Option[T] {
 	option := Option[T]{}
 	option.Set(value)
 	return option
 }
 
-func NewNone[T any]() Option[T] {
+func None[T any]() Option[T] {
 	return Option[T]{}
 }
 

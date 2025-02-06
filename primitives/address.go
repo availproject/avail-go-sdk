@@ -19,16 +19,16 @@ type MultiAddress struct {
 
 func NewMultiAddressId(value AccountId) MultiAddress {
 	address := MultiAddress{}
-	address.Id = NewSome(value)
+	address.Id = Some(value)
 	address.VariantIndex = 0
 	return address
 }
 
 func (this MultiAddress) ToAccountId() Option[AccountId] {
 	if this.Id.IsSome() {
-		return NewSome(this.Id.Unwrap())
+		return Some(this.Id.Unwrap())
 	}
-	return NewNone[AccountId]()
+	return None[AccountId]()
 }
 
 func (this *MultiAddress) EncodeTo(dest *string) {
@@ -60,31 +60,31 @@ func (this *MultiAddress) Decode(decoder *Decoder) error {
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Id = NewSome(value)
+		this.Id = Some(value)
 	case 1:
 		value := uint32(0)
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Index = NewSome(value)
+		this.Index = Some(value)
 	case 2:
 		value := []byte{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Raw = NewSome(value)
+		this.Raw = Some(value)
 	case 3:
 		value := [32]byte{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Address32 = NewSome(value)
+		this.Address32 = Some(value)
 	case 4:
 		value := [20]byte{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Address20 = NewSome(value)
+		this.Address20 = Some(value)
 	default:
 		return errors.New(fmt.Sprintf(`MultiAddress Decode failure. Unknown Variant index: %v`, this.VariantIndex))
 	}

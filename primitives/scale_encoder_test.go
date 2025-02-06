@@ -478,7 +478,7 @@ func TestEncoderString(t *testing.T) {
 func TestEncoderOption(t *testing.T) {
 	{
 		var expected = "0x00"
-		var el = NewNone[uint16]()
+		var el = None[uint16]()
 		var actual = "0x" + Encoder.Encode(el)
 		if actual != expected {
 			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)
@@ -493,7 +493,7 @@ func TestEncoderOption(t *testing.T) {
 
 	{
 		var expected = "0x016400"
-		var el = NewSome(uint16(100))
+		var el = Some(uint16(100))
 		var actual = "0x" + Encoder.Encode(el)
 		if actual != expected {
 			t.Fatalf(`Encoder String. Output %v, Expected Output %v`, actual, expected)

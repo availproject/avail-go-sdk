@@ -44,7 +44,7 @@ func RunProxyNormal() {
 
 	// Executing the Proxy.Proxy() call
 	call := pallets.ToCall(baPallet.CallTransferKeepAlive{Dest: proxyAccountMulti, Value: SDK.OneAvail()})
-	tx = sdk.Tx.Proxy.Proxy(mainAccountMulti, primitives.NewNone[metadata.ProxyType](), call)
+	tx = sdk.Tx.Proxy.Proxy(mainAccountMulti, primitives.None[metadata.ProxyType](), call)
 	res, err = tx.ExecuteAndWatchInclusion(proxyAccount, SDK.NewTransactionOptions())
 	PanicOnError(err)
 	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
@@ -92,7 +92,7 @@ func RunProxyPure() {
 	// Executing the Proxy.Proxy() call
 	key := fmt.Sprintf("MyKey%v", rand.Uint32())
 	call := pallets.ToCall(daPallet.CallCreateApplicationKey{Key: []byte(key)})
-	tx = sdk.Tx.Proxy.Proxy(pureProxy.ToMultiAddress(), primitives.NewNone[metadata.ProxyType](), call)
+	tx = sdk.Tx.Proxy.Proxy(pureProxy.ToMultiAddress(), primitives.None[metadata.ProxyType](), call)
 	res, err = tx.ExecuteAndWatchInclusion(mainAccount, SDK.NewTransactionOptions())
 	PanicOnError(err)
 	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
@@ -124,7 +124,7 @@ func RunProxyFailure() {
 
 	// Executing the Proxy.Proxy() call
 	call := pallets.ToCall(baPallet.CallTransferKeepAlive{Dest: proxyAccountMulti, Value: SDK.OneAvail()})
-	tx = sdk.Tx.Proxy.Proxy(mainAccountMulti, primitives.NewNone[metadata.ProxyType](), call)
+	tx = sdk.Tx.Proxy.Proxy(mainAccountMulti, primitives.None[metadata.ProxyType](), call)
 	res, err = tx.ExecuteAndWatchInclusion(proxyAccount, SDK.NewTransactionOptions())
 	PanicOnError(err)
 	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
