@@ -38,7 +38,7 @@ func RunTransactionPayment() {
 		fmt.Println("Base Fee:", InclusionFee.BaseFee)
 	}
 
-	// PaymentQueryCallFeeInfo
+	// PaymentQueryCallInfo
 	feeInfo1, err := tx.PaymentQueryCallInfo()
 	PanicOnError(err)
 
@@ -47,7 +47,7 @@ func RunTransactionPayment() {
 	fmt.Println("Class:", feeInfo1.Class)
 	fmt.Println("Partial Fee:", feeInfo1.PartialFee)
 
-	// PaymentQueryFeeInfo
+	// PaymentQueryInfo
 	feeInfo, err := tx.PaymentQueryInfo(acc, options)
 	PanicOnError(err)
 
