@@ -69,70 +69,70 @@ func (this *BlockTransaction) Events() prim.Option[EventRecords] {
 func (this *BlockTransaction) MultiAddress() prim.Option[prim.MultiAddress] {
 	signed := this.Signed()
 	if signed.IsNone() {
-		return prim.NewNone[prim.MultiAddress]()
+		return prim.None[prim.MultiAddress]()
 	}
 
 	address := signed.Unwrap().Address
 
-	return prim.NewSome(address)
+	return prim.Some(address)
 }
 
 func (this *BlockTransaction) AccountId() prim.Option[prim.AccountId] {
 	multiMyb := this.MultiAddress()
 	if multiMyb.IsNone() {
-		return prim.NewNone[prim.AccountId]()
+		return prim.None[prim.AccountId]()
 	}
 
 	multi := multiMyb.Unwrap()
 
 	if multi.Id.IsNone() {
-		return prim.NewNone[prim.AccountId]()
+		return prim.None[prim.AccountId]()
 	}
 
-	return prim.NewSome(multi.Id.Unwrap())
+	return prim.Some(multi.Id.Unwrap())
 }
 
 func (this *BlockTransaction) SS58Address() prim.Option[string] {
 	accountId := this.AccountId()
 	if accountId.IsNone() {
-		return prim.NewNone[string]()
+		return prim.None[string]()
 	}
 
-	return prim.NewSome(accountId.Unwrap().ToHuman())
+	return prim.Some(accountId.Unwrap().ToHuman())
 }
 
 func (this *BlockTransaction) AppId() prim.Option[uint32] {
 	signed := this.Signed()
 	if signed.IsNone() {
-		return prim.NewNone[uint32]()
+		return prim.None[uint32]()
 	}
 
-	return prim.NewSome(signed.Unwrap().AppId)
+	return prim.Some(signed.Unwrap().AppId)
 }
 
 func (this *BlockTransaction) Tip() prim.Option[metadata.Balance] {
 	signed := this.Signed()
 	if signed.IsNone() {
-		return prim.NewNone[metadata.Balance]()
+		return prim.None[metadata.Balance]()
 	}
 
-	return prim.NewSome(metadata.Balance{Value: signed.Unwrap().Tip})
+	return prim.Some(metadata.Balance{Value: signed.Unwrap().Tip})
 }
 
 func (this *BlockTransaction) Mortality() prim.Option[prim.Era] {
 	signed := this.Signed()
 	if signed.IsNone() {
-		return prim.NewNone[prim.Era]()
+		return prim.None[prim.Era]()
 	}
 
-	return prim.NewSome(signed.Unwrap().Era)
+	return prim.Some(signed.Unwrap().Era)
 }
 
 func (this *BlockTransaction) Nonce() prim.Option[uint32] {
 	signed := this.Signed()
 	if signed.IsNone() {
-		return prim.NewNone[uint32]()
+		return prim.None[uint32]()
 	}
 
-	return prim.NewSome(signed.Unwrap().Nonce)
+	return prim.Some(signed.Unwrap().Nonce)
 }

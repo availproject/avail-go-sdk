@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/availproject/avail-go-sdk/metadata"
 	"io"
 	"net/http"
+	"time"
+
+	"github.com/availproject/avail-go-sdk/metadata"
 
 	meta "github.com/availproject/avail-go-sdk/metadata"
 	prim "github.com/availproject/avail-go-sdk/primitives"
@@ -32,24 +34,34 @@ func NewClient(endpoint string) *Client {
 }
 
 func (this *Client) BlockNumber(blockHash prim.H256) (uint32, error) {
-	header, err := this.Rpc.Chain.GetHeader(prim.NewSome(blockHash))
-	if err != nil {
-		return 0, err
-	}
+	header, err := this.Rpc.Chain.GetHeader(prim.Some(blockHash))
+	return header.Number, err
+}
 
-	return header.Number, nil
+func (this *Client) BestBlockNumber() (uint32, error) {
+	header, err := this.Rpc.Chain.GetHeader(prim.None[prim.H256]())
+	return header.Number, err
+}
+
+func (this *Client) FinalizedBlockNumber() (uint32, error) {
+	hash, err := this.FinalizedBlockHash()
+	if err != nil {
+		return uint32(0), err
+	}
+	header, err := this.Rpc.Chain.GetHeader(prim.Some(hash))
+	return header.Number, err
 }
 
 func (this *Client) BlockHash(blockNumber uint32) (prim.H256, error) {
-	return this.Rpc.Chain.GetBlockHash(prim.NewSome(blockNumber))
+	return this.Rpc.Chain.GetBlockHash(prim.Some(blockNumber))
+}
+
+func (this *Client) BestBlockHash() (prim.H256, error) {
+	return this.Rpc.Chain.GetBlockHash(prim.None[uint32]())
 }
 
 func (this *Client) FinalizedBlockHash() (prim.H256, error) {
 	return this.Rpc.Chain.GetFinalizedHead()
-}
-
-func (this *Client) BestBlockHash() (prim.H256, error) {
-	return this.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
 }
 
 func (this *Client) EventsAt(at prim.Option[prim.H256]) (EventRecords, error) {
@@ -72,7 +84,7 @@ func (this *Client) EventsAt(at prim.Option[prim.H256]) (EventRecords, error) {
 
 func (this *Client) StorageAt(at prim.Option[prim.H256]) (BlockStorage, error) {
 	if at.IsNone() {
-		hash, err := this.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+		hash, err := this.Rpc.Chain.GetBlockHash(prim.None[uint32]())
 		if err != nil {
 			return BlockStorage{}, err
 		}
@@ -107,7 +119,36 @@ func (this *Client) InitMetadata(at prim.Option[prim.H256]) error {
 	return nil
 }
 
-func (this *Client) Request(method string, params string) (string, error) {
+func (this *Client) RequestWithRetry(method string, params string) (string, error) {
+	retryCount := 3
+	for {
+		res, err := this.Request(method, params)
+		if err != nil {
+			var sdkError *SDKError
+			if !errors.As(err, &sdkError) || sdkError.Code != 0 {
+				return "", err
+			}
+		}
+
+		if res.IsSome() {
+			return res.Unwrap(), nil
+		}
+
+		logger := NewCustomLoggerEmpty("RPC", true)
+
+		if retryCount == 0 {
+			logger.LogRpcRetryAbort(method)
+			e := ErrorCode005
+			e.Message = fmt.Sprintf("Method: %v, Params: %v", method, params)
+			return "", e
+		}
+		logger.LogRpcRetry(method)
+		retryCount -= 1
+		time.Sleep(time.Second * time.Duration(3))
+	}
+}
+
+func (this *Client) Request(method string, params string) (prim.Option[string], error) {
 	rawJSON := []byte(`{
 		"id": 1,
 		"jsonrpc": "2.0",
@@ -120,13 +161,13 @@ func (this *Client) Request(method string, params string) (string, error) {
 
 	request, err := http.NewRequest("POST", this.endpoint, bytes.NewBuffer(requestBodyBytes))
 	if err != nil {
-		return "", err
+		return prim.None[string](), err
 	}
 
 	request.Header.Add("Content-Type", "application/json")
 	response, err := this.client.Do(request)
 	if err != nil {
-		return "", newError(err, ErrorCode000)
+		return prim.None[string](), newError(err, ErrorCode000)
 	}
 
 	defer response.Body.Close()
@@ -139,12 +180,12 @@ func (this *Client) Request(method string, params string) (string, error) {
 	if response.StatusCode != http.StatusOK {
 		err := ErrorCode001
 		err.Message = fmt.Sprintf(`Status Code: %v`, response.StatusCode)
-		return "", &err
+		return prim.None[string](), &err
 	}
 
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal(responseBodyBytes, &mappedData); err != nil {
-		return "", newError(err, ErrorCode002)
+		return prim.None[string](), newError(err, ErrorCode002)
 	}
 
 	if mappedData["error"] != nil {
@@ -157,11 +198,11 @@ func (this *Client) Request(method string, params string) (string, error) {
 			errMessage += " " + err["data"].(string)
 		}
 
-		return "", newError(errors.New(errMessage), ErrorCode002)
+		return prim.None[string](), newError(errors.New(errMessage), ErrorCode002)
 	}
 
 	if mappedData["result"] == nil {
-		return "", nil
+		return prim.None[string](), nil
 	}
 
 	resultBytes, _ := json.Marshal(mappedData["result"])
@@ -174,7 +215,7 @@ func (this *Client) Request(method string, params string) (string, error) {
 		}
 	}
 
-	return result, nil
+	return prim.Some(result), nil
 }
 
 func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {

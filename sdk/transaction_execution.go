@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/vedhavyas/go-subkey/v2"
 
 	"errors"
@@ -25,10 +24,12 @@ func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload meta
 	return signAndSend(client, account, payload, extra, additional)
 }
 
-func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitFor uint8, options TransactionOptions, blockTimeout uint32, retryCount uint32) (TransactionDetails, error) {
+func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload metadata.Payload, waitFor uint8, options TransactionOptions) (TransactionDetails, error) {
 	if !checkPayloadAndOptionsValidity(&payload, &options) {
 		return TransactionDetails{}, errors.New("Transaction is not compatible with non-zero AppIds")
 	}
+
+	retryCount := 2
 
 	extra, additional, err := options.ToPrimitive(client, account.SS58Address(42))
 	if err != nil {
@@ -41,12 +42,10 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 			return TransactionDetails{}, err
 		}
 
-		iden := txHash.ToString()[0:10]
-		if logrus.IsLevelEnabled(logrus.DebugLevel) {
-			logrus.Debug(fmt.Sprintf("%v: Transaction was submitted. Account: %v, TxHash: %v", iden, account.SS58Address(42), txHash.ToHexWith0x()))
-		}
+		logger := NewCustomLogger(txHash, true)
+		logger.LogTxSubmitted(&account, extra.Era.Period)
 
-		watcher := NewWatcher(client, txHash, waitFor, blockTimeout, 3)
+		watcher := NewWatcher(client, txHash).WaitFor(waitFor).Logger(logger)
 		maybeDetails, err := watcher.Run()
 		if err != nil {
 			return TransactionDetails{}, err
@@ -54,25 +53,18 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 
 		if maybeDetails.IsSome() {
 			val := maybeDetails.Unwrap()
-			if logrus.IsLevelEnabled(logrus.DebugLevel) {
-				logrus.Debug(fmt.Sprintf("%v: Transaction was found. Tx Hash: %v, Tx Index: %v, Block Hash: %v, Block Number: %v", iden, val.TxHash.ToHexWith0x(), val.TxIndex, val.BlockHash.ToHexWith0x(), val.BlockNumber))
-			}
 			return val, nil
 		}
 
 		if retryCount == 0 {
-			if logrus.IsLevelEnabled(logrus.DebugLevel) {
-				logrus.Debug(fmt.Sprintf("%v: Failed to find transaction. TxHash: %v. Aborting", iden, txHash.ToHexWith0x()))
-			}
+			logger.LogTxRetryAbort()
 			break
 		}
 
 		RegenerateEra(client, &extra, &additional)
 
 		retryCount -= 1
-		if logrus.IsLevelEnabled(logrus.DebugLevel) {
-			logrus.Debug(fmt.Sprintf("%v: Failed to find transaction. TxHash: %v, Retry Count: %v/3. Trying again", iden, txHash.ToHexWith0x(), retryCount))
-		}
+		logger.LogTxRetry()
 	}
 
 	customErr := ErrorCode003
@@ -85,6 +77,9 @@ func signAndSend(client *Client, account subkey.KeyPair, payload metadata.Payloa
 	if err != nil {
 		return prim.H256{}, err
 	}
+
+	logger := NewCustomLogger(prim.H256{}, true)
+	logger.LogTxSubmitting(&account, &payload, extra.Nonce, extra.AppId)
 
 	return client.Send(tx)
 }

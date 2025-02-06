@@ -32,7 +32,7 @@ func NewDecodedExtrinsic(extrinsic EncodedExtrinsic, txIndex uint32) (DecodedExt
 	}
 
 	totalLength := len(decodedData)
-	signedPart := NewNone[DecodedExtrinsicSigned]()
+	signedPart := None[DecodedExtrinsicSigned]()
 
 	// Reading Transaction Length
 	decoder := NewDecoder(decodedData, 0)

@@ -16,7 +16,7 @@ func RunAccountBalance() {
 	PanicOnError(err)
 
 	// Via Storage RPC
-	storageAt, err := sdk.Client.StorageAt(primitives.NewNone[primitives.H256]())
+	storageAt, err := sdk.Client.StorageAt(primitives.None[primitives.H256]())
 	PanicOnError(err)
 
 	storage := syPallet.StorageAccount{}

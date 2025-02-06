@@ -25,7 +25,7 @@ func RunValidator() {
 	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
 
 	// Fetching Min Validator Bond storage
-	blockStorage, err := sdk.Client.StorageAt(primitives.NewNone[primitives.H256]())
+	blockStorage, err := sdk.Client.StorageAt(primitives.None[primitives.H256]())
 	PanicOnError(err)
 
 	storage := stPallet.StorageMinValidatorBond{}

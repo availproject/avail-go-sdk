@@ -13,14 +13,14 @@ func RunRpc() {
 
 	{
 		// chain_GetBlock
-		value, err := sdk.Client.Rpc.Chain.GetBlock(prim.NewNone[prim.H256]())
+		value, err := sdk.Client.Rpc.Chain.GetBlock(prim.None[prim.H256]())
 		PanicOnError(err)
 		fmt.Println("Block Number:", value.Header.Number)
 	}
 
 	{
 		// chain_GetBlockHash
-		value, err := sdk.Client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+		value, err := sdk.Client.Rpc.Chain.GetBlockHash(prim.None[uint32]())
 		PanicOnError(err)
 		fmt.Println("Block Hash:", value.ToHuman())
 	}
@@ -34,7 +34,7 @@ func RunRpc() {
 
 	{
 		// chain_GetHeader
-		value, err := sdk.Client.Rpc.Chain.GetHeader(prim.NewNone[prim.H256]())
+		value, err := sdk.Client.Rpc.Chain.GetHeader(prim.None[prim.H256]())
 		PanicOnError(err)
 		fmt.Println("Block Number:", value.Number)
 	}

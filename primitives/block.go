@@ -3,6 +3,7 @@ package primitives
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
 type Block struct {
@@ -13,10 +14,12 @@ type Block struct {
 func NewBlock(rawJson string) (Block, error) {
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal([]byte(rawJson), &mappedData); err != nil {
+		fmt.Println(fmt.Sprintf("Value: %v, Error: %v", rawJson, err))
 		return Block{}, err
 	}
 
 	if mappedData["block"] == nil {
+		fmt.Println(fmt.Sprintf("Value: %v", rawJson))
 		return Block{}, errors.New("Block is missing block")
 	}
 
@@ -31,10 +34,12 @@ func NewBlock(rawJson string) (Block, error) {
 
 	headerJson, err := json.Marshal(mappedData2["header"])
 	if err != nil {
+		fmt.Println(fmt.Sprintf("Value: %v, Error: %v", rawJson, err))
 		return Block{}, err
 	}
 	header, err := NewHeaderFromJson(string(headerJson))
 	if err != nil {
+		fmt.Println(fmt.Sprintf("Value: %v, Error: %v", rawJson, err))
 		return Block{}, err
 	}
 

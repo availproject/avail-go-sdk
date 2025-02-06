@@ -14,27 +14,27 @@ type MultiSignature struct {
 
 func emptyMultiSignature() MultiSignature {
 	return MultiSignature{
-		Ed25519: NewNone[H512](),
-		Sr25519: NewNone[H512](),
-		Ecdsa:   NewNone[H520](),
+		Ed25519: None[H512](),
+		Sr25519: None[H512](),
+		Ecdsa:   None[H520](),
 	}
 }
 
 func NewMultiSignatureEd(value H512) MultiSignature {
 	signature := emptyMultiSignature()
-	signature.Ed25519 = NewSome(value)
+	signature.Ed25519 = Some(value)
 	return signature
 }
 
 func NewMultiSignatureSr(value H512) MultiSignature {
 	signature := emptyMultiSignature()
-	signature.Sr25519 = NewSome(value)
+	signature.Sr25519 = Some(value)
 	return signature
 }
 
 func NewMultiSignatureEcdsa(value H520) MultiSignature {
 	signature := emptyMultiSignature()
-	signature.Ecdsa = NewSome(value)
+	signature.Ecdsa = Some(value)
 	return signature
 }
 
@@ -63,19 +63,19 @@ func (this *MultiSignature) Decode(decoder *Decoder) error {
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		result.Ed25519 = NewSome(value)
+		result.Ed25519 = Some(value)
 	} else if variantIndex == 1 {
 		value := H512{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		result.Sr25519 = NewSome(value)
+		result.Sr25519 = Some(value)
 	} else if variantIndex == 2 {
 		value := H520{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		result.Ecdsa = NewSome(value)
+		result.Ecdsa = Some(value)
 	} else {
 		return errors.New(fmt.Sprintf(`MultiSignature Decode failure. Unknown Variant index: %v`, variantIndex))
 	}

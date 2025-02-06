@@ -10,9 +10,9 @@ type BlockStorage struct {
 }
 
 func (this *BlockStorage) Fetch(storageEntryKey string) (string, error) {
-	return this.client.Rpc.State.GetStorage(storageEntryKey, primitives.NewSome(this.at))
+	return this.client.Rpc.State.GetStorage(storageEntryKey, primitives.Some(this.at))
 }
 
 func (this *BlockStorage) FetchKeys(storageEntryKey string) ([]string, error) {
-	return this.client.Rpc.State.GetKeys(storageEntryKey, primitives.NewSome(this.at))
+	return this.client.Rpc.State.GetKeys(storageEntryKey, primitives.Some(this.at))
 }

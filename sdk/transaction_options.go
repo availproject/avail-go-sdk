@@ -16,30 +16,30 @@ type TransactionOptions struct {
 
 func NewTransactionOptions() TransactionOptions {
 	return TransactionOptions{
-		AppId:     prim.NewNone[uint32](),
-		Nonce:     prim.NewNone[uint32](),
-		Mortality: prim.NewNone[uint32](),
-		Tip:       prim.NewNone[metadata.Balance](),
+		AppId:     prim.None[uint32](),
+		Nonce:     prim.None[uint32](),
+		Mortality: prim.None[uint32](),
+		Tip:       prim.None[metadata.Balance](),
 	}
 }
 
 func (this TransactionOptions) WithAppId(value uint32) TransactionOptions {
-	this.AppId = prim.NewSome(value)
+	this.AppId = prim.Some(value)
 	return this
 }
 
 func (this TransactionOptions) WithNonce(value uint32) TransactionOptions {
-	this.Nonce = prim.NewSome(value)
+	this.Nonce = prim.Some(value)
 	return this
 }
 
 func (this TransactionOptions) WithMortality(value uint32) TransactionOptions {
-	this.Mortality = prim.NewSome(value)
+	this.Mortality = prim.Some(value)
 	return this
 }
 
 func (this TransactionOptions) WithTip(value metadata.Balance) TransactionOptions {
-	this.Tip = prim.NewSome(value)
+	this.Tip = prim.Some(value)
 	return this
 }
 
@@ -48,17 +48,17 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	if err != nil {
 		return prim.Extra{}, prim.Additional{}, err
 	}
-	forkHash, err := client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+	forkHash, err := client.Rpc.Chain.GetFinalizedHead()
 	if err != nil {
 		return prim.Extra{}, prim.Additional{}, err
 	}
-	header, err := client.Rpc.Chain.GetHeader(prim.NewSome(forkHash))
+	header, err := client.Rpc.Chain.GetHeader(prim.Some(forkHash))
 	if err != nil {
 		return prim.Extra{}, prim.Additional{}, err
 	}
-	forBlockNumber := header.Number
+	forkBlockNumber := header.Number
 
-	runtimeVersion, err := client.Rpc.State.GetRuntimeVersion(prim.NewNone[prim.H256]())
+	runtimeVersion, err := client.Rpc.State.GetRuntimeVersion(prim.None[prim.H256]())
 	if err != nil {
 		return prim.Extra{}, prim.Additional{}, err
 	}
@@ -81,17 +81,17 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	} else {
 		extra.Nonce = this.Nonce.Unwrap()
 	}
-	extra.Era = prim.NewEra(uint64(this.Mortality.UnwrapOr(32)), uint64(forBlockNumber))
+	extra.Era = prim.NewEra(uint64(this.Mortality.UnwrapOr(32)), uint64(forkBlockNumber))
 
 	return extra, additional, nil
 }
 
 func RegenerateEra(client *Client, extra *prim.Extra, additional *prim.Additional) error {
-	forkHash, err := client.Rpc.Chain.GetBlockHash(prim.NewNone[uint32]())
+	forkHash, err := client.Rpc.Chain.GetBlockHash(prim.None[uint32]())
 	if err != nil {
 		return err
 	}
-	header, err := client.Rpc.Chain.GetHeader(prim.NewSome(forkHash))
+	header, err := client.Rpc.Chain.GetHeader(prim.Some(forkHash))
 	if err != nil {
 		return err
 	}

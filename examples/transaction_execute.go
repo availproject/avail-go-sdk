@@ -25,7 +25,7 @@ func RunTransactionExecute() {
 	//
 	// It's not necessary to use the builtin watcher. A custom watcher
 	// might yield better results in some cases.
-	watcher := SDK.NewWatcher(sdk.Client, txHash, SDK.Inclusion, 3, 3)
+	watcher := SDK.NewWatcher(sdk.Client, txHash).WaitFor(SDK.Inclusion)
 	mybTxDetails, err := watcher.Run()
 	PanicOnError(err)
 	AssertEq(mybTxDetails.IsSome(), true, "Watcher must have found the status for our transaction")
@@ -40,7 +40,7 @@ func RunTransactionExecute() {
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Converts from generic transaction to a specific one
+	// Converts generic event to a specific one
 	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
 	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, DataHash: %v, Who: %v`, event.PalletName(), event.EventName(), event.DataHash, event.Who.ToHuman()))

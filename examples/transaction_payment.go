@@ -38,8 +38,8 @@ func RunTransactionPayment() {
 		fmt.Println("Base Fee:", InclusionFee.BaseFee)
 	}
 
-	// PaymentQueryCallFeeInfo
-	feeInfo1, err := tx.PaymentQueryCallFeeInfo()
+	// PaymentQueryCallInfo
+	feeInfo1, err := tx.PaymentQueryCallInfo()
 	PanicOnError(err)
 
 	fmt.Println("ProofSize:", feeInfo1.Weight.ProofSize)
@@ -47,8 +47,8 @@ func RunTransactionPayment() {
 	fmt.Println("Class:", feeInfo1.Class)
 	fmt.Println("Partial Fee:", feeInfo1.PartialFee)
 
-	// PaymentQueryFeeInfo
-	feeInfo, err := tx.PaymentQueryFeeInfo(acc, options)
+	// PaymentQueryInfo
+	feeInfo, err := tx.PaymentQueryInfo(acc, options)
 	PanicOnError(err)
 
 	fmt.Println("ProofSize:", feeInfo.Weight.ProofSize)

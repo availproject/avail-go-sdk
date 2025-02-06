@@ -2,7 +2,10 @@ package sdk
 
 import (
 	"errors"
+	"os"
+
 	"github.com/itering/scale.go/utiles/uint128"
+	"github.com/sirupsen/logrus"
 
 	"math/big"
 
@@ -19,6 +22,16 @@ func (this *SDK) UpdateMetadata(blockHash prim.Option[prim.H256]) error {
 	return this.Client.InitMetadata(blockHash)
 }
 
+func EnableLogging() {
+	// Set log level based on the environment variable
+	level, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
+	if err != nil {
+		level = logrus.DebugLevel // Default to Debug if parsing fails
+	}
+	logrus.SetLevel(level)
+	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
+}
+
 // Returns a new SDK using the latest metadata from the chain.
 // To get the SDK initialized with different metadata, call NewSDKWithMetadata#
 //
@@ -28,7 +41,7 @@ func (this *SDK) UpdateMetadata(blockHash prim.Option[prim.H256]) error {
 //
 // The metadata can be updated on fly by calling sdk.UpdateMetadata(blockHash)
 func NewSDK(endpoint string) (SDK, error) {
-	return NewSDKWithMetadata(endpoint, prim.NewNone[prim.H256]())
+	return NewSDKWithMetadata(endpoint, prim.None[prim.H256]())
 }
 
 // Same as NewSDK but allows passing the block hash from which the metadata will be

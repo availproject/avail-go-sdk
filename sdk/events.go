@@ -143,10 +143,10 @@ type EventRecord struct {
 
 func (this *EventRecord) TxIndex() prim.Option[uint32] {
 	if this.Phase.ApplyExtrinsic.IsNone() {
-		return prim.NewNone[uint32]()
+		return prim.None[uint32]()
 	}
 
-	return prim.NewSome(this.Phase.ApplyExtrinsic.Unwrap())
+	return prim.Some(this.Phase.ApplyExtrinsic.Unwrap())
 }
 
 func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metadata) (EventRecord, error) {
@@ -252,13 +252,13 @@ func EventFindChecked[E interfaces.EventT](eventRecords EventRecords, target E) 
 
 		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
 		if err := decoder.Decode(&t); err != nil {
-			return prim.NewNone[[]E]()
+			return prim.None[[]E]()
 		}
 
 		result = append(result, t)
 	}
 
-	return prim.NewSome(result)
+	return prim.Some(result)
 }
 
 // Return None if the event has not been found.
@@ -276,12 +276,12 @@ func EventFindFirst[E interfaces.EventT](eventRecords EventRecords, target E) pr
 		var t E
 		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
 		if err := decoder.Decode(&t); err != nil {
-			return prim.NewSome(prim.NewNone[E]())
+			return prim.Some(prim.None[E]())
 		}
-		return prim.NewSome(prim.NewSome(t))
+		return prim.Some(prim.Some(t))
 	}
 
-	return prim.NewNone[prim.Option[E]]()
+	return prim.None[prim.Option[E]]()
 }
 
 // Return None if the event has not been found.
@@ -299,12 +299,12 @@ func EventFindLast[E interfaces.EventT](eventRecords EventRecords, target E) pri
 		var t E
 		var decoder = prim.NewDecoder(eventRecords[i].AllBytes[eventRecords[i].EventFieldsStartIndex:eventRecords[i].EventFieldsEndIndex], 0)
 		if err := decoder.Decode(&t); err != nil {
-			return prim.NewSome(prim.NewNone[E]())
+			return prim.Some(prim.None[E]())
 		}
-		return prim.NewSome(prim.NewSome(t))
+		return prim.Some(prim.Some(t))
 	}
 
-	return prim.NewNone[prim.Option[E]]()
+	return prim.None[prim.Option[E]]()
 }
 
 func EventFilterByTxIndex(eventRecords EventRecords, txIndex uint32) EventRecords {

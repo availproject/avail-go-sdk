@@ -26,7 +26,8 @@ func (this *systemRPC) AccountNextIndex(address string) (uint32, error) {
 	params := RPCParams{}
 	params.Add(address)
 
-	value, err := this.client.Request("system_accountNextIndex", params.Build())
+	value, err := this.client.RequestWithRetry("system_accountNextIndex", params.Build())
+
 	if err != nil {
 		return uint32(0), err
 	}
@@ -40,17 +41,17 @@ func (this *systemRPC) AccountNextIndex(address string) (uint32, error) {
 
 func (this *systemRPC) Chain() (string, error) {
 	params := RPCParams{}
-	return this.client.Request("system_chain", params.Build())
+	return this.client.RequestWithRetry("system_chain", params.Build())
 }
 
 func (this *systemRPC) ChainType() (string, error) {
 	params := RPCParams{}
-	return this.client.Request("system_chainType", params.Build())
+	return this.client.RequestWithRetry("system_chainType", params.Build())
 }
 
 func (this *systemRPC) Health() (RpcSystemHealth, error) {
 	params := RPCParams{}
-	val, err := this.client.Request("system_health", params.Build())
+	val, err := this.client.RequestWithRetry("system_health", params.Build())
 	if err != nil {
 		return RpcSystemHealth{}, err
 	}
@@ -86,17 +87,17 @@ type RpcSystemHealth struct {
 
 func (this *systemRPC) LocalPeerId() (string, error) {
 	params := RPCParams{}
-	return this.client.Request("system_localPeerId", params.Build())
+	return this.client.RequestWithRetry("system_localPeerId", params.Build())
 }
 
 func (this *systemRPC) Name() (string, error) {
 	params := RPCParams{}
-	return this.client.Request("system_name", params.Build())
+	return this.client.RequestWithRetry("system_name", params.Build())
 }
 
 func (this *systemRPC) NodeRoles() ([]string, error) {
 	params := RPCParams{}
-	val, err := this.client.Request("system_nodeRoles", params.Build())
+	val, err := this.client.RequestWithRetry("system_nodeRoles", params.Build())
 	if err != nil {
 		return []string{}, err
 	}
@@ -116,7 +117,7 @@ func (this *systemRPC) NodeRoles() ([]string, error) {
 
 func (this *systemRPC) Properties() (RpcSystemChainProperties, error) {
 	params := RPCParams{}
-	val, err := this.client.Request("system_properties", params.Build())
+	val, err := this.client.RequestWithRetry("system_properties", params.Build())
 	if err != nil {
 		return RpcSystemChainProperties{}, err
 	}
@@ -159,7 +160,7 @@ type RpcSystemChainProperties struct {
 
 func (this *systemRPC) SyncState() (RpcSystemSyncState, error) {
 	params := RPCParams{}
-	val, err := this.client.Request("system_syncState", params.Build())
+	val, err := this.client.RequestWithRetry("system_syncState", params.Build())
 	if err != nil {
 		return RpcSystemSyncState{}, err
 	}
@@ -195,5 +196,6 @@ type RpcSystemSyncState struct {
 
 func (this *systemRPC) Version() (string, error) {
 	params := RPCParams{}
-	return this.client.Request("system_version", params.Build())
+	val, err := this.client.RequestWithRetry("system_version", params.Build())
+	return val, err
 }

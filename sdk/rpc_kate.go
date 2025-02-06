@@ -20,7 +20,7 @@ func (this *kateRPC) BlockLength(blockHash prim.Option[prim.H256]) (metadata.Blo
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	rawJson, err := this.client.Request("kate_blockLength", params.Build())
+	rawJson, err := this.client.RequestWithRetry("kate_blockLength", params.Build())
 	if err != nil {
 		return metadata.BlockLength{}, err
 	}
@@ -66,7 +66,7 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	rawJson, err := this.client.Request("kate_queryDataProof", params.Build())
+	rawJson, err := this.client.RequestWithRetry("kate_queryDataProof", params.Build())
 	if err != nil {
 		return res, err
 	}
@@ -102,7 +102,7 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 	res.DataProof.Leaf, err = prim.NewH256FromHexString(dataProofMap["leaf"].(string))
 	if err != nil {
-		panic(err)
+		return metadata.ProofResponse{}, err
 	}
 	res.DataProof.LeafIndex = uint32(dataProofMap["leafIndex"].(float64))
 	res.DataProof.NumberOfLeaves = uint32(dataProofMap["numberOfLeaves"].(float64))
@@ -120,22 +120,22 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 	res.DataProof.Roots.BlobRoot, err = prim.NewH256FromHexString(rootsMap["blobRoot"].(string))
 	if err != nil {
-		panic(err)
+		return metadata.ProofResponse{}, err
 	}
 	res.DataProof.Roots.BridgeRoot, err = prim.NewH256FromHexString(rootsMap["bridgeRoot"].(string))
 	if err != nil {
-		panic(err)
+		return metadata.ProofResponse{}, err
 	}
 	res.DataProof.Roots.DataRoot, err = prim.NewH256FromHexString(rootsMap["dataRoot"].(string))
 	if err != nil {
-		panic(err)
+		return metadata.ProofResponse{}, err
 	}
 
 	proofMap := dataProofMap["proof"].([]interface{})
 	for i := range proofMap {
 		val, err := prim.NewH256FromHexString(proofMap[i].(string))
 		if err != nil {
-			panic(err)
+			return metadata.ProofResponse{}, err
 		}
 		res.DataProof.Proof = append(res.DataProof.Proof, val)
 	}
@@ -172,11 +172,11 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 	msg.From, err = prim.NewH256FromHexString(addressedMsgMap["from"].(string))
 	if err != nil {
-		panic(err)
+		return metadata.ProofResponse{}, err
 	}
 	msg.To, err = prim.NewH256FromHexString(addressedMsgMap["to"].(string))
 	if err != nil {
-		panic(err)
+		return metadata.ProofResponse{}, err
 	}
 
 	msg2Map := addressedMsgMap["message"].(map[string]interface{})
@@ -195,7 +195,7 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 
 		t.AssetId, err = prim.NewH256FromHexString(fungMap["asset_id"].(string))
 		if err != nil {
-			panic(err)
+			return metadata.ProofResponse{}, err
 		}
 
 		amountF := fungMap["amount"].(float64)
@@ -239,7 +239,7 @@ func (this *kateRPC) QueryProof(cells []KateCell, blockHash prim.Option[prim.H25
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	rawJson, err := this.client.Request("kate_queryProof", params.Build())
+	rawJson, err := this.client.RequestWithRetry("kate_queryProof", params.Build())
 	if err != nil {
 		return res, err
 	}
@@ -293,7 +293,7 @@ func (this *kateRPC) QueryRows(rows []uint32, blockHash prim.Option[prim.H256]) 
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	rawJson, err := this.client.Request("kate_queryRows", params.Build())
+	rawJson, err := this.client.RequestWithRetry("kate_queryRows", params.Build())
 	if err != nil {
 		return res, err
 	}
