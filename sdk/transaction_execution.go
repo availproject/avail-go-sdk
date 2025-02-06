@@ -42,7 +42,7 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 			return TransactionDetails{}, err
 		}
 
-		logger := NewTxLogger(txHash, true)
+		logger := NewCustomLogger(txHash, true)
 		logger.LogTxSubmitted(&account, extra.Era.Period)
 
 		watcher := NewWatcher(client, txHash).WaitFor(waitFor).Logger(logger)
@@ -78,7 +78,7 @@ func signAndSend(client *Client, account subkey.KeyPair, payload metadata.Payloa
 		return prim.H256{}, err
 	}
 
-	logger := NewTxLogger(prim.H256{}, true)
+	logger := NewCustomLogger(prim.H256{}, true)
 	logger.LogTxSubmitting(&account, &payload, extra.Nonce, extra.AppId)
 
 	return client.Send(tx)

@@ -17,7 +17,7 @@ To enable logging add this to the `main` function.
 // Set log level based on the environment variable
 level, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
 if err != nil {
-    level = logrus.InfoLevel // Default to INFO if parsing fails
+    level = logrus.DebugLevel // Default to INFO if parsing fails
 }
 logrus.SetLevel(level)
 logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})

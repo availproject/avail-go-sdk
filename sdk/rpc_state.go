@@ -15,7 +15,7 @@ func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) (prim.
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	value, err := this.client.Request("state_getRuntimeVersion", params.Build())
+	value, err := this.client.RequestWithRetry("state_getRuntimeVersion", params.Build())
 	if err != nil {
 		return prim.RuntimeVersion{}, err
 	}
@@ -30,7 +30,7 @@ func (this *stateRPC) GetStorage(key string, at prim.Option[prim.H256]) (string,
 		params.AddH256(at.Unwrap())
 	}
 
-	return this.client.Request("state_getStorage", params.Build())
+	return this.client.RequestWithRetry("state_getStorage", params.Build())
 }
 
 func (this *stateRPC) GetKeys(key string, at prim.Option[prim.H256]) ([]string, error) {
@@ -40,7 +40,7 @@ func (this *stateRPC) GetKeys(key string, at prim.Option[prim.H256]) ([]string, 
 		params.AddH256(at.Unwrap())
 	}
 
-	value, err := this.client.Request("state_getKeys", params.Build())
+	value, err := this.client.RequestWithRetry("state_getKeys", params.Build())
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (this *stateRPC) GetMetadata(at prim.Option[prim.H256]) (string, error) {
 		params.AddH256(at.Unwrap())
 	}
 
-	return this.client.Request("state_getMetadata", params.Build())
+	return this.client.RequestWithRetry("state_getMetadata", params.Build())
 }
 
 func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) (string, error) {
@@ -69,7 +69,7 @@ func (this *stateRPC) GetEvents(at prim.Option[prim.H256]) (string, error) {
 		params.AddH256(at.Unwrap())
 	}
 
-	return this.client.Request("state_getStorage", params.Build())
+	return this.client.RequestWithRetry("state_getStorage", params.Build())
 }
 
 func (this *stateRPC) Call(method string, data string, at prim.Option[prim.H256]) (string, error) {
@@ -80,5 +80,5 @@ func (this *stateRPC) Call(method string, data string, at prim.Option[prim.H256]
 		params.AddH256(at.Unwrap())
 	}
 
-	return this.client.Request("state_call", params.Build())
+	return this.client.RequestWithRetry("state_call", params.Build())
 }

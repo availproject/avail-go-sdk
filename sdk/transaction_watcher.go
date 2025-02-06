@@ -1,8 +1,6 @@
 package sdk
 
 import (
-	"github.com/sirupsen/logrus"
-
 	"time"
 
 	prim "github.com/availproject/avail-go-sdk/primitives"
@@ -15,7 +13,7 @@ type Watcher struct {
 	blockCountTimeout  prim.Option[uint32]
 	blockHeightTimeout prim.Option[uint32]
 	blockFetchInterval uint32
-	logger             TxLogger
+	logger             CustomLogger
 }
 
 func NewWatcher(client *Client, txHash prim.H256) Watcher {
@@ -26,11 +24,11 @@ func NewWatcher(client *Client, txHash prim.H256) Watcher {
 		blockCountTimeout:  prim.None[uint32](),
 		blockHeightTimeout: prim.None[uint32](),
 		blockFetchInterval: 3_000,
-		logger:             NewTxLogger(prim.H256{}, false),
+		logger:             NewCustomLogger(prim.H256{}, false),
 	}
 }
 
-func (this Watcher) Logger(value TxLogger) Watcher {
+func (this Watcher) Logger(value CustomLogger) Watcher {
 	this.logger = value
 	return this
 }
@@ -63,16 +61,15 @@ func (this Watcher) BlockFetchInterval(value uint32) Watcher {
 
 func (this *Watcher) getBlockHash() (prim.H256, error) {
 	if this.waitFor == Finalization {
-		return this.client.Rpc.Chain.GetFinalizedHead()
+		return this.client.FinalizedBlockHash()
 	} else {
-		return this.client.Rpc.Chain.GetBlockHash(prim.None[uint32]())
+		return this.client.BestBlockHash()
 	}
 }
 
 func (this *Watcher) getTxEvents(ext *prim.DecodedExtrinsic, blockHash prim.H256) prim.Option[EventRecords] {
 	blockEvents, err := this.client.EventsAt(prim.Some(blockHash))
 	if err != nil {
-		logrus.Error(err.Error())
 		return prim.None[EventRecords]()
 	}
 
@@ -95,9 +92,7 @@ func (this *Watcher) Run() (prim.Option[TransactionDetails], error) {
 		blockHash := currentBlockHash.Unwrap()
 		this.logger.LogWatcherNewBlock(&block, blockHash)
 
-		if txDetails, err := this.findTransaction(&block, blockHash); err != nil {
-			return prim.None[TransactionDetails](), err
-		} else if txDetails.IsSome() {
+		if txDetails := this.findTransaction(&block, blockHash); txDetails.IsSome() {
 			details := txDetails.Unwrap()
 			this.logger.LogWatcherTxFound(&details)
 			return prim.Some(details), nil
@@ -118,7 +113,7 @@ func (this *Watcher) fetchNextBlock(currentBlockHash *prim.Option[prim.H256]) (R
 		}
 
 		if currentBlockHash.IsSome() && currentBlockHash.Unwrap() == blockHash {
-			time.Sleep(time.Second * time.Duration(this.blockFetchInterval))
+			time.Sleep(time.Millisecond * time.Duration(this.blockFetchInterval))
 			continue
 		}
 		*currentBlockHash = prim.Some(blockHash)
@@ -139,7 +134,7 @@ func (this *Watcher) calculateBlockHeightTimeout() (uint32, error) {
 	return current_height + count, err
 }
 
-func (this *Watcher) findTransaction(block *RPCBlock, blockHash prim.H256) (prim.Option[TransactionDetails], error) {
+func (this *Watcher) findTransaction(block *RPCBlock, blockHash prim.H256) prim.Option[TransactionDetails] {
 	blockNumber := block.Header.Number
 
 	extrinsics := block.Extrinsics
@@ -150,8 +145,8 @@ func (this *Watcher) findTransaction(block *RPCBlock, blockHash prim.H256) (prim
 
 		txEvents := this.getTxEvents(&extrinsics[i], blockHash)
 		res := TransactionDetails{client: this.client, TxHash: extrinsics[i].TxHash, TxIndex: extrinsics[i].TxIndex, BlockHash: blockHash, BlockNumber: blockNumber, Events: txEvents}
-		return prim.Some(res), nil
+		return prim.Some(res)
 	}
 
-	return prim.None[TransactionDetails](), nil
+	return prim.None[TransactionDetails]()
 }

@@ -1,6 +1,8 @@
 package sdk
 
 import (
+	"fmt"
+
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -13,8 +15,11 @@ func (this *chainRPC) GetBlock(blockHash prim.Option[prim.H256]) (prim.Block, er
 	if blockHash.IsSome() {
 		params.AddH256(blockHash.Unwrap())
 	}
-	value, err := this.client.Request("chain_getBlock", params.Build())
+
+	value, err := this.client.RequestWithRetry("chain_getBlock", params.Build())
+
 	if err != nil {
+		fmt.Println(fmt.Sprintf("Value: %v, Error: %v", value, err))
 		return prim.Block{}, err
 	}
 
@@ -26,7 +31,8 @@ func (this *chainRPC) GetBlockHash(blockNumber prim.Option[uint32]) (prim.H256, 
 	if blockNumber.IsSome() {
 		params.AddUint32(blockNumber.Unwrap())
 	}
-	value, err := this.client.Request("chain_getBlockHash", params.Build())
+
+	value, err := this.client.RequestWithRetry("chain_getBlockHash", params.Build())
 	if err != nil {
 		return prim.H256{}, err
 	}
@@ -36,7 +42,8 @@ func (this *chainRPC) GetBlockHash(blockNumber prim.Option[uint32]) (prim.H256, 
 
 func (this *chainRPC) GetFinalizedHead() (prim.H256, error) {
 	params := RPCParams{}
-	value, err := this.client.Request("chain_getFinalizedHead", params.Build())
+
+	value, err := this.client.RequestWithRetry("chain_getFinalizedHead", params.Build())
 	if err != nil {
 		return prim.H256{}, err
 	}
@@ -50,10 +57,11 @@ func (this *chainRPC) GetHeader(blockHash prim.Option[prim.H256]) (prim.Header, 
 	if blockHash.IsSome() {
 		params.AddH256(blockHash.Unwrap())
 	}
-	headerRaw, err := this.client.Request("chain_getHeader", params.Build())
+
+	value, err := this.client.RequestWithRetry("chain_getHeader", params.Build())
 	if err != nil {
 		return prim.Header{}, err
 	}
 
-	return prim.NewHeaderFromJson(headerRaw)
+	return prim.NewHeaderFromJson(value)
 }

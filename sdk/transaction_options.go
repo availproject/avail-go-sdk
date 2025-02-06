@@ -56,7 +56,7 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	if err != nil {
 		return prim.Extra{}, prim.Additional{}, err
 	}
-	forBlockNumber := header.Number
+	forkBlockNumber := header.Number
 
 	runtimeVersion, err := client.Rpc.State.GetRuntimeVersion(prim.None[prim.H256]())
 	if err != nil {
@@ -81,7 +81,7 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	} else {
 		extra.Nonce = this.Nonce.Unwrap()
 	}
-	extra.Era = prim.NewEra(uint64(this.Mortality.UnwrapOr(32)), uint64(forBlockNumber))
+	extra.Era = prim.NewEra(uint64(this.Mortality.UnwrapOr(32)), uint64(forkBlockNumber))
 
 	return extra, additional, nil
 }
