@@ -16,11 +16,13 @@ import (
 )
 
 type Client struct {
-	client   *http.Client
-	endpoint string
-	metadata *metadata.Metadata
-	Rpc      RPC
-	Call     RuntimeApi
+	client         *http.Client
+	endpoint       string
+	metadata       *metadata.Metadata
+	Rpc            RPC
+	Call           RuntimeApi
+	RuntimeVersion *prim.RuntimeVersion
+	GenesisHash    *prim.H256
 }
 
 func NewClient(endpoint string) *Client {
@@ -116,6 +118,22 @@ func (this *Client) InitMetadata(at prim.Option[prim.H256]) error {
 	}
 
 	this.metadata = &metadata
+	return nil
+}
+
+func (this *Client) InitRuntimeVersion(at prim.Option[prim.H256]) error {
+	runtimeVersion, err := this.Rpc.State.GetRuntimeVersion(at)
+	if err != nil {
+		return err
+	}
+	this.RuntimeVersion = &runtimeVersion
+
+	genesisHash, err := this.Rpc.ChainSpec.V1GenesisHash()
+	if err != nil {
+		return err
+	}
+	this.GenesisHash = &genesisHash
+
 	return nil
 }
 

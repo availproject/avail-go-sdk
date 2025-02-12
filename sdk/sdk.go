@@ -18,10 +18,6 @@ type SDK struct {
 	Tx     transactions
 }
 
-func (this *SDK) UpdateMetadata(blockHash prim.Option[prim.H256]) error {
-	return this.Client.InitMetadata(blockHash)
-}
-
 func EnableLogging() {
 	// Set log level based on the environment variable
 	level, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
@@ -52,6 +48,11 @@ func NewSDKWithMetadata(endpoint string, metadataBlockHash prim.Option[prim.H256
 	if err := client.InitMetadata(metadataBlockHash); err != nil {
 		return SDK{}, err
 	}
+
+	if err := client.InitRuntimeVersion(metadataBlockHash); err != nil {
+		return SDK{}, err
+	}
+
 	return SDK{
 		Client: client,
 		Tx:     newTransactions(client),
