@@ -4,10 +4,83 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+
+	"github.com/availproject/avail-go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/primitives"
 )
 
 type systemRPC struct {
 	client *Client
+}
+
+func (this *systemRPC) TransactionState(txHash primitives.H256, finalized bool) ([]metadata.TransactionState, error) {
+	params := RPCParams{}
+	params.AddH256(txHash)
+	if finalized {
+		params.Add("true")
+	} else {
+		params.Add("false")
+	}
+
+	value, err := this.client.RequestWithRetry("system_transaction_state", params.Build())
+
+	if err != nil {
+		return []metadata.TransactionState{}, err
+	}
+
+	var jsonData []map[string]interface{}
+	if err := json.Unmarshal([]byte(value), &jsonData); err != nil {
+		return []metadata.TransactionState{}, newError(err, ErrorCode002)
+	}
+
+	results := []metadata.TransactionState{}
+
+	for _, jsonElem := range jsonData {
+		if jsonElem["block_hash"] == nil {
+			return []metadata.TransactionState{}, errors.New("Failed to find Block Hash")
+		}
+		if jsonElem["block_height"] == nil {
+			return []metadata.TransactionState{}, errors.New("Failed to find Block Height")
+		}
+		if jsonElem["is_finalized"] == nil {
+			return []metadata.TransactionState{}, errors.New("Failed to find Is Finalized")
+		}
+		if jsonElem["pallet_index"] == nil {
+			return []metadata.TransactionState{}, errors.New("Failed to find Pallet Index")
+		}
+		if jsonElem["call_index"] == nil {
+			return []metadata.TransactionState{}, errors.New("Failed to find Call Index")
+		}
+		if jsonElem["tx_hash"] == nil {
+			return []metadata.TransactionState{}, errors.New("Failed to find Tx Hash")
+		}
+		if jsonElem["tx_index"] == nil {
+			return []metadata.TransactionState{}, errors.New("Failed to find Tx Index")
+		}
+		if jsonElem["tx_success"] == nil {
+			return []metadata.TransactionState{}, errors.New("Failed to find Tx Success")
+		}
+
+		elem := metadata.TransactionState{}
+
+		elem.BlockHash, err = primitives.NewBlockHashFromHexString(jsonElem["block_hash"].(string))
+		if err != nil {
+			return []metadata.TransactionState{}, newError(err, ErrorCode002)
+		}
+		elem.BlockHeight = uint32(jsonElem["block_height"].(float64))
+		elem.TxHash, err = primitives.NewBlockHashFromHexString(jsonElem["tx_hash"].(string))
+		if err != nil {
+			return []metadata.TransactionState{}, newError(err, ErrorCode002)
+		}
+		elem.TxIndex = uint32(jsonElem["tx_index"].(float64))
+		elem.PalletIndex = uint8(jsonElem["pallet_index"].(float64))
+		elem.CallIndex = uint8(jsonElem["call_index"].(float64))
+		elem.IsFinalized = jsonElem["is_finalized"].(bool)
+		elem.TxSuccess = jsonElem["tx_success"].(bool)
+		results = append(results, elem)
+	}
+
+	return results, nil
 }
 
 func (this *systemRPC) AccountNextIndex(address string) (uint32, error) {

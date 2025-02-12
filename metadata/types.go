@@ -1629,3 +1629,14 @@ func (this *ProxyType) Decode(decoder *prim.Decoder) error {
 
 	return nil
 }
+
+type TransactionState struct {
+	BlockHash   prim.H256
+	BlockHeight uint32
+	TxHash      prim.H256
+	TxIndex     uint32
+	TxSuccess   bool
+	PalletIndex uint8
+	CallIndex   uint8
+	IsFinalized bool
+}
