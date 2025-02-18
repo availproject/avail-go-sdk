@@ -45,7 +45,7 @@ func RunBlockTransactionByIndex() {
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Convert from Generic Transaction Event to Specific Transaction Event
+	// Find NewAccount event
 	eventMyb := SDK.EventFindFirst(txEvents, syPallet.EventNewAccount{})
 	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Account: %v`, event.PalletName(), event.EventName(), event.Account.ToHuman()))

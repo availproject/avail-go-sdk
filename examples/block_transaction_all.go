@@ -45,7 +45,7 @@ func RunBlockTransactionAll() {
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Convert from Generic Transaction Event to Specific Transaction Event
+	// Find DataSubmitted event
 	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
 	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Who: %v, Data Hash: %v`, event.PalletName(), event.EventName(), event.Who.ToHuman(), event.DataHash))

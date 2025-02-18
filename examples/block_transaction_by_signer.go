@@ -28,7 +28,7 @@ func RunBlockTransactionBySigner() {
 	fmt.Println("Transaction Count: ", len(blockTxs))
 	AssertEq(len(blockTxs), 5, "Transaction count is not 5")
 
-	// Printout Block Transactions made by Signer
+	// Printout Block Transactions filtered by Signer
 	for _, tx := range blockTxs {
 		AssertEq(tx.SS58Address().UnsafeUnwrap(), accountId.ToHuman(), "Signer is not the correct one")
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
@@ -49,7 +49,7 @@ func RunBlockTransactionBySigner() {
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Convert from Generic Transaction Event to Specific Transaction Event
+	// Find ApplicationKeyCreated event
 	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventApplicationKeyCreated{})
 	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Owner: %v, Key: %v, AppId: %v`, event.PalletName(), event.EventName(), event.Owner.ToHuman(), string(event.Key), event.Id))

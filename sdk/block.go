@@ -161,26 +161,17 @@ func (this *Block) DataSubmissions(filter Filter) []DataSubmission {
 }
 
 func (this *Block) EventsForTransaction(txIndex uint32) prim.Option[EventRecords] {
-	extrinsics := this.Block.Extrinsics
-
-	if txIndex >= uint32(len(extrinsics)) {
-		return prim.None[EventRecords]()
-	}
-
 	if this.events.IsNone() {
 		return prim.None[EventRecords]()
 	}
 
-	for i := range extrinsics {
-		if extrinsics[i].TxIndex != txIndex {
-			continue
-		}
-		allEvents := this.events.Unwrap()
-		txEvents := EventFilterByTxIndex(allEvents, txIndex)
-		return prim.Some(txEvents)
+	if txIndex >= uint32(len(this.Block.Extrinsics)) {
+		return prim.None[EventRecords]()
 	}
 
-	return prim.None[EventRecords]()
+	allEvents := this.events.Unwrap()
+	txEvents := EventFilterByTxIndex(allEvents, txIndex)
+	return prim.Some(txEvents)
 }
 
 func (this *Block) Events() prim.Option[EventRecords] {

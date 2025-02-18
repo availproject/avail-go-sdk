@@ -68,7 +68,7 @@ func main() {
 	}
 
 	// Transaction Details
-	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
 }
 ```
 

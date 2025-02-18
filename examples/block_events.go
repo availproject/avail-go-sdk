@@ -30,7 +30,7 @@ func RunBlockEvents() {
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Convert from Block Transaction Event to Specific Transaction Event
+	// Find Transfer event
 	baEvents := SDK.EventFind(blockEvents, baPallet.EventTransfer{})
 	PanicOnError(err)
 	AssertEq(len(baEvents), 2, "Event Transfer event count is not 2")
@@ -39,7 +39,7 @@ func RunBlockEvents() {
 		fmt.Println(fmt.Sprintf(`From: %v, To: %v, Amount: %v`, ev.From.ToHuman(), ev.To.ToHuman(), ev.Amount))
 	}
 
-	// Convert from Block Transaction Event to Specific ApplicationKeyCreated Event
+	// Find ApplicationKeyCreated event
 	daEventMyb := SDK.EventFindFirst(blockEvents, daPallet.EventApplicationKeyCreated{})
 	daEvent := daEventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Id: %v, Key: %v, Owner: %v`, daEvent.PalletName(), daEvent.EventName(), daEvent.Id, string(daEvent.Key), daEvent.Owner.ToHuman()))
@@ -59,10 +59,17 @@ func RunBlockEvents() {
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Convert from Block Transaction Event to Specific Transaction Event
+	// Find ExtrinsicSuccess event
 	syEventMyb := SDK.EventFindFirst(txEvents, syPallet.EventExtrinsicSuccess{})
 	syEvent := syEventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Class: %v`, syEvent.PalletName(), syEvent.EventName(), syEvent.DispatchInfo.Class))
+
+	// Check
+	tx2 := block.Transactions(SDK.Filter{}.WTxIndex(txIndex))
+	AssertEq(len(tx2), 1, "")
+	tx2Events := tx2[0].Events()
+	AssertTrue(tx2Events.IsSome(), "")
+	AssertEq(len(tx2Events.Unwrap()), len(txEvents), "")
 
 	fmt.Println("RunBlockEvents finished correctly.")
 }

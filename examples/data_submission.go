@@ -54,7 +54,7 @@ func RunDataSubmission() {
 	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Tx must be successful")
 
 	// Transaction Details
-	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
 
 	// Events
 	AssertTrue(res.Events.IsSome(), "Events must be present")

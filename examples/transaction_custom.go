@@ -46,7 +46,7 @@ func RunTransactionCustom() {
 	AssertTrue(txDetails.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
 	// Printout Transaction Details
-	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
 
 	// Printout Transaction Events
 	txEvents := txDetails.Events.UnsafeUnwrap()

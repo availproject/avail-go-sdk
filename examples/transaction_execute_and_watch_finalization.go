@@ -26,7 +26,7 @@ func RunTransactionExecuteAndWatchFinalization() {
 	AssertTrue(txDetails.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
 
 	// Printout Transaction Details
-	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Index: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
 
 	// Printout Transaction Events
 	txEvents := txDetails.Events.UnsafeUnwrap()
@@ -34,7 +34,7 @@ func RunTransactionExecuteAndWatchFinalization() {
 		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
 	}
 
-	// Converts generic event to a specific one
+	// Find DataSubmitted event
 	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
 	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
 	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, DataHash: %v, Who: %v`, event.PalletName(), event.EventName(), event.DataHash, event.Who.ToHuman()))
