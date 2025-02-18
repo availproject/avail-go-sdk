@@ -7,6 +7,7 @@ import (
 	"reflect"
 
 	SType "github.com/itering/scale.go/types"
+	utiles "github.com/itering/scale.go/utiles"
 	"github.com/itering/scale.go/utiles/uint128"
 )
 
@@ -39,8 +40,8 @@ func (encoderT) array(value reflect.Value, dest *string) bool {
 
 // Dynamic arrays
 func (encoderT) slice(value reflect.Value, dest *string) bool {
-	len := uint32(value.Len())
-	if len == 0 {
+	length := uint32(value.Len())
+	if length == 0 {
 		Encoder.EncodeTo(CompactU32{Value: 0}, dest)
 		return true
 	}
@@ -52,10 +53,15 @@ func (encoderT) slice(value reflect.Value, dest *string) bool {
 		return false
 	}
 
-	Encoder.EncodeTo(CompactU32{Value: len}, dest)
-	for i := 0; i < int(len); i++ {
-		if !Encoder.EncodeTo(value.Index(i).Interface(), dest) {
-			return false
+	Encoder.EncodeTo(CompactU32{Value: length}, dest)
+	if value.Index(0).Kind() == reflect.Uint8 {
+		var concreteValue []byte = value.Interface().([]byte)
+		*dest += utiles.BytesToHex(concreteValue)
+	} else {
+		for i := 0; i < int(length); i++ {
+			if !Encoder.EncodeTo(value.Index(i).Interface(), dest) {
+				return false
+			}
 		}
 	}
 
