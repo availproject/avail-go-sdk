@@ -3,6 +3,8 @@ package metadata
 import (
 	"strings"
 
+	"sync"
+
 	"github.com/availproject/avail-go-sdk/interfaces"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
@@ -161,12 +163,12 @@ func GenericFetch[V any, S StorageT](blockStorage interfaces.BlockStorageT, stor
 		return prim.None[V](), err
 	}
 
-	if encoded == "" {
+	if encoded.IsNone() || encoded.Unwrap() == "" {
 		return prim.None[V](), nil
 	}
 
 	var t V
-	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded), 0)
+	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded.Unwrap()), 0)
 	if err := decoder.Decode(&t); err != nil {
 		return prim.None[V](), err
 	}
@@ -181,12 +183,12 @@ func GenericMapFetch[V any, K any, S StorageMapT](blockStorage interfaces.BlockS
 		return prim.None[StorageEntry[K, V]](), err
 	}
 
-	if encoded == "" {
+	if encoded.IsNone() || encoded.Unwrap() == "" {
 		return prim.None[StorageEntry[K, V]](), nil
 	}
 
 	var t V
-	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded), 0)
+	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded.Unwrap()), 0)
 	if err := decoder.Decode(&t); err != nil {
 		return prim.None[StorageEntry[K, V]](), err
 	}
@@ -207,24 +209,62 @@ func GenericMapKeysFetch[V any, K any, S StorageMapT](blockStorage interfaces.Bl
 	}
 
 	storageEntries := []StorageEntry[K, V]{}
-	for i := range storageKeys {
-		mapKey, err := storageMapKeyDecode[K](storageKeys[i], storage)
-		if err != nil {
-			return nil, err
+
+	errors := []error{}
+	var mu sync.Mutex
+
+	wg := sync.WaitGroup{}
+	target := len(storageKeys)
+	currentIndex := 0
+	for {
+		for i := 0; i < 100; i++ {
+			wg.Add(1)
+			go func(i int) {
+				defer wg.Done()
+
+				mapKey, err := storageMapKeyDecode[K](storageKeys[i], storage)
+				if err != nil {
+					mu.Lock()
+					errors = append(errors, err)
+					mu.Unlock()
+					return
+				}
+
+				value, err := GenericMapFetch[V](blockStorage, mapKey, storage)
+				if err != nil {
+					mu.Lock()
+					errors = append(errors, err)
+					mu.Unlock()
+					return
+				}
+
+				if value.IsNone() {
+					return
+				}
+
+				mu.Lock()
+				storageEntries = append(storageEntries, value.Unwrap())
+				mu.Unlock()
+			}(currentIndex)
+
+			currentIndex += 1
+			if currentIndex >= target {
+				break
+			}
 		}
 
-		value, err := GenericMapFetch[V](blockStorage, mapKey, storage)
-		if err != nil {
-			return nil, err
+		wg.Wait()
+		if len(errors) > 0 {
+			break
 		}
-
-		if value.IsNone() {
-			continue
+		if currentIndex >= (target - 1) {
+			break
 		}
-
-		storageEntries = append(storageEntries, value.Unwrap())
 	}
 
+	if len(errors) > 0 {
+		return nil, errors[0]
+	}
 	return storageEntries, nil
 }
 
@@ -235,12 +275,12 @@ func GenericDoubleMapFetch[V any, K1 any, K2 any, S StorageDoubleMapT](blockStor
 		return prim.None[StorageEntryDoubleMap[K1, K2, V]](), err
 	}
 
-	if encoded == "" {
+	if encoded.IsNone() || encoded.Unwrap() == "" {
 		return prim.None[StorageEntryDoubleMap[K1, K2, V]](), nil
 	}
 
 	var t V
-	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded), 0)
+	decoder := prim.NewDecoder(prim.Hex.FromHex(encoded.Unwrap()), 0)
 	if err := decoder.Decode(&t); err != nil {
 		return prim.None[StorageEntryDoubleMap[K1, K2, V]](), err
 	}

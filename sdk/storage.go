@@ -9,7 +9,7 @@ type BlockStorage struct {
 	at     primitives.H256
 }
 
-func (this *BlockStorage) Fetch(storageEntryKey string) (string, error) {
+func (this *BlockStorage) Fetch(storageEntryKey string) (primitives.Option[string], error) {
 	return this.client.Rpc.State.GetStorage(storageEntryKey, primitives.Some(this.at))
 }
 

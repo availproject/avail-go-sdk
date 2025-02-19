@@ -23,14 +23,14 @@ func (this *stateRPC) GetRuntimeVersion(blockHash prim.Option[prim.H256]) (prim.
 	return prim.NewRuntimeVersionFromJson(value)
 }
 
-func (this *stateRPC) GetStorage(key string, at prim.Option[prim.H256]) (string, error) {
+func (this *stateRPC) GetStorage(key string, at prim.Option[prim.H256]) (prim.Option[string], error) {
 	params := RPCParams{}
 	params.Add("\"" + key + "\"")
 	if at.IsSome() {
 		params.AddH256(at.Unwrap())
 	}
 
-	return this.client.RequestWithRetry("state_getStorage", params.Build())
+	return this.client.Request("state_getStorage", params.Build())
 }
 
 func (this *stateRPC) GetKeys(key string, at prim.Option[prim.H256]) ([]string, error) {

@@ -1,6 +1,6 @@
 package interfaces
 
-import ()
+import "github.com/availproject/avail-go-sdk/primitives"
 
 type EventT interface {
 	PalletIndex() uint8
@@ -10,6 +10,6 @@ type EventT interface {
 }
 
 type BlockStorageT interface {
-	Fetch(storageEntryKey string) (string, error)
+	Fetch(storageEntryKey string) (primitives.Option[string], error)
 	FetchKeys(key string) ([]string, error)
 }
