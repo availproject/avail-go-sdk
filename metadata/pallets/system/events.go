@@ -68,3 +68,24 @@ func (this EventNewAccount) EventIndex() uint8 {
 func (this EventNewAccount) EventName() string {
 	return "NewAccount"
 }
+
+// An account was reaped.
+type EventKilledAccount struct {
+	Account primitives.AccountId
+}
+
+func (this EventKilledAccount) PalletIndex() uint8 {
+	return PalletIndex
+}
+
+func (this EventKilledAccount) PalletName() string {
+	return PalletName
+}
+
+func (this EventKilledAccount) EventIndex() uint8 {
+	return 4
+}
+
+func (this EventKilledAccount) EventName() string {
+	return "KilledAccount"
+}
