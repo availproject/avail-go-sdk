@@ -167,39 +167,7 @@ func (this *Client) RequestWithRetry(method string, params string) (string, erro
 }
 
 func (this *Client) Request(method string, params string) (prim.Option[string], error) {
-	rawJSON := []byte(`{
-		"id": 1,
-		"jsonrpc": "2.0",
-		"method": "%s",
-		"params": %s
-	}`)
-
-	requestBodyString := fmt.Sprintf(string(rawJSON), method, params)
-	requestBodyBytes := []byte(requestBodyString)
-
-	request, err := http.NewRequest("POST", this.endpoint, bytes.NewBuffer(requestBodyBytes))
-	if err != nil {
-		return prim.None[string](), err
-	}
-
-	request.Header.Add("Content-Type", "application/json")
-	response, err := this.client.Do(request)
-	if err != nil {
-		return prim.None[string](), newError(err, ErrorCode000)
-	}
-
-	defer response.Body.Close()
-
-	responseBodyBytes, _ := io.ReadAll(response.Body)
-	// fmt.Println("response Status:", response.Status)
-	// fmt.Println("response Headers:", response.Header)
-	// fmt.Println("response Body:", string(responseBodyBytes))
-
-	if response.StatusCode != http.StatusOK {
-		err := ErrorCode001
-		err.Message = fmt.Sprintf(`Status Code: %v`, response.StatusCode)
-		return prim.None[string](), &err
-	}
+	responseBodyBytes, _ := this.RequestRaw(method, params)
 
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal(responseBodyBytes, &mappedData); err != nil {
@@ -234,6 +202,44 @@ func (this *Client) Request(method string, params string) (prim.Option[string], 
 	}
 
 	return prim.Some(result), nil
+}
+
+func (this *Client) RequestRaw(method string, params string) ([]byte, error) {
+	rawJSON := []byte(`{
+		"id": 1,
+		"jsonrpc": "2.0",
+		"method": "%s",
+		"params": %s
+	}`)
+
+	requestBodyString := fmt.Sprintf(string(rawJSON), method, params)
+	requestBodyBytes := []byte(requestBodyString)
+
+	request, err := http.NewRequest("POST", this.endpoint, bytes.NewBuffer(requestBodyBytes))
+	if err != nil {
+		return []byte{}, err
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+	response, err := this.client.Do(request)
+	if err != nil {
+		return []byte{}, newError(err, ErrorCode000)
+	}
+
+	defer response.Body.Close()
+
+	responseBodyBytes, _ := io.ReadAll(response.Body)
+	// fmt.Println("response Status:", response.Status)
+	// fmt.Println("response Headers:", response.Header)
+	// fmt.Println("response Body:", string(responseBodyBytes))
+
+	if response.StatusCode != http.StatusOK {
+		err := ErrorCode001
+		err.Message = fmt.Sprintf(`Status Code: %v`, response.StatusCode)
+		return []byte{}, &err
+	}
+
+	return responseBodyBytes, nil
 }
 
 func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {

@@ -3,6 +3,7 @@ package examples
 import (
 	"fmt"
 
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
 	idenPallet "github.com/availproject/avail-go-sdk/metadata/pallets/identity"
 	staPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
 	sysPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
@@ -54,12 +55,30 @@ func RunStorage() {
 		fmt.Println("Account Free Balance: ", val.Value.AccountData.Free.ToHuman())
 	}
 
+	// Fetch Map Storage 2
+	{
+		storage := daPallet.StorageAppKeys{}
+		value1, err := storage.Fetch(&blockStorage, []byte("ThisShouldNotExist"))
+		PanicOnError(err)
+		AssertEq(value1.IsNone(), true, "")
+
+		value2, err := storage.Fetch(&blockStorage, []byte("gohan"))
+		PanicOnError(err)
+		AssertEq(value2.IsSome(), true, "")
+		val2 := value2.Unwrap()
+
+		fmt.Println("Key: ", string(val2.Key))
+		fmt.Println("AppId: ", val2.Value.AppId)
+		fmt.Println("Owner: ", val2.Value.Owner.ToSS58())
+	}
+
 	// Fetch All Map Storage
 	{
 		storage := idenPallet.StorageIdentityOf{}
 		val, err := storage.FetchAll(&blockStorage)
 		PanicOnError(err)
 		AssertTrue(len(val) > 0, "There need to be more than 0 values")
+		AssertEq(len(val), 120, "")
 
 		for i := 0; i < len(val); i++ {
 			fmt.Println("Identity Key: ", val[i].Key.ToHuman())
@@ -94,6 +113,7 @@ func RunStorage() {
 		val, err := storage.FetchAll(&blockStorage, era)
 		PanicOnError(err)
 		AssertTrue(len(val) > 0, "There need to be more than 0 values")
+		AssertEq(len(val), 80, "")
 
 		for i := 0; i < len(val); i++ {
 			fmt.Println("Era: ", val[i].Key1)

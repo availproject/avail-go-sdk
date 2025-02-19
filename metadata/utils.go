@@ -208,16 +208,16 @@ func GenericMapKeysFetch[V any, K any, S StorageMapT](blockStorage interfaces.Bl
 		return nil, nil
 	}
 
-	storageEntries := []StorageEntry[K, V]{}
-
+	// Sync mechanism
 	errors := []error{}
-	var mu sync.Mutex
-
+	mu := sync.Mutex{}
 	wg := sync.WaitGroup{}
+
+	storageEntries := []StorageEntry[K, V]{}
 	target := len(storageKeys)
 	currentIndex := 0
 	for {
-		for i := 0; i < 100; i++ {
+		for i := 0; i < 150; i++ {
 			wg.Add(1)
 			go func(i int) {
 				defer wg.Done()
@@ -265,6 +265,7 @@ func GenericMapKeysFetch[V any, K any, S StorageMapT](blockStorage interfaces.Bl
 	if len(errors) > 0 {
 		return nil, errors[0]
 	}
+
 	return storageEntries, nil
 }
 
@@ -300,23 +301,62 @@ func GenericDoubleMapKeysFetch[V any, K1 any, K2 any, S StorageDoubleMapT](block
 		return nil, nil
 	}
 
+	// Sync mechanism
+	errors := []error{}
+	mu := sync.Mutex{}
+	wg := sync.WaitGroup{}
+
 	storageEntries := []StorageEntryDoubleMap[K1, K2, V]{}
-	for i := range storageKeys {
-		mapKey1, mapKey2, err := storageDoubleMapKeyDecode[K1, K2](storageKeys[i], storage)
-		if err != nil {
-			return nil, err
+	target := len(storageKeys)
+	currentIndex := 0
+	for {
+		for i := 0; i < 150; i++ {
+			wg.Add(1)
+			go func(i int) {
+				defer wg.Done()
+
+				mapKey1, mapKey2, err := storageDoubleMapKeyDecode[K1, K2](storageKeys[i], storage)
+				if err != nil {
+					mu.Lock()
+					errors = append(errors, err)
+					mu.Unlock()
+					return
+				}
+
+				value, err := GenericDoubleMapFetch[V](blockStorage, mapKey1, mapKey2, storage)
+				if err != nil {
+					mu.Lock()
+					errors = append(errors, err)
+					mu.Unlock()
+					return
+				}
+
+				if value.IsNone() {
+					return
+				}
+
+				mu.Lock()
+				storageEntries = append(storageEntries, value.Unwrap())
+				mu.Unlock()
+			}(currentIndex)
+
+			currentIndex += 1
+			if currentIndex >= target {
+				break
+			}
 		}
 
-		value, err := GenericDoubleMapFetch[V](blockStorage, mapKey1, mapKey2, storage)
-		if err != nil {
-			return nil, err
+		wg.Wait()
+		if len(errors) > 0 {
+			break
 		}
-
-		if value.IsNone() {
-			continue
+		if currentIndex >= (target - 1) {
+			break
 		}
+	}
 
-		storageEntries = append(storageEntries, value.Unwrap())
+	if len(errors) > 0 {
+		return nil, errors[0]
 	}
 
 	return storageEntries, nil
