@@ -16,3 +16,7 @@ func (this *BlockStorage) Fetch(storageEntryKey string) (primitives.Option[strin
 func (this *BlockStorage) FetchKeys(storageEntryKey string) ([]string, error) {
 	return this.client.Rpc.State.GetKeys(storageEntryKey, primitives.Some(this.at))
 }
+
+func (this *BlockStorage) FetchKeysPaged(storageEntryKey string, count uint32, startKey primitives.Option[string]) ([]string, error) {
+	return this.client.Rpc.State.GetKeysPaged(storageEntryKey, count, startKey, primitives.Some(this.at))
+}

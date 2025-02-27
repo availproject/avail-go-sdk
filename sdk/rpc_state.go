@@ -2,6 +2,8 @@ package sdk
 
 import (
 	"encoding/json"
+	"fmt"
+
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
 
@@ -41,6 +43,32 @@ func (this *stateRPC) GetKeys(key string, at prim.Option[prim.H256]) ([]string, 
 	}
 
 	value, err := this.client.RequestWithRetry("state_getKeys", params.Build())
+	if err != nil {
+		return nil, err
+	}
+
+	res := []string{}
+	if err := json.Unmarshal([]byte(value), &res); err != nil {
+		return nil, newError(err, ErrorCode002)
+	}
+
+	return res, nil
+}
+
+func (this *stateRPC) GetKeysPaged(key string, count uint32, startKey prim.Option[string], at prim.Option[prim.H256]) ([]string, error) {
+	params := RPCParams{}
+	params.Add("\"" + key + "\"")
+	params.Add(fmt.Sprintf(`%v`, count))
+	if startKey.IsSome() {
+		params.Add("\"" + startKey.Unwrap() + "\"")
+	} else {
+		params.Add("null")
+	}
+	if at.IsSome() {
+		params.AddH256(at.Unwrap())
+	}
+
+	value, err := this.client.RequestWithRetry("state_getKeysPaged", params.Build())
 	if err != nil {
 		return nil, err
 	}
