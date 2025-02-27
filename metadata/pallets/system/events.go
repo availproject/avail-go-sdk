@@ -89,3 +89,25 @@ func (this EventKilledAccount) EventIndex() uint8 {
 func (this EventKilledAccount) EventName() string {
 	return "KilledAccount"
 }
+
+// On on-chain remark happened
+type EventRemarked struct {
+	Sender primitives.AccountId
+	Hash   primitives.H256
+}
+
+func (this EventRemarked) PalletIndex() uint8 {
+	return PalletIndex
+}
+
+func (this EventRemarked) PalletName() string {
+	return PalletName
+}
+
+func (this EventRemarked) EventIndex() uint8 {
+	return 5
+}
+
+func (this EventRemarked) EventName() string {
+	return "Remarked"
+}
