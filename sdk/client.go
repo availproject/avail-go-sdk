@@ -66,6 +66,10 @@ func (this *Client) FinalizedBlockHash() (prim.H256, error) {
 	return this.Rpc.Chain.GetFinalizedHead()
 }
 
+func (this *Client) TransactionState(txHash prim.H256, finalized bool) ([]meta.TransactionState, error) {
+	return this.Rpc.Transaction.State(txHash, finalized)
+}
+
 func (this *Client) EventsAt(at prim.Option[prim.H256]) (EventRecords, error) {
 	eventsRaw, err := this.Rpc.State.GetEvents(at)
 	if err != nil {

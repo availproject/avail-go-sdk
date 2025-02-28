@@ -25,9 +25,9 @@ go version
 #### To Existing Project
 
 ```bash
-# Fetches Avail-GO SDK v0.2.3. This might not be the newest version so make sure to check out the latest github avail-go-sdk release.
+# Fetches Avail-GO SDK v0.2.4. This might not be the newest version so make sure to check out the latest github avail-go-sdk release.
 # Link to Github: https://github.com/availproject/avail-go-sdk/releases
-go get github.com/availproject/avail-go-sdk@v0.2.3
+go get github.com/availproject/avail-go-sdk@v0.2.4
 ```
 
 #### To A New Project
@@ -35,9 +35,9 @@ go get github.com/availproject/avail-go-sdk@v0.2.3
 ```bash
 # Creates a new project with name myproject
 go mod init myproject
-# Fetches Avail-GO SDK v0.2.3. This might not be the newest version so make sure to check out the latest github avail-go-sdk release.
+# Fetches Avail-GO SDK v0.2.4. This might not be the newest version so make sure to check out the latest github avail-go-sdk release.
 # Link to Github: https://github.com/availproject/avail-go-sdk/releases
-go get github.com/availproject/avail-go-sdk@v0.2.3
+go get github.com/availproject/avail-go-sdk@v0.2.4
 ```
 
 #### First Time Running

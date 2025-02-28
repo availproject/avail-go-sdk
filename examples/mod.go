@@ -12,6 +12,7 @@ func Run() {
 	RunTransaction()
 	RunValidator()
 	RunProxy()
+	RunTransactionState()
 }
 
 func AssertTrue(v bool, message string) {

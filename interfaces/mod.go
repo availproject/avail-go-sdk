@@ -10,6 +10,7 @@ type EventT interface {
 }
 
 type BlockStorageT interface {
-	Fetch(storageEntryKey string) (primitives.Option[string], error)
+	Fetch(key string) (primitives.Option[string], error)
 	FetchKeys(key string) ([]string, error)
+	FetchKeysPaged(key string, count uint32, startKey primitives.Option[string]) ([]string, error)
 }

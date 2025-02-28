@@ -217,8 +217,6 @@ func (this CallWithdrawUnbonded) CallName() string {
 //   - `amount` - The amount of funds to delegate to the pool. This also acts of a sort of
 //     deposit since the pools creator cannot fully unbond funds until the pool is being
 //     destroyed.
-//   - `index` - A disambiguation index for creating the account. Likely only useful when
-//     creating multiple pools in the same extrinsic.
 //   - `root` - The account to set as [`PoolRoles::root`].
 //   - `nominator` - The account to set as the [`PoolRoles::nominator`].
 //   - `bouncer` - The account to set as the [`PoolRoles::bouncer`].
@@ -458,11 +456,6 @@ func (this CallBondExtraOther) CallName() string {
 // claim their pending rewards. If a pool member wishes so, they can set this to
 // `PermissionlessAll` to allow any account to claim their rewards and bond extra to the
 // pool.
-//
-// # Arguments
-//
-// * `origin` - Member of a pool.
-// * `actor` - Account to claim reward. // improve this
 type CallSetClaimPermission struct {
 	Permission metadata.PoolClaimPermission
 }

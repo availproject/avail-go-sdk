@@ -8,24 +8,26 @@ import (
 )
 
 type RPC struct {
-	client    *Client
-	System    systemRPC
-	State     stateRPC
-	Chain     chainRPC
-	ChainSpec chainSpecRPC
-	Kate      kateRPC
-	Author    authorRPC
+	client      *Client
+	System      systemRPC
+	State       stateRPC
+	Chain       chainRPC
+	ChainSpec   chainSpecRPC
+	Kate        kateRPC
+	Author      authorRPC
+	Transaction transactionRPC
 }
 
 func newRPC(client *Client) RPC {
 	return RPC{
-		client:    client,
-		System:    systemRPC{client: client},
-		State:     stateRPC{client: client},
-		Chain:     chainRPC{client: client},
-		ChainSpec: chainSpecRPC{client: client},
-		Kate:      kateRPC{client: client},
-		Author:    authorRPC{client: client},
+		client:      client,
+		System:      systemRPC{client: client},
+		State:       stateRPC{client: client},
+		Chain:       chainRPC{client: client},
+		ChainSpec:   chainSpecRPC{client: client},
+		Kate:        kateRPC{client: client},
+		Author:      authorRPC{client: client},
+		Transaction: transactionRPC{client: client},
 	}
 }
 
@@ -35,6 +37,14 @@ type RPCParams struct {
 
 func (this *RPCParams) Add(value string) {
 	this.Values = append(this.Values, value)
+}
+
+func (this *RPCParams) AddBool(value bool) {
+	if value == true {
+		this.Add("true")
+	} else {
+		this.Add("false")
+	}
 }
 
 func (this *RPCParams) AddByteSlice(value []byte) {

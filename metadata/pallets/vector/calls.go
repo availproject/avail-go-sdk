@@ -2,9 +2,32 @@ package vector
 
 import (
 	"github.com/availproject/avail-go-sdk/metadata"
-	. "github.com/availproject/avail-go-sdk/metadata/pallets"
 	prim "github.com/availproject/avail-go-sdk/primitives"
 )
+
+type CallFulfillCall struct {
+	FunctionId prim.H256
+	Input      []byte
+	output     []byte
+	proof      []byte
+	slot       uint64 `scale:"compact"`
+}
+
+func (this CallFulfillCall) PalletIndex() uint8 {
+	return PalletIndex
+}
+
+func (this CallFulfillCall) PalletName() string {
+	return PalletName
+}
+
+func (this CallFulfillCall) CallIndex() uint8 {
+	return 0
+}
+
+func (this CallFulfillCall) CallName() string {
+	return "fulfill_call"
+}
 
 // Send a batch of dispatch calls.
 //
@@ -29,16 +52,4 @@ func (this CallSendMessage) CallIndex() uint8 {
 
 func (this CallSendMessage) CallName() string {
 	return "send_message"
-}
-
-func (this *CallSendMessage) ToCall() prim.Call {
-	return ToCall(this)
-}
-
-func (this *CallSendMessage) ToPayload() metadata.Payload {
-	return ToPayload(this)
-}
-
-func (this *CallSendMessage) DecodeExtrinsic(tx *prim.DecodedExtrinsic) bool {
-	return Decode(this, tx)
 }
