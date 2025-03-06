@@ -171,7 +171,10 @@ func (this *Client) RequestWithRetry(method string, params string) (string, erro
 }
 
 func (this *Client) Request(method string, params string) (prim.Option[string], error) {
-	responseBodyBytes, _ := this.RequestRaw(method, params)
+	responseBodyBytes, err := this.RequestRaw(method, params)
+	if err != nil {
+		return prim.None[string](), err
+	}
 
 	var mappedData map[string]interface{}
 	if err := json.Unmarshal(responseBodyBytes, &mappedData); err != nil {
@@ -232,14 +235,17 @@ func (this *Client) RequestRaw(method string, params string) ([]byte, error) {
 
 	defer response.Body.Close()
 
-	responseBodyBytes, _ := io.ReadAll(response.Body)
+	responseBodyBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return []byte{}, err
+	}
 	// fmt.Println("response Status:", response.Status)
 	// fmt.Println("response Headers:", response.Header)
 	// fmt.Println("response Body:", string(responseBodyBytes))
 
 	if response.StatusCode != http.StatusOK {
 		err := ErrorCode001
-		err.Message = fmt.Sprintf(`Status Code: %v`, response.StatusCode)
+		err.Message = fmt.Sprintf(`Status: %v. Response Body: %v`, response.Status, string(responseBodyBytes))
 		return []byte{}, &err
 	}
 
