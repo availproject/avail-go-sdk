@@ -3,16 +3,17 @@ package examples
 import "fmt"
 
 func Run() {
-	RunAccount()
-	RunBatch()
-	RunBlock()
-	RunDataSubmission()
-	RunStorage()
-	RunRpc()
-	RunTransaction()
-	RunValidator()
-	RunProxy()
-	RunTransactionState()
+	// RunAccount()
+	// RunBatch()
+	// RunBlock()
+	// RunDataSubmission()
+	// RunStorage()
+	// RunRpc()
+	// RunTransaction()
+	// RunValidator()
+	// RunProxy()
+	// RunTransactionState()
+	RunVector()
 }
 
 func AssertTrue(v bool, message string) {
