@@ -637,7 +637,7 @@ type VectorTx struct {
 	client *Client
 }
 
-func (this *VectorTx) SendMessage(message metadata.VectorMessageKind, To prim.H256, domain uint32) Transaction {
+func (this *VectorTx) SendMessage(message metadata.VectorMessage, To prim.H256, domain uint32) Transaction {
 	call := vcPallet.CallSendMessage{Message: message, To: To, Domain: domain}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }

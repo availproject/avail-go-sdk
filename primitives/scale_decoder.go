@@ -213,6 +213,18 @@ func (this *Decoder) primitives(value reflect.Value, isCompact bool) (error, boo
 			return nil, true
 		}
 	} else {
+		if kind == "uint16" {
+			decoder := SType.Compact{}
+			options := SType.ScaleDecoderOption{}
+			options.SubType = "u16"
+			decoder.Init(this.ScaleBytes, &options)
+			decoder.Process()
+
+			this.ScaleBytes.Offset = decoder.Data.Offset
+			res := decoder.Value.(uint16)
+			value.Set(reflect.ValueOf(res))
+			return nil, true
+		}
 		if kind == "uint32" {
 			decoder := SType.CompactU32{}
 			decoder.Init(this.ScaleBytes, nil)
@@ -236,7 +248,6 @@ func (this *Decoder) primitives(value reflect.Value, isCompact bool) (error, boo
 			value.Set(reflect.ValueOf(res))
 			return nil, true
 		}
-
 		if name == "Uint128" {
 			decoder := SType.Compact{}
 			options := SType.ScaleDecoderOption{}
