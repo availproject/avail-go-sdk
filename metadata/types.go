@@ -1645,3 +1645,8 @@ type VectorConfiguration struct {
 	SlotsPerPeriod    uint64 `scale:"compact"`
 	FinalityThreshold uint16 `scale:"compact"`
 }
+
+type TimepointBlockNumber struct {
+	Height uint32
+	Index  uint32
+}
