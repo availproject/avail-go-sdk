@@ -13,7 +13,8 @@ func Run() {
 	// RunValidator()
 	// RunProxy()
 	// RunTransactionState()
-	RunVector()
+	// RunVector()
+	RunIndexer()
 }
 
 func AssertTrue(v bool, message string) {
