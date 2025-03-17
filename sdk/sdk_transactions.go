@@ -637,8 +637,93 @@ type VectorTx struct {
 	client *Client
 }
 
-func (this *VectorTx) SendMessage(message metadata.VectorMessageKind, To prim.H256, domain uint32) Transaction {
+func (this *VectorTx) FulfillCall(functionId prim.H256, input []byte, output []byte, proof []byte, slot uint64) Transaction {
+	call := vcPallet.CallFulfillCall{FunctionId: functionId, Input: input, Output: output, Proof: proof, Slot: slot}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) Execute(slot uint64, addrMessage metadata.VectorMessage, accountProof []byte, storageProof []byte) Transaction {
+	call := vcPallet.CallExecute{Slot: slot, AddrMessage: addrMessage, AccountProof: accountProof, StorageProof: storageProof}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SourceChainFroze(sourceChainId uint32, frozen bool) Transaction {
+	call := vcPallet.CallSourceChainFroze{SourceChainId: sourceChainId, Frozen: frozen}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SendMessage(message metadata.VectorMessage, To prim.H256, domain uint32) Transaction {
 	call := vcPallet.CallSendMessage{Message: message, To: To, Domain: domain}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetPoseidonHash(period uint64, poseidonHash []byte) Transaction {
+	call := vcPallet.CallSetPoseidonHash{Period: period, PoseidonHash: poseidonHash}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetBroadcaster(broadcasterDomain uint32, broadcaster prim.H256) Transaction {
+	call := vcPallet.CallSetBroadcaster{BroadcasterDomain: broadcasterDomain, Broadcaster: broadcaster}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetWhitelistedDomains(value []uint32) Transaction {
+	call := vcPallet.CallSetWhitelistedDomains{Value: value}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetConfiguration(value metadata.VectorConfiguration) Transaction {
+	call := vcPallet.CallSetConfiguration{Value: value}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetFunctionsIds(value prim.Option[metadata.Tuple2[prim.H256, prim.H256]]) Transaction {
+	call := vcPallet.CallSetFunctionsIds{Value: value}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetStepVerificationKey(value prim.Option[[]byte]) Transaction {
+	call := vcPallet.CallSetStepVerificationKey{Value: value}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetRotateVerificationKey(value prim.Option[[]byte]) Transaction {
+	call := vcPallet.CallSetRotateVerificationKey{Value: value}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) FailedSendMessageTxs(failedTxs []uint32) Transaction {
+	call := vcPallet.CallFailedSendMessageTxs{FailedTxs: failedTxs}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetUpdater(updater prim.H256) Transaction {
+	call := vcPallet.CallSetUpdater{Updater: updater}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) Fulfill(proof []byte, publicValues []byte) Transaction {
+	call := vcPallet.CallFulfill{Proof: proof, PublicValues: publicValues}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetSp1VerificationKey(sp1Vk prim.H256) Transaction {
+	call := vcPallet.CallSetSp1VerificationKey{Sp1Vk: sp1Vk}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) SetSyncCommitteeHash(period uint64, Hash prim.H256) Transaction {
+	call := vcPallet.CallSetSyncCommitteeHash{Period: period, Hash: Hash}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) EnableMock(value bool) Transaction {
+	call := vcPallet.CallEnableMock{Value: value}
+	return NewTransaction(this.client, pallets.ToPayload(call))
+}
+
+func (this *VectorTx) MockFulfill(publicValues []byte) Transaction {
+	call := vcPallet.CallMockFulfill{PublicValues: publicValues}
 	return NewTransaction(this.client, pallets.ToPayload(call))
 }
 

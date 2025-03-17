@@ -190,6 +190,7 @@ func (this *Client) Request(method string, params string) (prim.Option[string], 
 		if err["data"] != nil {
 			errMessage += " " + err["data"].(string)
 		}
+		errMessage += " Method: " + method
 
 		return prim.None[string](), newError(errors.New(errMessage), ErrorCode002)
 	}

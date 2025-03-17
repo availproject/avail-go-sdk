@@ -1469,7 +1469,7 @@ type BlockLength struct {
 	ChunkSize uint32 `scale:"compact"`
 }
 
-type VectorMessageKind struct {
+type VectorMessage struct {
 	VariantIndex     uint8
 	ArbitraryMessage prim.Option[[]byte]
 	FungibleToken    prim.Option[MessageFungibleToken]
@@ -1480,11 +1480,11 @@ type MessageFungibleToken struct {
 	Amount  Balance `scale:"compact"`
 }
 
-func (this VectorMessageKind) ToHuman() string {
+func (this VectorMessage) ToHuman() string {
 	return this.ToString()
 }
 
-func (this VectorMessageKind) ToString() string {
+func (this VectorMessage) ToString() string {
 	switch this.VariantIndex {
 	case 0:
 		return fmt.Sprintf("ArbitraryMessage: %v", string(this.ArbitraryMessage.Unwrap()))
@@ -1492,11 +1492,11 @@ func (this VectorMessageKind) ToString() string {
 		v := this.FungibleToken.Unwrap()
 		return fmt.Sprintf("FungibleToken: Asset Id: %v,  Amount: %v", v.AssetId, v.Amount.String())
 	default:
-		panic("Unknown VectorMessageKind Variant Index")
+		panic("Unknown VectorMessage Variant Index")
 	}
 }
 
-func (this *VectorMessageKind) EncodeTo(dest *string) {
+func (this *VectorMessage) EncodeTo(dest *string) {
 	prim.Encoder.EncodeTo(this.VariantIndex, dest)
 
 	if this.ArbitraryMessage.IsSome() {
@@ -1508,8 +1508,8 @@ func (this *VectorMessageKind) EncodeTo(dest *string) {
 	}
 }
 
-func (this *VectorMessageKind) Decode(decoder *prim.Decoder) error {
-	*this = VectorMessageKind{}
+func (this *VectorMessage) Decode(decoder *prim.Decoder) error {
+	*this = VectorMessage{}
 
 	if err := decoder.Decode(&this.VariantIndex); err != nil {
 		return err
@@ -1529,7 +1529,7 @@ func (this *VectorMessageKind) Decode(decoder *prim.Decoder) error {
 		}
 		this.FungibleToken.Set(t)
 	default:
-		return errors.New("Unknown VectorMessageKind Variant Index while Decoding")
+		return errors.New("Unknown VectorMessage Variant Index while Decoding")
 	}
 
 	return nil
@@ -1555,7 +1555,7 @@ type TxDataRoots struct {
 }
 
 type AddressedMessage struct {
-	Message           VectorMessageKind
+	Message           VectorMessage
 	From              prim.H256
 	To                prim.H256
 	OriginDomain      uint32 `scale:"compact"`
@@ -1639,4 +1639,14 @@ type TransactionState struct {
 	PalletIndex uint8
 	CallIndex   uint8
 	IsFinalized bool
+}
+
+type VectorConfiguration struct {
+	SlotsPerPeriod    uint64 `scale:"compact"`
+	FinalityThreshold uint16 `scale:"compact"`
+}
+
+type TimepointBlockNumber struct {
+	Height uint32
+	Index  uint32
 }
