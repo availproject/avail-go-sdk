@@ -33,3 +33,5 @@
 - [Validator](./validator.md)
 - [Proxy](./proxy.md)
 - [Transaction State](./transaction_state.md)
+- [Vector](./vector.md)
+- [Indexer](./indexer.md)
