@@ -18,6 +18,7 @@ book-deploy:
     mv ./documentation/book/html ./docs
 book-publish:
     git checkout gh-page
+    git reset --hard main
     just book-deploy
     git add .
     git commit -m 'Book Deployed'
