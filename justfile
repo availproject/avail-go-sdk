@@ -17,6 +17,7 @@ book-deploy:
     rm -rf ./docs
     mv ./documentation/book/html ./docs
 book-publish:
+    git diff --quiet
     git checkout gh-page
     git reset --hard main
     just book-deploy
