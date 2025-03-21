@@ -16,3 +16,10 @@ book-deploy:
     just book-build
     rm -rf ./docs
     mv ./documentation/book/html ./docs
+book-publish:
+    git checkout gh-page
+    just book-deploy
+    git add .
+    git commit -m 'Book Deployed'
+    git pf
+

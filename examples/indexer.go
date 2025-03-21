@@ -103,7 +103,7 @@ func (this *Indexer) fetchBlock() (IndexedBlock, bool) {
 		hash, err := this.sdk.Client.FinalizedBlockHash()
 		PanicOnError(err)
 		if this.block.hash == hash {
-			time.Sleep(1 * time.Second)
+			time.Sleep(15 * time.Second)
 			continue
 		}
 
@@ -128,7 +128,7 @@ func (this *Indexer) GetBlock(blockNumber uint32) IndexedBlock {
 		this.lock.Unlock()
 
 		if blockNumber > this.block.height {
-			time.Sleep(1 * time.Second)
+			time.Sleep(15 * time.Second)
 			continue
 		}
 
