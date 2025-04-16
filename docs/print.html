@@ -1,0 +1,2542 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Avail Go SDK Examples</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="custom.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Avail Go SDK Examples</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="sdk-version"><a class="header" href="#sdk-version">SDK Version</a></h1>
+<p>This Documentation is based upon avail-go version v0.2.7</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<p>You can find Go installation instructions <a href="https://go.dev/doc/install">here</a>. The required minimum version of Go is 1.23.0</p>
+<p>If you already have installed Go (version no less than 1.23.0), jump to <code>Add Avail-GO SDK as dependency</code>  section.</p>
+<h2 id="installing-go-in-an-empty-ubuntu-container"><a class="header" href="#installing-go-in-an-empty-ubuntu-container">Installing GO in an Empty Ubuntu Container</a></h2>
+<p>Here are the instructions on how to install GO using the latest Ubuntu image.</p>
+<pre><code class="language-bash">podman run -it --rm --name ubuntu-container ubuntu:latest
+apt-get update
+apt-get upgrade
+apt-get install nano wget
+cd ./home/ubuntu/.
+wget https://go.dev/dl/go1.23.5.linux-amd64.tar.gz
+tar -xf go1.23.5.linux-amd64.tar.gz
+mv ./go /usr/local/go
+export PATH=$PATH:/usr/local/go/bin
+go version
+# "go version go1.23.5 linux/amd64"
+</code></pre>
+<h2 id="add-avail-go-sdk-as-dependency"><a class="header" href="#add-avail-go-sdk-as-dependency">Add Avail-GO SDK as dependency</a></h2>
+<h4 id="to-existing-project"><a class="header" href="#to-existing-project">To Existing Project</a></h4>
+<pre><code class="language-bash"># Fetches Avail-GO SDK v0.2.4. This might not be the newest version so make sure to check out the latest github avail-go-sdk release.
+# Link to Github: https://github.com/availproject/avail-go-sdk/releases
+go get github.com/availproject/avail-go-sdk@v0.2.4
+</code></pre>
+<h4 id="to-a-new-project"><a class="header" href="#to-a-new-project">To A New Project</a></h4>
+<pre><code class="language-bash"># Creates a new project with name myproject
+go mod init myproject
+# Fetches Avail-GO SDK v0.2.4. This might not be the newest version so make sure to check out the latest github avail-go-sdk release.
+# Link to Github: https://github.com/availproject/avail-go-sdk/releases
+go get github.com/availproject/avail-go-sdk@v0.2.4
+</code></pre>
+<h4 id="first-time-running"><a class="header" href="#first-time-running">First Time Running</a></h4>
+<ol>
+<li>Paste the following code to <code>main.go</code>:</li>
+</ol>
+<pre><code class="language-go">package main
+
+import (
+	"fmt"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func main() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	if err != nil {
+		panic(err)
+	}
+
+	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Ferdie
+	acc := SDK.Account.Ferdie()
+
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
+	fmt.Println("Submitting new Transaction... Can take up to 20 seconds")
+	res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(1))
+	if err != nil {
+		panic(err)
+	}
+
+	// Transaction Details
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
+}
+</code></pre>
+<ol start="2">
+<li>Fetch dependencies:</li>
+</ol>
+<pre><code class="language-bash">go mod tidy
+</code></pre>
+<ol start="3">
+<li>Run Example:</li>
+</ol>
+<pre><code class="language-bash">go run .
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="data-submission"><a class="header" href="#data-submission">Data Submission</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+	"math/rand/v2"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunDataSubmission() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
+	acc := SDK.Account.Alice()
+
+	key := fmt.Sprintf("MyKey%v", rand.Uint32())
+	// Transactions can be found under sdk.Tx.*
+	tx := sdk.Tx.DataAvailability.CreateApplicationKey([]byte(key))
+
+	// Transaction Execution
+	res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions())
+	// Err means that we failed to submit and execute the transaction.
+	PanicOnError(err)
+
+	isOk := res.IsSuccessful()
+	// If the return value from `IsSuccessful` is None, it means that we cannot
+	// determine if the transaction was successful or not.
+	//
+	// In this case we assume that we were able to determine it.
+	AssertTrue(isOk.IsSome(), "Failed to determine transaction status.")
+
+	// If the value of `IsSuccessful()` is Some(false) then the transaction has failed.
+	AssertTrue(isOk.Unwrap(), "The transaction failed.")
+
+	// We might have failed to decode the events so res.Events could be None.
+	//
+	// In the case we assume that we were able to decode then.
+	AssertTrue(res.Events.IsSome(), "Failed to decode events.")
+	events := res.Events.UnsafeUnwrap()
+	eventMyb := SDK.EventFindFirst(events, daPallet.EventApplicationKeyCreated{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+
+	// Printing out all the values of the event ApplicationKeyCreated
+	appId := event.Id
+	fmt.Println(fmt.Sprintf(`Owner: %v, Key: %v, AppId: %v`, event.Owner.ToHuman(), string(event.Key), appId))
+
+	// Submit Data
+	tx = sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
+	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(appId))
+	PanicOnError(err)
+
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Tx must be successful")
+
+	// Transaction Details
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, res.BlockHash.ToHexWith0x(), res.BlockNumber, res.TxHash.ToHexWith0x(), res.TxIndex))
+
+	// Events
+	AssertTrue(res.Events.IsSome(), "Events must be present")
+	txEvents := res.Events.UnsafeUnwrap()
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	event2Myb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
+	event2 := event2Myb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Who: %v, Datahash: %v`, event2.Who.ToHuman(), event2.DataHash.ToHexWith0x()))
+
+	fmt.Println("RunDataSubmission finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="account"><a class="header" href="#account">Account</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="account-creation"><a class="header" href="#account-creation">Account Creation</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunAccountCreation() {
+	// Use `NewKeyPair` to create your own key from your secret seed phase or uri.
+	acc, err := SDK.Account.NewKeyPair("//Alice")
+	PanicOnError(err)
+	fmt.Println("Alice Address: " + acc.SS58Address(42))
+
+	// Use `GenerateAccount` to generate a random account
+	acc, err = SDK.Account.GenerateAccount()
+	PanicOnError(err)
+	fmt.Println("Random Account Address: " + acc.SS58Address(42))
+
+	// There are predefined testing accounts available to be used on local dev networks.
+	acc = SDK.Account.Alice()
+	fmt.Println("Alice Address: " + acc.SS58Address(42))
+	acc = SDK.Account.Bob()
+	fmt.Println("Bob Address: " + acc.SS58Address(42))
+	acc = SDK.Account.Charlie()
+	fmt.Println("Charlie Address: " + acc.SS58Address(42))
+	acc = SDK.Account.Eve()
+	fmt.Println("Eve Address: " + acc.SS58Address(42))
+	acc = SDK.Account.Ferdie()
+	fmt.Println("Ferdie Address: " + acc.SS58Address(42))
+
+	// AccountId can be created from Keypair...
+	accountId := primitives.NewAccountIdFromKeyPair(acc)
+	fmt.Println("Ferdie Address: " + accountId.ToHuman())
+
+	// ...or from SS58 address
+	accountId, err = primitives.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	PanicOnError(err)
+	fmt.Println("Alice Address: " + accountId.ToHuman())
+	fmt.Println("Alice Account Id: " + accountId.ToString())
+
+	// AccountId can be converted to MultiAddress
+	multiAddress := accountId.ToMultiAddress()
+	AssertEq(multiAddress.VariantIndex, 0, "Variant Index needs to be 0")
+	AssertTrue(multiAddress.Id.IsSome(), "ID needs to be populated")
+	AssertEq(multiAddress.Id.UnsafeUnwrap(), accountId, "multiAddress and accountId need to have the same value")
+
+	// MultiAddress can be converted to AccountId
+	accountId2 := multiAddress.ToAccountId()
+	AssertTrue(accountId2.IsSome(), "")
+
+	// Non-init AccountId has `5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM` as the SS58 address
+	accountId = primitives.AccountId{Value: primitives.H256{}}
+	fmt.Println("Address: " + accountId.ToHuman())
+	AssertEq(accountId.ToHuman(), "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM", "Non-init account id ss58 address is not correct.")
+
+	fmt.Println("RunAccountCreation finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="account-nonce"><a class="header" href="#account-nonce">Account Nonce</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunAccountNonce() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	// Via RPC
+	nonce, err := sdk.Client.Rpc.System.AccountNextIndex("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	PanicOnError(err)
+
+	fmt.Println("RPC Nonce: ", nonce)
+
+	// Via Abstraction
+	accountId, err := primitives.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	PanicOnError(err)
+
+	nonce2, err := SDK.Account.Nonce(sdk.Client, accountId)
+	PanicOnError(err)
+
+	fmt.Println("Abstraction Nonce: ", nonce2)
+
+	fmt.Println("RunAccountNonce finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="account-balance"><a class="header" href="#account-balance">Account Balance</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	"github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunAccountBalance() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	accountId, err := primitives.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	PanicOnError(err)
+
+	// Via Storage RPC
+	storageAt, err := sdk.Client.StorageAt(primitives.None[primitives.H256]())
+	PanicOnError(err)
+
+	storage := syPallet.StorageAccount{}
+	val, err := storage.Fetch(&amp;storageAt, accountId)
+	PanicOnError(err)
+
+	fmt.Println("Free Balance: ", val.Value.AccountData.Free.ToHuman())
+	fmt.Println("Reserved Balance: ", val.Value.AccountData.Reserved.ToHuman())
+	fmt.Println("Frozen Balance: ", val.Value.AccountData.Frozen.ToHuman())
+
+	// Via Abstraction
+	balance, err := SDK.Account.Balance(sdk.Client, accountId)
+	PanicOnError(err)
+
+	fmt.Println("Free Balance: ", balance.Free.ToHuman())
+	fmt.Println("Reserved Balance: ", balance.Reserved.ToHuman())
+	fmt.Println("Frozen Balance: ", balance.Frozen.ToHuman())
+
+	fmt.Println("RunAccountBalance finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="enum"><a class="header" href="#enum">Enum</a></h1>
+<p>There are no such thing as tagged union (enums from Rust) in Go. From Scale perspective, a enum is represented by a <code>variant index</code> that defines what enum variant is described and by additional data that each variant could have.</p>
+<h2 id="simple-enums"><a class="header" href="#simple-enums">Simple Enums</a></h2>
+<p>Example:</p>
+<pre><code class="language-go">type SimpleEnum struct {
+	VariantIndex uint8
+}
+
+func (this SimpleEnum) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Nothing"
+	case 1:
+		return "Day"
+	case 2:
+		return "Month"
+	case 3:
+		return "Year"
+	default:
+		panic("Unknown SimpleEnum Variant Index")
+	}
+}
+
+</code></pre>
+<p>Simple enums don't have anything attach to it besides the variant index. The scale encoding and decoding is done automatically so there is no need to write our own encode/decode methods. In order to know how many variants there are and what each variant means, we create the ToString() method that shows thats.</p>
+<p>In order to set the enum to a variant, we just need to set <code>VariantIndex</code> to the desired and correct value.</p>
+<p>Example of correct setup:</p>
+<pre><code class="language-go">enum := SimpleEnum{}
+enum.VariantIndex = 1
+</code></pre>
+<p>Example of incorrect setup:</p>
+<pre><code class="language-go">// VariantIndex out of range
+enum := SimpleEnum{}
+enum.VariantIndex = 200
+</code></pre>
+<h2 id="complex-enums"><a class="header" href="#complex-enums">Complex Enums</a></h2>
+<p>Example:</p>
+<pre><code class="language-go">type ComplexEnum struct {
+	VariantIndex uint8
+	Day          prim.Option[uint16]
+	Month        prim.Option[uint8]
+	Year         prim.Option[uint32]
+}
+
+func (this ComplexEnum) ToString() string {
+	switch this.VariantIndex {
+	case 0:
+		return "Nothing"
+	case 1:
+		return fmt.Sprintf("Set: %v", this.Day.Unwrap())
+	case 2:
+		return fmt.Sprintf("Set: %v", this.Month.Unwrap())
+	case 3:
+		return fmt.Sprintf("Set: %v", this.Year.Unwrap())
+	default:
+		panic("Unknown ComplexEnum Variant Index")
+	}
+}
+
+func (this *ComplexEnum) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+
+	if this.Day.IsSome() {
+		prim.Encoder.EncodeTo(this.Day.Unwrap(), dest)
+	}
+
+	if this.Month.IsSome() {
+		prim.Encoder.EncodeTo(this.Month.Unwrap(), dest)
+	}
+
+	if this.Year.IsSome() {
+		prim.Encoder.EncodeTo(this.Year.Unwrap(), dest)
+	}
+}
+
+func (this *ComplexEnum) Decode(decoder *prim.Decoder) error {
+	*this = ComplexEnum{}
+
+	if err := decoder.Decode(&amp;this.VariantIndex); err != nil {
+		return err
+	}
+
+	switch this.VariantIndex {
+	case 0:
+	case 1:
+		var t uint16
+		if err := decoder.Decode(&amp;t); err != nil {
+			return err
+		}
+		this.Day.Set(t)
+	case 2:
+		var t uint8
+		if err := decoder.Decode(&amp;t); err != nil {
+			return err
+		}
+		this.Month.Set(t)
+	case 3:
+		var t uint32
+		if err := decoder.Decode(&amp;t); err != nil {
+			return err
+		}
+		this.Year.Set(t)
+	default:
+		return errors.New("Unknown ComplexEnum Variant Index while Decoding")
+	}
+
+	return nil
+}
+
+</code></pre>
+<p>When at least one variant has additional data attach to it, we are forced to created on our encode and decode methods.</p>
+<p>First of all the additional variant data needs to be stored as an option, and the field member should have the same name as the variant itself. In this case <code>Day</code>, <code>Month</code>, <code>Year</code> now carry additional data and that's why there are three fields with the same name in our enum struct.</p>
+<p>The EncodeTo method manually scale encodes the data. The <code>VariantIndex</code> is a u8 so it's going to be encoded like that. The rest depends on what option has been set. If <code>VariantIndex</code> is set to 1, and <code>Day</code> is set to 25, both will be encoded correctly. Take care: If you set up the wrong option or set up more than one option then the transaction will fail. It's up to you to be diligent and not mess up.</p>
+<p>Example of correct setup:</p>
+<pre><code class="language-go">enum := ComplexEnum{}
+enum.VariantIndex = 2
+enum.Month.Set(12)
+</code></pre>
+<p>Example of incorrect setup:</p>
+<pre><code class="language-go">// VariantIndex out of range
+enum := ComplexEnum{}
+enum.VariantIndex = 125
+
+// VariantIndex and data not matching
+enum.VariantIndex = 0
+enum.Year.Set(1990)
+
+// Too many data fields are set
+enum.VariantIndex = 1
+enum.Day.Set(24)
+enum.Year.Set(1990)
+</code></pre>
+<p>There isn't much room for errors in the Decode method unless the devs messed it up.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block"><a class="header" href="#block">Block</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="all-block-transactions"><a class="header" href="#all-block-transactions">All Block Transactions</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockTransactionAll() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// All Transactions
+	blockTxs := block.Transactions(SDK.Filter{})
+	fmt.Println("Transaction Count: ", len(blockTxs))
+	AssertEq(len(blockTxs), 9, "Transaction count is not 9")
+
+	// Printout Block Transactions
+	for _, tx := range blockTxs {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
+		fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.SS58Address(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
+	}
+
+	// Convert from Block Transaction to Specific Transaction
+	daTx := daPallet.CallSubmitData{}
+	isOk := pallets.Decode(&amp;daTx, blockTxs[2].Extrinsic)
+	AssertEq(isOk, true, "Transaction number 3 was not of type Call Submit Data")
+	fmt.Println(fmt.Sprintf(`Data: %v,`, string(daTx.Data)))
+
+	// Printout all Transaction Events
+	txEvents := blockTxs[2].Events().UnsafeUnwrap()
+	AssertEq(len(txEvents), 7, "Events count is not 7")
+
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find DataSubmitted event
+	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Who: %v, Data Hash: %v`, event.PalletName(), event.EventName(), event.Who.ToHuman(), event.DataHash))
+
+	fmt.Println("RunBlockTransactionAll finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-transactions-filtered-by-app-id"><a class="header" href="#block-transactions-filtered-by-app-id">Block Transactions Filtered By App Id</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockTransactionByAppId() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// All Transaction filtered by App Id
+	appId := uint32(2)
+	blockTxs := block.Transactions(SDK.Filter{}.WAppId(appId))
+	fmt.Println("Transaction Count: ", len(blockTxs))
+	AssertEq(len(blockTxs), 2, "Transaction count is not 2")
+
+	// Printout Block Transactions filtered by App Id
+	for _, tx := range blockTxs {
+		AssertEq(tx.AppId().UnsafeUnwrap(), appId, "Transactions don't have App Id equal to 2")
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
+		fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.SS58Address(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
+	}
+
+	// Convert from Block Transaction to Specific Transaction
+	daTx := daPallet.CallSubmitData{}
+	isOk := pallets.Decode(&amp;daTx, blockTxs[0].Extrinsic)
+	AssertEq(isOk, true, "Transaction was not of type Submit Data")
+	fmt.Println(fmt.Sprintf(`Data: %v`, string(daTx.Data)))
+
+	// Printout all Transaction Events
+	txEvents := blockTxs[0].Events().UnsafeUnwrap()
+	AssertEq(len(txEvents), 7, "Events count is not 7")
+
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find DataSubmitted event
+	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, DataHash: %v, Who: %v`, event.PalletName(), event.EventName(), event.DataHash, event.Who.ToHuman()))
+
+	fmt.Println("RunBlockTransactionByAppId finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-transactions-filtered-by-transaction-hash"><a class="header" href="#block-transactions-filtered-by-transaction-hash">Block Transactions Filtered By Transaction Hash</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockTransactionByHash() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// Transaction filtered by Transaction hash
+	txHash, err := primitives.NewH256FromHexString("0x19c486e107c926ff4af3fa9b1d95aaba130cb0bc89515d0f5b523ef6bac06338")
+	PanicOnError(err)
+	txs := block.Transactions(SDK.Filter{}.WTxHash(txHash))
+	AssertEq(len(txs), 1, "")
+	tx := &amp;txs[0]
+
+	// Printout Block Transaction filtered by Tx Hash
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
+	fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.SS58Address(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
+
+	// Convert from Block Transaction to Specific Transaction
+	baTx := baPallet.CallTransferKeepAlive{}
+	isOk := pallets.Decode(&amp;baTx, tx.Extrinsic)
+	AssertEq(isOk, true, "Transaction was not of type Transfer Keep Alive")
+	fmt.Println(fmt.Sprintf(`Destination: %v, Value: %v`, baTx.Dest.Id.UnsafeUnwrap().ToHuman(), baTx.Value.ToHuman()))
+
+	// Printout all Transaction Events
+	txEvents := tx.Events().UnsafeUnwrap()
+	AssertEq(len(txEvents), 7, "Events count is not 7")
+
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find Transfer event
+	eventMyb := SDK.EventFindFirst(txEvents, baPallet.EventTransfer{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, From: %v, To: %v, Amount: %v`, event.PalletName(), event.EventName(), event.From.ToHuman(), event.To.ToHuman(), event.Amount))
+
+	fmt.Println("RunBlockTransactionByHash finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-transactions-filtered-by-transaction-index"><a class="header" href="#block-transactions-filtered-by-transaction-index">Block Transactions Filtered By Transaction Index</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
+	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockTransactionByIndex() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// Transaction filtered by Transaction index
+	txIndex := uint32(1)
+	txs := block.Transactions(SDK.Filter{}.WTxIndex(txIndex))
+	AssertEq(len(txs), 1, "")
+	tx := &amp;txs[0]
+
+	// Printout Block Transaction filtered by Tx Index
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
+	fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.SS58Address(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
+
+	// Convert from Block Transaction to Specific Transaction
+	baTx := baPallet.CallTransferKeepAlive{}
+	isOk := pallets.Decode(&amp;baTx, tx.Extrinsic)
+	AssertEq(isOk, true, "Transaction was not of type Transfer Keep Alive")
+	fmt.Println(fmt.Sprintf(`Destination: %v, Value: %v`, baTx.Dest.Id.UnsafeUnwrap().ToHuman(), baTx.Value))
+
+	// Printout all Transaction Events
+	txEvents := tx.Events().UnsafeUnwrap()
+	AssertEq(len(txEvents), 9, "Events count is not 9")
+
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find NewAccount event
+	eventMyb := SDK.EventFindFirst(txEvents, syPallet.EventNewAccount{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Account: %v`, event.PalletName(), event.EventName(), event.Account.ToHuman()))
+
+	fmt.Println("RunBlockTransactionByIndex finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-transactions-filtered-by-signer"><a class="header" href="#block-transactions-filtered-by-signer">Block Transactions Filtered By Signer</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockTransactionBySigner() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	accountId, err := primitives.NewAccountIdFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+	PanicOnError(err)
+
+	// All Transaction filtered by Signer
+	blockTxs := block.Transactions(SDK.Filter{}.WTxSigner(accountId))
+	fmt.Println("Transaction Count: ", len(blockTxs))
+	AssertEq(len(blockTxs), 5, "Transaction count is not 5")
+
+	// Printout Block Transactions filtered by Signer
+	for _, tx := range blockTxs {
+		AssertEq(tx.SS58Address().UnsafeUnwrap(), accountId.ToHuman(), "Signer is not the correct one")
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Call Name: %v, Call Index: %v, Tx Hash: %v, Tx Index: %v`, tx.PalletName(), tx.PalletIndex(), tx.CallName(), tx.CallIndex(), tx.TxHash(), tx.TxIndex()))
+		fmt.Println(fmt.Sprintf(`Tx Signer: %v, App Id: %v, Tip: %v, Mortality: %v, Nonce: %v`, tx.SS58Address(), tx.AppId(), tx.Tip(), tx.Mortality(), tx.Nonce()))
+	}
+
+	// Convert from Block Transaction to Specific Transaction
+	daTx := daPallet.CallCreateApplicationKey{}
+	isOk := pallets.Decode(&amp;daTx, blockTxs[0].Extrinsic)
+	AssertEq(isOk, true, "Transaction was not of type Create Application Key")
+	fmt.Println(fmt.Sprintf(`Key: %v`, string(daTx.Key)))
+
+	// Printout all Transaction Events
+	txEvents := blockTxs[0].Events().UnsafeUnwrap()
+	AssertEq(len(txEvents), 7, "Events count is not 7")
+
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find ApplicationKeyCreated event
+	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventApplicationKeyCreated{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Owner: %v, Key: %v, AppId: %v`, event.PalletName(), event.EventName(), event.Owner.ToHuman(), string(event.Key), event.Id))
+
+	fmt.Println("RunBlockTransactionBySigner finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="all-block-data-submissions"><a class="header" href="#all-block-data-submissions">All Block Data Submissions</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockDataSubmissionAll() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// All Block Blobs
+	blobs := block.DataSubmissions(SDK.Filter{})
+	AssertEq(len(blobs), 4, "Data Submission count is not 4")
+
+	// Printout All Block Blobs
+	for _, blob := range blobs {
+		accountId, err := primitives.NewAccountIdFromMultiAddress(blob.TxSigner)
+		PanicOnError(err)
+
+		fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
+	}
+
+	fmt.Println("RunBlockDataSubmissionAll finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-data-submissions-filtered-by-app-id"><a class="header" href="#block-data-submissions-filtered-by-app-id">Block Data Submissions Filtered By App Id</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockDataSubmissionByAppId() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// Block Blobs filtered by App Id
+	appId := uint32(2)
+	blobs := block.DataSubmissions(SDK.Filter{}.WAppId(appId))
+	AssertEq(len(blobs), 2, "Data Submission count is not 2")
+
+	// Printout Block Blobs filtered by App Id
+	for _, blob := range blobs {
+		AssertEq(blob.AppId, appId, "Transaction App Ids are not the same.")
+
+		accountId, err := primitives.NewAccountIdFromMultiAddress(blob.TxSigner)
+		PanicOnError(err)
+
+		fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
+	}
+
+	fmt.Println("RunBlockDataSubmissionByAppId finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-data-submissions-filtered-by-transaction-hash"><a class="header" href="#block-data-submissions-filtered-by-transaction-hash">Block Data Submissions Filtered By Transaction Hash</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockDataSubmissionByHash() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// Block Blobs filtered by Transaction Hash
+	txHash, err := primitives.NewH256FromHexString("0xe7efa71363d11bce370fe71a33e5ff296775f37507075c49316132131420f793")
+	PanicOnError(err)
+
+	blobs := block.DataSubmissions(SDK.Filter{}.WTxHash(txHash))
+	AssertEq(len(blobs), 1, "")
+	blob := &amp;blobs[0]
+	AssertEq(blob.TxHash.ToHuman(), txHash.ToHuman(), "Transaction Hash are not the same.")
+
+	// Printout Block Blobs filtered by Transaction Hash
+	accountId, err := primitives.NewAccountIdFromMultiAddress(blob.TxSigner)
+	PanicOnError(err)
+	fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
+
+	fmt.Println("RunBlockDataSubmissionByHash finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-data-submissions-filtered-by-transaction-index"><a class="header" href="#block-data-submissions-filtered-by-transaction-index">Block Data Submissions Filtered By Transaction Index</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockDataSubmissionByIndex() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// Block Blobs filtered by Transaction Index
+	txIndex := uint32(6)
+	blobs := block.DataSubmissions(SDK.Filter{}.WTxIndex(txIndex))
+	AssertEq(len(blobs), 1, "")
+	blob := &amp;blobs[0]
+	AssertEq(blob.TxIndex, txIndex, "Transaction Indices are not the same.")
+
+	// Printout Block Blobs filtered by Transaction Index
+	accountId, err := primitives.NewAccountIdFromMultiAddress(blob.TxSigner)
+	PanicOnError(err)
+	fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, accountId.ToHuman()))
+
+	fmt.Println("RunBlockDataSubmissionByIndex finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-data-submissions-filtered-by-signer"><a class="header" href="#block-data-submissions-filtered-by-signer">Block Data Submissions Filtered By Signer</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockDataSubmissionBySigner() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := primitives.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	accountId, err := primitives.NewAccountIdFromAddress("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
+	PanicOnError(err)
+
+	// Block Blobs filtered by Signer
+	blobs := block.DataSubmissions(SDK.Filter{}.WTxSigner(accountId))
+	AssertEq(len(blobs), 1, "Data Submission count is not 1")
+
+	// Printout Block Blobs filtered by Signer
+	for _, blob := range blobs {
+		blobAccountId := blob.TxSigner.ToAccountId().UnsafeUnwrap()
+		PanicOnError(err)
+		AssertEq(blobAccountId.ToHuman(), accountId.ToHuman(), "Transaction Signers are not the same.")
+
+		fmt.Println(fmt.Sprintf(`Tx Hash: %v, Tx Index: %v, Data: %v, App Id: %v, Signer: %v,`, blob.TxHash, blob.TxIndex, string(blob.Data), blob.AppId, blobAccountId.ToHuman()))
+	}
+
+	fmt.Println("RunBlockDataSubmissionBySigner finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="block-events"><a class="header" href="#block-events">Block Events</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	prim "github.com/availproject/avail-go-sdk/primitives"
+
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	syPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBlockEvents() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := prim.NewBlockHashFromHexString("0x94746ba186876d7407ee618d10cb6619befc59eeb173cacb00c14d1ff492fc58")
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(sdk.Client, blockHash)
+	PanicOnError(err)
+
+	// All Block Events
+	blockEvents := block.Events().UnsafeUnwrap()
+	AssertEq(len(blockEvents), 53, "Block event count must be 53")
+
+	// Printout All Block Events
+	for _, ev := range blockEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find Transfer event
+	baEvents := SDK.EventFind(blockEvents, baPallet.EventTransfer{})
+	PanicOnError(err)
+	AssertEq(len(baEvents), 2, "Event Transfer event count is not 2")
+
+	for _, ev := range baEvents {
+		fmt.Println(fmt.Sprintf(`From: %v, To: %v, Amount: %v`, ev.From.ToHuman(), ev.To.ToHuman(), ev.Amount))
+	}
+
+	// Find ApplicationKeyCreated event
+	daEventMyb := SDK.EventFindFirst(blockEvents, daPallet.EventApplicationKeyCreated{})
+	daEvent := daEventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Id: %v, Key: %v, Owner: %v`, daEvent.PalletName(), daEvent.EventName(), daEvent.Id, string(daEvent.Key), daEvent.Owner.ToHuman()))
+
+	// Check
+	AssertEq(len(SDK.EventFind(blockEvents, daPallet.EventDataSubmitted{})), 4, "Incorrect count of Data Submitted Event")
+	AssertEq(len(SDK.EventFind(blockEvents, daPallet.EventApplicationKeyCreated{})), 1, "Incorrect count of Application Key Created Event")
+
+	// Events for Specific Transaction
+	txIndex := uint32(0)
+	txEvents := block.EventsForTransaction(txIndex).UnsafeUnwrap()
+	AssertEq(len(txEvents), 1, "Tx event count is not 1")
+
+	// Printout All Tx Events
+	for _, ev := range txEvents {
+		AssertEq(ev.TxIndex(), prim.Some(txIndex), "Tx Index is not the same")
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find ExtrinsicSuccess event
+	syEventMyb := SDK.EventFindFirst(txEvents, syPallet.EventExtrinsicSuccess{})
+	syEvent := syEventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, Class: %v`, syEvent.PalletName(), syEvent.EventName(), syEvent.DispatchInfo.Class))
+
+	// Check
+	tx2 := block.Transactions(SDK.Filter{}.WTxIndex(txIndex))
+	AssertEq(len(tx2), 1, "")
+	tx2Events := tx2[0].Events()
+	AssertTrue(tx2Events.IsSome(), "")
+	AssertEq(len(tx2Events.Unwrap()), len(txEvents), "")
+
+	fmt.Println("RunBlockEvents finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transaction"><a class="header" href="#transaction">Transaction</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transaction-execute"><a class="header" href="#transaction-execute">Transaction Execute</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunTransactionExecute() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Transaction will be signed, and sent.
+	//
+	// There is no guarantee that the transaction was executed at all. It might have been
+	// dropped or discarded for various reasons. The caller is responsible for querying future
+	// blocks in order to determine the execution status of that transaction.
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
+	txHash, err := tx.Execute(SDK.Account.Alice(), SDK.NewTransactionOptions().WithAppId(1))
+	PanicOnError(err)
+	fmt.Println("Tx Hash:", txHash)
+
+	// Checking if the transaction was included
+	//
+	// It's not necessary to use the builtin watcher. A custom watcher
+	// might yield better results in some cases.
+	watcher := SDK.NewWatcher(sdk.Client, txHash).WaitFor(SDK.Inclusion).BlockCountTimeout(32)
+	mybTxDetails, err := watcher.Run()
+	PanicOnError(err)
+	AssertEq(mybTxDetails.IsSome(), true, "Watcher must have found the status for our transaction")
+
+	// Printout Transaction Details
+	txDetails := mybTxDetails.UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
+
+	// Printout Transaction Events
+	txEvents := txDetails.Events.UnsafeUnwrap()
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find DataSubmitted event
+	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, DataHash: %v, Who: %v`, event.PalletName(), event.EventName(), event.DataHash, event.Who.ToHuman()))
+
+	fmt.Println("RunTransactionExecute finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transaction-execute-and-watch-inclusion"><a class="header" href="#transaction-execute-and-watch-inclusion">Transaction Execute And Watch Inclusion</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunTransactionExecuteAndWatchInclusion() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Transaction will be signed, sent, and watched
+	// If the transaction was dropped or never executed, the system will retry it
+	// for 2 more times using the same nonce and app id.
+	//
+	// Waits for transaction inclusion. Most of the time you would want to call `ExecuteAndWatchFinalization` as
+	// inclusion doesn't mean that the transaction will be in the canonical chain.
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
+	txDetails, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), SDK.NewTransactionOptions().WithAppId(1))
+	PanicOnError(err)
+
+	// Returns None if there was no way to determine the
+	// success status of a transaction. Otherwise it returns
+	// true or false.
+	AssertTrue(txDetails.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+	// Printout Transaction Details
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
+
+	// Printout Transaction Events
+	txEvents := txDetails.Events.UnsafeUnwrap()
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find DataSubmitted event
+	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, DataHash: %v, Who: %v`, event.PalletName(), event.EventName(), event.DataHash, event.Who.ToHuman()))
+
+	fmt.Println("RunTransactionExecuteAndWatchInclusion finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transaction-execute-and-watch-finalization"><a class="header" href="#transaction-execute-and-watch-finalization">Transaction Execute And Watch Finalization</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunTransactionExecuteAndWatchFinalization() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Transaction will be signed, sent, and watched
+	// If the transaction was dropped or never executed, the system will retry it
+	// for 2 more times using the same nonce and app id.
+	//
+	// Waits for finalization to finalize the transaction.
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
+	txDetails, err := tx.ExecuteAndWatchFinalization(SDK.Account.Alice(), SDK.NewTransactionOptions().WithAppId(1))
+	PanicOnError(err)
+
+	// Returns None if there was no way to determine the
+	// success status of a transaction. Otherwise it returns
+	// true or false.
+	AssertTrue(txDetails.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+	// Printout Transaction Details
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
+
+	// Printout Transaction Events
+	txEvents := txDetails.Events.UnsafeUnwrap()
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Find DataSubmitted event
+	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, DataHash: %v, Who: %v`, event.PalletName(), event.EventName(), event.DataHash, event.Who.ToHuman()))
+
+	fmt.Println("RunTransactionExecuteAndWatchFinalization finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transaction-options"><a class="header" href="#transaction-options">Transaction Options</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunTransactionOptions() {
+	RunTransactionOptionsAppId()
+	RunTransactionOptionsNonce()
+	RunTransactionOptionsMortality()
+	RunTransactionOptionsTip()
+
+	fmt.Println("RunTransactionOptions finished correctly.")
+}
+
+func RunTransactionOptionsAppId() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Setting AppId
+	appId := uint32(5)
+	options := SDK.NewTransactionOptions().WithAppId(appId)
+
+	// Executing Transaction
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
+	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
+	PanicOnError(err)
+
+	// Checking is the App Id was used correctly
+	blockTxs := block.Transactions(SDK.Filter{}.WTxHash(res.TxHash))
+	AssertEq(len(blockTxs), 1, "")
+	foundAppId := blockTxs[0].AppId().UnsafeUnwrap()
+	AssertEq(appId, foundAppId, "App Ids are not the same")
+
+	fmt.Println("RunTransactionOptionsAppId finished correctly.")
+}
+
+func RunTransactionOptionsNonce() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Getting Nonce
+	acc := SDK.Account.Alice()
+	currentNonce, err := SDK.Account.Nonce(sdk.Client, primitives.NewAccountIdFromKeyPair(acc))
+	PanicOnError(err)
+
+	// Executing Transaction
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
+	options := SDK.NewTransactionOptions().WithNonce(currentNonce).WithAppId(5)
+	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
+	PanicOnError(err)
+
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
+	PanicOnError(err)
+
+	// Checking is the Nonce was used correctly
+	blockTxs := block.Transactions(SDK.Filter{}.WTxHash(res.TxHash))
+	AssertEq(len(blockTxs), 1, "")
+	foundNonce := blockTxs[0].Nonce().UnsafeUnwrap()
+	AssertEq(foundNonce, currentNonce, "Nonces are not the same")
+
+	newNonce, err := SDK.Account.Nonce(sdk.Client, primitives.NewAccountIdFromKeyPair(acc))
+	PanicOnError(err)
+	AssertEq(newNonce, currentNonce+1, "New nonce and old nonce + 1 are not the same.")
+
+	fmt.Println("RunTransactionOptionsNonce finished correctly.")
+}
+
+func RunTransactionOptionsMortality() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Setting Mortality
+	mortality := uint32(16)
+	options := SDK.NewTransactionOptions().WithMortality(mortality).WithAppId(1)
+
+	// Executing Transaction
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
+	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
+	PanicOnError(err)
+
+	// Checking if the Mortality is the same as the one expected
+	blockTxs := block.Transactions(SDK.Filter{}.WTxHash(res.TxHash))
+	AssertEq(len(blockTxs), 1, "")
+	actualMortality := uint32(blockTxs[0].Mortality().UnsafeUnwrap().Period)
+	AssertEq(actualMortality, mortality, "Mortalities are not the same.")
+
+	fmt.Println("RunTransactionOptionsMortality finished correctly.")
+}
+
+func RunTransactionOptionsTip() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Setting Tip
+	tip := SDK.OneAvail()
+	options := SDK.NewTransactionOptions().WithTip(tip).WithAppId(1)
+
+	// Executing Transaction
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
+	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), options)
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+	block, err := SDK.NewBlock(sdk.Client, res.BlockHash)
+	PanicOnError(err)
+
+	// Checking if the Tip is the same as the one expected
+	blockTxs := block.Transactions(SDK.Filter{}.WTxHash(res.TxHash))
+	AssertEq(len(blockTxs), 1, "")
+	actualTip := blockTxs[0].Tip().UnsafeUnwrap()
+	AssertEq(actualTip, tip, "Tips are not the same.")
+
+	fmt.Println("RunTransactionOptionsTip finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transaction-payment"><a class="header" href="#transaction-payment">Transaction Payment</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunTransactionPayment() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	acc := SDK.Account.Alice()
+	options := SDK.NewTransactionOptions().WithAppId(1)
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("Hello World"))
+
+	// PaymentQueryCallFeeDetails
+	feeDetails1, err := tx.PaymentQueryCallFeeDetails()
+	PanicOnError(err)
+
+	AssertEq(feeDetails1.InclusionFee.IsSome(), true, "InclusionFee Must Exist")
+	if feeDetails1.InclusionFee.IsSome() {
+		InclusionFee := feeDetails1.InclusionFee.UnsafeUnwrap()
+		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee)
+		fmt.Println("Len Fee:", InclusionFee.LenFee)
+		fmt.Println("Base Fee:", InclusionFee.BaseFee)
+	}
+
+	// PaymentQueryFeeDetails
+	feeDetails2, err := tx.PaymentQueryFeeDetails(acc, options)
+	PanicOnError(err)
+
+	AssertEq(feeDetails1.InclusionFee.IsSome(), true, "InclusionFee Must Exist")
+	if feeDetails2.InclusionFee.IsSome() {
+		InclusionFee := feeDetails2.InclusionFee.UnsafeUnwrap()
+		fmt.Println("Adjusted Weight Fee:", InclusionFee.AdjustedWeightFee)
+		fmt.Println("Len Fee:", InclusionFee.LenFee)
+		fmt.Println("Base Fee:", InclusionFee.BaseFee)
+	}
+
+	// PaymentQueryCallInfo
+	feeInfo1, err := tx.PaymentQueryCallInfo()
+	PanicOnError(err)
+
+	fmt.Println("ProofSize:", feeInfo1.Weight.ProofSize)
+	fmt.Println("RefTime:", feeInfo1.Weight.RefTime)
+	fmt.Println("Class:", feeInfo1.Class)
+	fmt.Println("Partial Fee:", feeInfo1.PartialFee)
+
+	// PaymentQueryInfo
+	feeInfo, err := tx.PaymentQueryInfo(acc, options)
+	PanicOnError(err)
+
+	fmt.Println("ProofSize:", feeInfo.Weight.ProofSize)
+	fmt.Println("RefTime:", feeInfo.Weight.RefTime)
+	fmt.Println("Class:", feeInfo.Class)
+	fmt.Println("Partial Fee:", feeInfo.PartialFee)
+
+	fmt.Println("RunTransactionPayment finished correctly.")
+
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transaction-custom"><a class="header" href="#transaction-custom">Transaction Custom</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+type CustomTransaction struct {
+	Value []byte
+}
+
+func (this CustomTransaction) PalletName() string {
+	return "DataAvailability"
+}
+
+func (this CustomTransaction) PalletIndex() uint8 {
+	return 29
+}
+
+func (this CustomTransaction) CallName() string {
+	return "submit_data"
+}
+
+func (this CustomTransaction) CallIndex() uint8 {
+	return 1
+}
+
+func RunTransactionCustom() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Creating custom transaction
+	customTx := CustomTransaction{Value: []byte("Hello World")}
+	tx := SDK.NewTransaction(sdk.Client, pallets.ToPayload(customTx))
+
+	// Executing Custom transaction
+	txDetails, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), SDK.NewTransactionOptions())
+	PanicOnError(err)
+
+	// Returns None if there was no way to determine the
+	// success status of a transaction. Otherwise it returns
+	// true or false.
+	AssertTrue(txDetails.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+	// Printout Transaction Details
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Number: %v, Tx Hash: %v, Tx Index: %v`, txDetails.BlockHash, txDetails.BlockNumber, txDetails.TxHash, txDetails.TxIndex))
+
+	// Printout Transaction Events
+	txEvents := txDetails.Events.UnsafeUnwrap()
+	for _, ev := range txEvents {
+		fmt.Println(fmt.Sprintf(`Pallet Name: %v, Pallet Index: %v, Event Name: %v, Event Index: %v, Event Position: %v, Tx Index: %v`, ev.PalletName, ev.PalletIndex, ev.EventName, ev.EventIndex, ev.Position, ev.TxIndex()))
+	}
+
+	// Converts from generic transaction to a specific one
+	eventMyb := SDK.EventFindFirst(txEvents, daPallet.EventDataSubmitted{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pallet Name: %v, Event Name: %v, DataHash: %v, Who: %v`, event.PalletName(), event.EventName(), event.DataHash, event.Who.ToHuman()))
+
+	fmt.Println("RunTransactionCustom finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="storage"><a class="header" href="#storage">Storage</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	idenPallet "github.com/availproject/avail-go-sdk/metadata/pallets/identity"
+	staPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
+	sysPallet "github.com/availproject/avail-go-sdk/metadata/pallets/system"
+	prim "github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunStorage() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	blockHash, err := prim.NewH256FromHexString("0x9e813bb85fca217f8f3967bd4b550b05f7d559412571ca1dd621aa37343b300b")
+	PanicOnError(err)
+
+	blockStorage, err := sdk.Client.StorageAt(prim.Some(blockHash))
+	PanicOnError(err)
+
+	// Simple Storage
+	{
+		storage := staPallet.StorageMinValidatorBond{}
+		val, err := storage.Fetch(&amp;blockStorage)
+		PanicOnError(err)
+
+		fmt.Println("Min Validator Bond: ", val.ToHuman())
+	}
+
+	// Simple Storage that returns Option
+	{
+		storage := staPallet.StorageCurrentEra{}
+		val, err := storage.Fetch(&amp;blockStorage)
+		PanicOnError(err)
+
+		if val.IsSome() {
+			fmt.Println("Current Era: ", val.Unwrap())
+		}
+	}
+
+	// Fetch Map Storage
+	{
+		storage := sysPallet.StorageAccount{}
+		acc, err := prim.NewAccountIdFromAddress("5C869t2dWzmmYkE8NT1oocuEEdwqNnAm2XhvnuHcavNUcTTT")
+		PanicOnError(err)
+
+		val, err := storage.Fetch(&amp;blockStorage, acc)
+		PanicOnError(err)
+
+		fmt.Println("Account Key: ", val.Key.ToHuman())
+		fmt.Println("Account Nonce: ", val.Value.Nonce)
+		fmt.Println("Account Free Balance: ", val.Value.AccountData.Free.ToHuman())
+	}
+
+	// Fetch Map Storage 2
+	{
+		storage := daPallet.StorageAppKeys{}
+		value1, err := storage.Fetch(&amp;blockStorage, []byte("ThisShouldNotExist"))
+		PanicOnError(err)
+		AssertEq(value1.IsNone(), true, "")
+
+		value2, err := storage.Fetch(&amp;blockStorage, []byte("gohan"))
+		PanicOnError(err)
+		AssertEq(value2.IsSome(), true, "")
+		val2 := value2.Unwrap()
+
+		fmt.Println("Key: ", string(val2.Key))
+		fmt.Println("AppId: ", val2.Value.AppId)
+		fmt.Println("Owner: ", val2.Value.Owner.ToSS58())
+	}
+
+	// Fetch All Map Storage
+	{
+		storage := idenPallet.StorageIdentityOf{}
+		val, err := storage.FetchAll(&amp;blockStorage)
+		PanicOnError(err)
+		AssertTrue(len(val) &gt; 0, "There need to be more than 0 values")
+		AssertEq(len(val), 120, "")
+
+		for i := 0; i &lt; len(val); i++ {
+			fmt.Println("Identity Key: ", val[i].Key.ToHuman())
+			fmt.Println("Identity Deposit: ", val[i].Value.T0.Deposit.ToHuman())
+			fmt.Println("Identity Display: ", val[i].Value.T0.Info.Display.ToHuman())
+			if i &gt;= 2 {
+				break
+			}
+		}
+	}
+
+	// Fetch Double Map Storage
+	{
+		storage := staPallet.StorageErasValidatorPrefs{}
+		era := uint32(299)
+		acc, err := prim.NewAccountIdFromAddress("5EFTSpRN2nMZDLjkniBYdmMxquMNm5CLVsrX2V3HHue6QFFF")
+		PanicOnError(err)
+
+		val, err := storage.Fetch(&amp;blockStorage, era, acc)
+		PanicOnError(err)
+
+		fmt.Println("Era: ", val.Key1)
+		fmt.Println("Address: ", val.Key2.ToHuman())
+		fmt.Println("Commission: ", val.Value.Commission.ToHuman())
+		fmt.Println("Blocked: ", val.Value.Blocked)
+	}
+
+	// Fetch All Double Map Storage
+	{
+		storage := staPallet.StorageErasValidatorPrefs{}
+		era := uint32(299)
+		val, err := storage.FetchAll(&amp;blockStorage, era)
+		PanicOnError(err)
+		AssertTrue(len(val) &gt; 0, "There need to be more than 0 values")
+		AssertEq(len(val), 80, "")
+
+		for i := 0; i &lt; len(val); i++ {
+			fmt.Println("Era: ", val[i].Key1)
+			fmt.Println("Address: ", val[i].Key2.ToHuman())
+			fmt.Println("Commission: ", val[i].Value.Commission.ToHuman())
+			fmt.Println("Blocked: ", val[i].Value.Blocked)
+			if i &gt;= 2 {
+				break
+			}
+		}
+	}
+
+	fmt.Println("RunStorage finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="batch"><a class="header" href="#batch">Batch</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
+	utPallet "github.com/availproject/avail-go-sdk/metadata/pallets/utility"
+	"github.com/availproject/avail-go-sdk/primitives"
+	prim "github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunBatch() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Use SDK.Account.NewKeyPair("Your key") to use a different account than Alice
+	acc := SDK.Account.Alice()
+
+	callsToExecute := []prim.Call{}
+
+	// One way to create a suitable call for the batch transaction is to manually create the desired call and then convert it to a generic call
+	{
+		destBob, err := primitives.NewAccountIdFromAddress("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
+		PanicOnError(err)
+
+		call := baPallet.CallTransferKeepAlive{Dest: destBob.ToMultiAddress(), Value: SDK.OneAvail()}
+		callsToExecute = append(callsToExecute, pallets.ToCall(call))
+	}
+
+	// The other was it to create a transaction using the sdk api and then use the `call` field member
+	{
+		destCharlie, err := primitives.NewAccountIdFromAddress("5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y")
+		PanicOnError(err)
+
+		tx := sdk.Tx.Balances.TransferKeepAlive(destCharlie.ToMultiAddress(), SDK.OneAvail())
+		callsToExecute = append(callsToExecute, tx.Payload.Call)
+	}
+
+	//
+	// Happy Path
+	//
+
+	// Batch call
+	{
+		tx := sdk.Tx.Utility.Batch(callsToExecute)
+		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+		events := res.Events.UnsafeUnwrap()
+
+		event := SDK.EventFindFirst(events, utPallet.EventBatchCompleted{})
+		AssertTrue(event.IsSome(), "BatchCompleted event must be present.")
+
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 2, "ItemCompleted events must be produced twice")
+
+		fmt.Println("Batch call done")
+	}
+
+	// Batch All call
+	{
+		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
+		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+		events := res.Events.UnsafeUnwrap()
+
+		event := SDK.EventFindFirst(events, utPallet.EventBatchCompleted{})
+		AssertTrue(event.IsSome(), "BatchCompleted event must be present.")
+
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 2, "ItemCompleted events must be produced twice")
+
+		fmt.Println("Batch All call done")
+	}
+
+	// Force Batch call
+	{
+		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
+		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+		events := res.Events.UnsafeUnwrap()
+
+		event := SDK.EventFindFirst(events, utPallet.EventBatchCompleted{})
+		AssertTrue(event.IsSome(), "BatchCompleted event must be present.")
+
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 2, "ItemCompleted events must be produced twice")
+
+		fmt.Println("Force Batch call done")
+	}
+
+	//
+	//	Things differ when we introduce a call that will fail
+	//
+
+	// The 3. is poisoned with a too high transfer amount
+	{
+		destEve, err := primitives.NewAccountIdFromAddress("5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw")
+		PanicOnError(err)
+
+		tx := sdk.Tx.Balances.TransferKeepAlive(destEve.ToMultiAddress(), SDK.OneAvail().Mul64(uint64(1_000_000_000)))
+		callsToExecute = append(callsToExecute, tx.Payload.Call)
+	}
+
+	// The 4. call is a normal one
+	{
+		destDave, err := primitives.NewAccountIdFromAddress("5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy")
+		PanicOnError(err)
+
+		tx := sdk.Tx.Balances.TransferKeepAlive(destDave.ToMultiAddress(), SDK.OneAvail())
+		callsToExecute = append(callsToExecute, tx.Payload.Call)
+	}
+
+	// Batch call
+	{
+		tx := sdk.Tx.Utility.Batch(callsToExecute)
+		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+		events := res.Events.UnsafeUnwrap()
+
+		event := SDK.EventFindFirst(events, utPallet.EventBatchInterrupted{})
+		AssertTrue(event.IsSome(), "BatchInterrupted event must be present.")
+
+		event2 := SDK.EventFindFirst(events, utPallet.EventBatchCompleted{})
+		AssertTrue(event2.IsNone(), "BatchCompleted event must NOT be present.")
+
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 2, "ItemCompleted events must be produced twice")
+
+		fmt.Println("Batch call done")
+	}
+
+	// Batch All call
+	{
+		tx := sdk.Tx.Utility.BatchAll(callsToExecute)
+		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
+		PanicOnError(err)
+		AssertEq(res.IsSuccessful(), prim.Some(false), "Transaction is supposed to fail")
+
+		fmt.Println("Batch All call done")
+	}
+
+	// Force Batch call
+	{
+		tx := sdk.Tx.Utility.ForceBatch(callsToExecute)
+		res, err := tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions().WithAppId(0))
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction is supposed to succeed")
+
+		events := res.Events.UnsafeUnwrap()
+
+		event := SDK.EventFindFirst(events, utPallet.EventBatchCompletedWithErrors{})
+		AssertTrue(event.IsSome(), "BatchCompletedWithErrors event must be present.")
+
+		event_count := len(SDK.EventFind(events, utPallet.EventItemCompleted{}))
+		AssertEq(event_count, 3, "ItemCompleted events must be produced thrice")
+
+		event_count2 := len(SDK.EventFind(events, utPallet.EventItemFailed{}))
+		AssertEq(event_count2, 1, "ItemFailed events must be produced once")
+
+		fmt.Println("Force Batch call done")
+	}
+
+	fmt.Println("RunBatch finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rpc"><a class="header" href="#rpc">RPC</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	prim "github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunRpc() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	{
+		// chain_GetBlock
+		value, err := sdk.Client.Rpc.Chain.GetBlock(prim.None[prim.H256]())
+		PanicOnError(err)
+		fmt.Println("Block Number:", value.Header.Number)
+	}
+
+	{
+		// chain_GetBlockHash
+		value, err := sdk.Client.Rpc.Chain.GetBlockHash(prim.None[uint32]())
+		PanicOnError(err)
+		fmt.Println("Block Hash:", value.ToHuman())
+	}
+
+	{
+		// chain_GetFinalizedHead
+		value, err := sdk.Client.Rpc.Chain.GetFinalizedHead()
+		PanicOnError(err)
+		fmt.Println("Block Hash:", value.ToHuman())
+	}
+
+	{
+		// chain_GetHeader
+		value, err := sdk.Client.Rpc.Chain.GetHeader(prim.None[prim.H256]())
+		PanicOnError(err)
+		fmt.Println("Block Number:", value.Number)
+	}
+
+	{
+		// chainspec_V1GenesisHash
+		value, err := sdk.Client.Rpc.ChainSpec.V1GenesisHash()
+		PanicOnError(err)
+		fmt.Println("Genesis Hash:", value.ToHuman())
+	}
+
+	{
+		// system_AccountNextIndex
+		value, err := sdk.Client.Rpc.System.AccountNextIndex("5GEQ6S3vpSFjYCqsrndQhcPL3sh8uAYbpeCiZFhF4u9EjK6F")
+		PanicOnError(err)
+		fmt.Println("Nonce:", value)
+	}
+
+	{
+		// system_Chain
+		value, err := sdk.Client.Rpc.System.Chain()
+		PanicOnError(err)
+		fmt.Println("Chain:", value)
+	}
+
+	{
+		// system_ChainType
+		value, err := sdk.Client.Rpc.System.ChainType()
+		PanicOnError(err)
+		fmt.Println("ChainType:", value)
+	}
+
+	{
+		// system_Health
+		value, err := sdk.Client.Rpc.System.Health()
+		PanicOnError(err)
+		fmt.Println("Health: IsSyncing:", value.IsSyncing)
+	}
+
+	{
+		// system_LocalPeerId
+		value, err := sdk.Client.Rpc.System.LocalPeerId()
+		PanicOnError(err)
+		fmt.Println("Local Peer Id:", value)
+	}
+
+	{
+		// system_Name
+		value, err := sdk.Client.Rpc.System.Name()
+		PanicOnError(err)
+		fmt.Println("Name:", value)
+	}
+
+	{
+		// system_NodeRoles
+		value, err := sdk.Client.Rpc.System.NodeRoles()
+		PanicOnError(err)
+		for _, elem := range value {
+			fmt.Println("Role:", elem)
+		}
+	}
+
+	{
+		// system_Properties
+		value, err := sdk.Client.Rpc.System.Properties()
+		PanicOnError(err)
+		fmt.Println("Ss58format:", value.Ss58Format)
+		fmt.Println("Token Symbol:", value.TokenSymbol)
+	}
+
+	{
+		// system_SyncState
+		value, err := sdk.Client.Rpc.System.SyncState()
+		PanicOnError(err)
+		fmt.Println("Starting Block:", value.StartingBlock)
+		fmt.Println("Current Block:", value.CurrentBlock)
+		fmt.Println("Highest Block:", value.HighestBlock)
+	}
+
+	{
+		// system_Version
+		value, err := sdk.Client.Rpc.System.Version()
+		PanicOnError(err)
+		fmt.Println("Version:", value)
+	}
+
+	{
+		// author_RotateKeys
+		_, _ = sdk.Client.Rpc.Author.RotateKeys()
+	}
+
+	fmt.Println("RunRpc finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="validator"><a class="header" href="#validator">Validator</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/metadata"
+	stPallet "github.com/availproject/avail-go-sdk/metadata/pallets/staking"
+	"github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunValidator() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Generating new account.
+	acc, err := SDK.Account.GenerateAccount()
+	PanicOnError(err)
+
+	// Sending funds to that account.
+	dest := primitives.NewAccountIdFromKeyPair(acc).ToMultiAddress()
+	tx := sdk.Tx.Balances.TransferKeepAlive(dest, SDK.OneAvail().Mul64(uint64(250_000)))
+	res, err := tx.ExecuteAndWatchInclusion(SDK.Account.Alice(), SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
+
+	// Fetching Min Validator Bond storage
+	blockStorage, err := sdk.Client.StorageAt(primitives.None[primitives.H256]())
+	PanicOnError(err)
+
+	storage := stPallet.StorageMinValidatorBond{}
+	minValBond, err := storage.Fetch(&amp;blockStorage)
+	PanicOnError(err)
+
+	// If there is a min validator bond value then we will bond 1 more.
+	// If there isn't one then instead of bonding 0 we will bond 1.
+	bondValue := minValBond.Add(SDK.OneAvail())
+	payee := metadata.RewardDestination{VariantIndex: 0}
+
+	// Bond
+	tx = sdk.Tx.Staking.Bond(bondValue, payee)
+	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
+
+	// Generate Session Keys
+	keysRaw, err := sdk.Client.Rpc.Author.RotateKeys()
+	PanicOnError(err)
+	sessionKeys, err := SDK.DeconstructSessionKeys(keysRaw)
+	PanicOnError(err)
+
+	// Set Keys
+	tx = sdk.Tx.Session.SetKeys(sessionKeys, []byte{})
+	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
+
+	// Validate
+	commission := metadata.NewPerbillFromU8(10) // 10.0%
+	pref := metadata.ValidatorPrefs{Commission: commission, Blocked: false}
+
+	tx = sdk.Tx.Staking.Validate(pref)
+	res, err = tx.ExecuteAndWatchInclusion(acc, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
+
+	fmt.Println("RunValidator finished correctly.")
+
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="proxy"><a class="header" href="#proxy">Proxy</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+	"math/rand/v2"
+
+	"github.com/availproject/avail-go-sdk/metadata"
+	"github.com/availproject/avail-go-sdk/metadata/pallets"
+	baPallet "github.com/availproject/avail-go-sdk/metadata/pallets/balances"
+	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
+	pxPallet "github.com/availproject/avail-go-sdk/metadata/pallets/proxy"
+	"github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunProxy() {
+	RunProxyNormal()
+	RunProxyPure()
+	RunProxyFailure()
+
+	fmt.Println("RunProxy finished correctly.")
+}
+
+func RunProxyNormal() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	proxyAccount := SDK.Account.Bob()
+	proxyAccountMulti := primitives.NewAccountIdFromKeyPair(proxyAccount).ToMultiAddress()
+	mainAccount := SDK.Account.Ferdie()
+	mainAccountMulti := primitives.NewAccountIdFromKeyPair(mainAccount).ToMultiAddress()
+
+	// Creating proxy
+	proxyType := metadata.ProxyType{VariantIndex: 0} // Any Proxy
+	tx := sdk.Tx.Proxy.AddProxy(proxyAccountMulti, proxyType, 0)
+	res, err := tx.ExecuteAndWatchInclusion(mainAccount, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
+
+	// Finding the ProxyAdded Event
+	eventMyb := SDK.EventFindFirst(res.Events.UnsafeUnwrap(), pxPallet.EventProxyAdded{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Delegatee: %v, Delegator %v, ProxyTpe %v, Delay: %v`, event.Delegatee.ToHuman(), event.Delegator.ToHuman(), event.ProxyTpe.ToHuman(), event.Delay))
+
+	// Executing the Proxy.Proxy() call
+	call := pallets.ToCall(baPallet.CallTransferKeepAlive{Dest: proxyAccountMulti, Value: SDK.OneAvail()})
+	tx = sdk.Tx.Proxy.Proxy(mainAccountMulti, primitives.None[metadata.ProxyType](), call)
+	res, err = tx.ExecuteAndWatchInclusion(proxyAccount, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
+
+	// Finding ProxyExecuted event.
+	event2Myb := SDK.EventFindFirst(res.Events.UnsafeUnwrap(), pxPallet.EventProxyExecuted{})
+	event2 := event2Myb.UnsafeUnwrap().UnsafeUnwrap()
+	AssertEq(event2.Result.VariantIndex, 0, "Proxy must be successful")
+
+	// Removing Proxy
+	tx = sdk.Tx.Proxy.RemoveProxy(proxyAccountMulti, proxyType, 0)
+	res, err = tx.ExecuteAndWatchInclusion(mainAccount, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
+
+	// Finding for EventProxyRemoved event.
+	event3Myb := SDK.EventFindFirst(res.Events.UnsafeUnwrap(), pxPallet.EventProxyRemoved{})
+	event3 := event3Myb.UnsafeUnwrap().UnsafeUnwrap()
+	AssertEq(event2.Result.VariantIndex, 0, "Event must OK")
+	fmt.Println(fmt.Sprintf(`Delegatee: %v, Delegator %v, ProxyTpe %v, Delay: %v`, event3.Delegatee.ToHuman(), event3.Delegator.ToHuman(), event3.ProxyTpe.ToHuman(), event3.Delay))
+
+	fmt.Println("RunProxyNormal finished correctly.")
+}
+
+func RunProxyPure() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	mainAccount := SDK.Account.Bob()
+
+	// Creating Pure Proxy
+	proxyType := metadata.ProxyType{VariantIndex: 0} // Any Proxy
+	index := uint16(0)
+	tx := sdk.Tx.Proxy.CreatePure(proxyType, 0, index)
+	res, err := tx.ExecuteAndWatchInclusion(mainAccount, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
+
+	// Finding PureCreated Event
+	eventMyb := SDK.EventFindFirst(res.Events.UnsafeUnwrap(), pxPallet.EventPureCreated{})
+	event := eventMyb.UnsafeUnwrap().UnsafeUnwrap()
+	fmt.Println(fmt.Sprintf(`Pure: %v, Who %v, ProxyType %v, Index: %v`, event.Pure.ToHuman(), event.Who.ToHuman(), event.ProxyTpe.ToHuman(), event.DisambiguationIndex))
+	pureProxy := event.Pure
+
+	// Executing the Proxy.Proxy() call
+	key := fmt.Sprintf("MyKey%v", rand.Uint32())
+	call := pallets.ToCall(daPallet.CallCreateApplicationKey{Key: []byte(key)})
+	tx = sdk.Tx.Proxy.Proxy(pureProxy.ToMultiAddress(), primitives.None[metadata.ProxyType](), call)
+	res, err = tx.ExecuteAndWatchInclusion(mainAccount, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
+
+	// Finding the Proxy Executed Event
+	event2Myb := SDK.EventFindFirst(res.Events.UnsafeUnwrap(), pxPallet.EventProxyExecuted{})
+	event2 := event2Myb.UnsafeUnwrap().UnsafeUnwrap()
+	AssertEq(event2.Result.VariantIndex, 0, "Event must OK")
+	fmt.Println(fmt.Sprintf(`Dispatch Result: %v`, event2.Result.ToString()))
+
+	fmt.Println("RunProxyPure finished correctly.")
+}
+
+func RunProxyFailure() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	proxyAccount := SDK.Account.Bob()
+	proxyAccountMulti := primitives.NewAccountIdFromKeyPair(proxyAccount).ToMultiAddress()
+	mainAccount := SDK.Account.Ferdie()
+	mainAccountMulti := primitives.NewAccountIdFromKeyPair(mainAccount).ToMultiAddress()
+
+	// Creating proxy
+	proxyType := metadata.ProxyType{VariantIndex: 1} // NonTransfer
+	tx := sdk.Tx.Proxy.AddProxy(proxyAccountMulti, proxyType, 0)
+	res, err := tx.ExecuteAndWatchInclusion(mainAccount, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
+
+	// Executing the Proxy.Proxy() call
+	call := pallets.ToCall(baPallet.CallTransferKeepAlive{Dest: proxyAccountMulti, Value: SDK.OneAvail()})
+	tx = sdk.Tx.Proxy.Proxy(mainAccountMulti, primitives.None[metadata.ProxyType](), call)
+	res, err = tx.ExecuteAndWatchInclusion(proxyAccount, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
+
+	// Finding ProxyExecuted event.
+	event2Myb := SDK.EventFindFirst(res.Events.UnsafeUnwrap(), pxPallet.EventProxyExecuted{})
+	event2 := event2Myb.UnsafeUnwrap().UnsafeUnwrap()
+	AssertEq(event2.Result.VariantIndex, 1, "Proxy must fail")
+	fmt.Println("Failure", event2.Result.Err.UnsafeUnwrap().ToHuman())
+
+	// Removing Proxy
+	tx = sdk.Tx.Proxy.RemoveProxy(proxyAccountMulti, proxyType, 0)
+	res, err = tx.ExecuteAndWatchInclusion(mainAccount, SDK.NewTransactionOptions())
+	PanicOnError(err)
+	AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction has to succeed")
+
+	fmt.Println("RunProxyFailure finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transaction-state"><a class="header" href="#transaction-state">Transaction State</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/availproject/avail-go-sdk/metadata"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunTransactionState() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	// Transaction will be signed, and sent.
+	//
+	// There is no guarantee that the transaction was executed at all. It might have been
+	// dropped or discarded for various reasons. The caller is responsible for querying future
+	// blocks in order to determine the execution status of that transaction.
+	tx := sdk.Tx.DataAvailability.SubmitData([]byte("MyData"))
+	txHash, err := tx.Execute(SDK.Account.Alice(), SDK.NewTransactionOptions().WithAppId(1))
+	PanicOnError(err)
+	fmt.Println("Tx Hash:", txHash)
+
+	details := []metadata.TransactionState{}
+	for {
+		details, err = sdk.Client.TransactionState(txHash, false)
+		PanicOnError(err)
+		if len(details) != 0 {
+			break
+		}
+
+		time.Sleep(time.Second)
+	}
+	AssertEq(len(details), 1, "")
+	detail := details[0]
+	fmt.Println(fmt.Sprintf(`Block Hash: %v, Block Height: %v, Tx Hash: %v, Tx Index: %v`, detail.BlockHash.ToHuman(), detail.BlockHeight, detail.TxHash.ToHuman(), detail.TxIndex))
+	fmt.Println(fmt.Sprintf(`Pallet Index: %v, Call Index: %v, Tx Success: %v, Is Finalized: %v`, detail.PalletIndex, detail.CallIndex, detail.TxSuccess, detail.IsFinalized))
+
+	fmt.Println("RunTransactionState finished correctly.")
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="vector"><a class="header" href="#vector">Vector</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+
+	"github.com/availproject/avail-go-sdk/metadata"
+	sudoPallet "github.com/availproject/avail-go-sdk/metadata/pallets/sudo"
+	"github.com/availproject/avail-go-sdk/primitives"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunVector() {
+	sdk, err := SDK.NewSDK(SDK.LocalEndpoint)
+	PanicOnError(err)
+
+	alice := SDK.Account.Alice()
+
+	// Whitelisting 0
+	{
+		call := sdk.Tx.Vector.SetWhitelistedDomains([]uint32{0})
+		sudoTx := sdk.Tx.Sudo.Sudo(call.Payload.Call)
+		res, err := sudoTx.ExecuteAndWatchInclusion(alice, SDK.NewTransactionOptions())
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
+		events := res.Events.UnsafeUnwrap()
+		event := SDK.EventFindFirst(events, sudoPallet.EventSudid{}).UnsafeUnwrap().UnsafeUnwrap()
+		AssertEq(event.SudoResult.VariantIndex, 0, "Sudo Failed")
+	}
+
+	// Enabling mock
+	{
+		call := sdk.Tx.Vector.EnableMock(true)
+		sudoTx := sdk.Tx.Sudo.Sudo(call.Payload.Call)
+		res, err := sudoTx.ExecuteAndWatchInclusion(alice, SDK.NewTransactionOptions())
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
+		events := res.Events.UnsafeUnwrap()
+		event := SDK.EventFindFirst(events, sudoPallet.EventSudid{}).UnsafeUnwrap().UnsafeUnwrap()
+		AssertEq(event.SudoResult.VariantIndex, 0, "Sudo Failed")
+	}
+
+	// Setting updater
+	{
+		updater, err := primitives.NewH256FromByteSlice(alice.AccountID())
+		PanicOnError(err)
+
+		call := sdk.Tx.Vector.SetUpdater(updater)
+		sudoTx := sdk.Tx.Sudo.Sudo(call.Payload.Call)
+		res, err := sudoTx.ExecuteAndWatchInclusion(alice, SDK.NewTransactionOptions())
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
+		events := res.Events.UnsafeUnwrap()
+		event := SDK.EventFindFirst(events, sudoPallet.EventSudid{}).UnsafeUnwrap().UnsafeUnwrap()
+		AssertEq(event.SudoResult.VariantIndex, 0, "Sudo Failed")
+	}
+
+	// Mock Fulfill
+	{
+		publicValues := []byte{0, 1, 2}
+		tx := sdk.Tx.Vector.MockFulfill(publicValues)
+		res, err := tx.ExecuteAndWatchInclusion(alice, SDK.NewTransactionOptions())
+		PanicOnError(err)
+		AssertEq(res.IsSuccessful().UnsafeUnwrap(), false, "Should fail as public values are not correct")
+	}
+
+	// Send Message
+	{
+		message := metadata.VectorMessage{VariantIndex: 0, ArbitraryMessage: primitives.Some([]byte{0, 1, 2})}
+		tx := sdk.Tx.Vector.SendMessage(message, primitives.H256{}, 0)
+		res, err := tx.ExecuteAndWatchInclusion(alice, SDK.NewTransactionOptions())
+		PanicOnError(err)
+		AssertTrue(res.IsSuccessful().UnsafeUnwrap(), "Transaction must be successful")
+	}
+
+	fmt.Println("RunVector finished correctly.")
+
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="indexer"><a class="header" href="#indexer">Indexer</a></h1>
+<pre><code class="language-go">package examples
+
+import (
+	"fmt"
+	"sync"
+	"time"
+
+	"github.com/availproject/avail-go-sdk/primitives"
+	"github.com/availproject/avail-go-sdk/sdk"
+	SDK "github.com/availproject/avail-go-sdk/sdk"
+)
+
+func RunIndexer() {
+	sdk, err := SDK.NewSDK(SDK.TuringEndpoint)
+	PanicOnError(err)
+
+	indexer := Indexer{sdk: sdk}
+	// Initializing indexer with default values
+	indexer.Init()
+	// Running indexer in the background
+	go indexer.Run()
+
+	// Fetching blocks in procedural way
+	sub := indexer.Subscribe()
+	for i := 0; i &lt; 3; i++ {
+		block := sub.Fetch()
+		fmt.Println(fmt.Sprintf("Current: Block Height: %v, Block hash: %v", block.height, block.hash))
+	}
+
+	// Fetching historical blocks
+	sub.Height = sub.Height - 100
+	for i := 0; i &lt; 3; i++ {
+		block := sub.Fetch()
+		fmt.Println(fmt.Sprintf("Historical: Block Height: %v, Block hash: %v", block.height, block.hash))
+	}
+
+	// Using Callbacks
+	callBack := func(block IndexedBlock) {
+		fmt.Println(fmt.Sprintf("Callback: Block Height: %v, Block hash: %v", block.height, block.hash))
+	}
+	sub2 := indexer.Callback(callBack)
+	time.Sleep(25 * time.Second)
+
+	sub2.Shutdown = true
+	indexer.Shutdown()
+
+	time.Sleep(3 * time.Second)
+	fmt.Println("RunIndexer finished correctly.")
+}
+
+type IndexedBlock struct {
+	hash   primitives.H256
+	height uint32
+	block  sdk.Block
+}
+
+type Indexer struct {
+	sdk      SDK.SDK
+	shutdown bool
+	block    IndexedBlock
+	lock     sync.Mutex
+}
+
+func (this *Indexer) Init() {
+	hash, err := this.sdk.Client.FinalizedBlockHash()
+	PanicOnError(err)
+
+	block, err := SDK.NewBlock(this.sdk.Client, hash)
+	PanicOnError(err)
+
+	number, err := this.sdk.Client.BlockNumber(hash)
+	PanicOnError(err)
+
+	this.lock.Lock()
+	this.block.block = block
+	this.block.hash = hash
+	this.block.height = number
+	this.lock.Unlock()
+
+}
+
+func (this *Indexer) Run() {
+	for {
+		block, shutdown := this.fetchBlock()
+		if shutdown {
+			return
+		}
+
+		this.lock.Lock()
+		this.block.block = block.block
+		this.block.hash = block.hash
+		this.block.height = block.height
+		this.lock.Unlock()
+	}
+}
+
+func (this *Indexer) fetchBlock() (IndexedBlock, bool) {
+	for {
+		if this.shutdown {
+			return IndexedBlock{}, true
+		}
+
+		hash, err := this.sdk.Client.FinalizedBlockHash()
+		PanicOnError(err)
+		if this.block.hash == hash {
+			time.Sleep(15 * time.Second)
+			continue
+		}
+
+		block, err := SDK.NewBlock(this.sdk.Client, hash)
+		PanicOnError(err)
+
+		number, err := this.sdk.Client.BlockNumber(hash)
+		PanicOnError(err)
+
+		return IndexedBlock{hash: hash, height: number, block: block}, false
+	}
+}
+
+func (this *Indexer) GetBlock(blockNumber uint32) IndexedBlock {
+	for {
+		if this.shutdown {
+			return IndexedBlock{}
+		}
+
+		this.lock.Lock()
+		block := this.block
+		this.lock.Unlock()
+
+		if blockNumber &gt; this.block.height {
+			time.Sleep(15 * time.Second)
+			continue
+		}
+
+		if blockNumber == this.block.height {
+			return block
+		}
+
+		hash, err := this.sdk.Client.BlockHash(blockNumber)
+		PanicOnError(err)
+
+		oldBlock, err := SDK.NewBlock(this.sdk.Client, hash)
+		PanicOnError(err)
+
+		number, err := this.sdk.Client.BlockNumber(hash)
+		PanicOnError(err)
+
+		return IndexedBlock{hash: hash, height: number, block: oldBlock}
+	}
+}
+
+func (this *Indexer) Shutdown() {
+	this.shutdown = true
+}
+
+func (this *Indexer) Callback(cb func(IndexedBlock)) *BlockSubscription {
+	sub := this.Subscribe()
+	go func() {
+		for {
+			block := sub.Fetch()
+			if this.shutdown || sub.Shutdown {
+				return
+			}
+
+			cb(block)
+		}
+
+	}()
+	return &amp;sub
+}
+
+func (this *Indexer) Subscribe() BlockSubscription {
+	return BlockSubscription{Height: this.block.height, indexer: this}
+}
+
+type BlockSubscription struct {
+	Height   uint32
+	indexer  *Indexer
+	Shutdown bool
+}
+
+func (this *BlockSubscription) Fetch() IndexedBlock {
+	if this.Shutdown {
+		return IndexedBlock{}
+	}
+
+	block := this.indexer.GetBlock(this.Height)
+	this.Height += 1
+
+	return block
+}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
