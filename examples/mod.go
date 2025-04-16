@@ -12,7 +12,7 @@ func Run() {
 	RunTransaction()
 	RunValidator()
 	RunProxy()
-	RunTransactionState()
+	// RunTransactionState()
 	RunVector()
 	RunIndexer()
 }

@@ -16,7 +16,7 @@ func TransactionSignAndSend(client *Client, account subkey.KeyPair, payload meta
 		return prim.H256{}, errors.New("Transaction is not compatible with non-zero AppIds")
 	}
 
-	extra, additional, err := options.ToPrimitive(client, account.SS58Address(42))
+	extra, additional, _, err := options.ToPrimitive(client, account.SS58Address(42))
 	if err != nil {
 		return prim.H256{}, err
 	}
@@ -31,7 +31,7 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 
 	retryCount := 2
 
-	extra, additional, err := options.ToPrimitive(client, account.SS58Address(42))
+	extra, additional, forkBlockNumber, err := options.ToPrimitive(client, account.SS58Address(42))
 	if err != nil {
 		return TransactionDetails{}, err
 	}
@@ -45,7 +45,7 @@ func TransactionSignSendWatch(client *Client, account subkey.KeyPair, payload me
 		logger := NewCustomLogger(txHash, true)
 		logger.LogTxSubmitted(&account, extra.Era.Period)
 
-		watcher := NewWatcher(client, txHash).WaitFor(waitFor).Logger(logger)
+		watcher := NewWatcher(client, txHash).WaitFor(waitFor).Logger(logger).BlockHeightTimeout(forkBlockNumber + uint32(extra.Era.Period))
 		maybeDetails, err := watcher.Run()
 		if err != nil {
 			return TransactionDetails{}, err

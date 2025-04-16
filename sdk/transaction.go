@@ -28,7 +28,7 @@ func (this *Transaction) CallToHex() string {
 }
 
 func (this *Transaction) ToHex(account subkey.KeyPair, options TransactionOptions) (string, error) {
-	extra, additional, err := options.ToPrimitive(this.client, account.SS58Address(42))
+	extra, additional, _, err := options.ToPrimitive(this.client, account.SS58Address(42))
 	if err != nil {
 		return "", err
 	}

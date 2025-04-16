@@ -43,14 +43,14 @@ func (this TransactionOptions) WithTip(value metadata.Balance) TransactionOption
 	return this
 }
 
-func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress string) (prim.Extra, prim.Additional, error) {
+func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress string) (prim.Extra, prim.Additional, uint32, error) {
 	forkHash, err := client.Rpc.Chain.GetFinalizedHead()
 	if err != nil {
-		return prim.Extra{}, prim.Additional{}, err
+		return prim.Extra{}, prim.Additional{}, 0, err
 	}
 	header, err := client.Rpc.Chain.GetHeader(prim.Some(forkHash))
 	if err != nil {
-		return prim.Extra{}, prim.Additional{}, err
+		return prim.Extra{}, prim.Additional{}, 0, err
 	}
 	forkBlockNumber := header.Number
 
@@ -67,14 +67,14 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	if this.Nonce.IsNone() {
 		extra.Nonce, err = client.Rpc.System.AccountNextIndex(accountAddress)
 		if err != nil {
-			return prim.Extra{}, prim.Additional{}, err
+			return prim.Extra{}, prim.Additional{}, 0, err
 		}
 	} else {
 		extra.Nonce = this.Nonce.Unwrap()
 	}
 	extra.Era = prim.NewEra(uint64(this.Mortality.UnwrapOr(32)), uint64(forkBlockNumber))
 
-	return extra, additional, nil
+	return extra, additional, forkBlockNumber, nil
 }
 
 func RegenerateEra(client *Client, extra *prim.Extra, additional *prim.Additional) error {
