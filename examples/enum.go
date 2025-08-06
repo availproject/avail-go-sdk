@@ -12,8 +12,8 @@ type SimpleEnum struct {
 	VariantIndex uint8
 }
 
-func (this SimpleEnum) ToString() string {
-	switch this.VariantIndex {
+func (se SimpleEnum) ToString() string {
+	switch se.VariantIndex {
 	case 0:
 		return "Nothing"
 	case 1:
@@ -37,64 +37,64 @@ type ComplexEnum struct {
 	Year         prim.Option[uint32]
 }
 
-func (this ComplexEnum) ToString() string {
-	switch this.VariantIndex {
+func (se ComplexEnum) ToString() string {
+	switch se.VariantIndex {
 	case 0:
 		return "Nothing"
 	case 1:
-		return fmt.Sprintf("Set: %v", this.Day.Unwrap())
+		return fmt.Sprintf("Set: %v", se.Day.Unwrap())
 	case 2:
-		return fmt.Sprintf("Set: %v", this.Month.Unwrap())
+		return fmt.Sprintf("Set: %v", se.Month.Unwrap())
 	case 3:
-		return fmt.Sprintf("Set: %v", this.Year.Unwrap())
+		return fmt.Sprintf("Set: %v", se.Year.Unwrap())
 	default:
 		panic("Unknown ComplexEnum Variant Index")
 	}
 }
 
-func (this *ComplexEnum) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (se *ComplexEnum) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(se.VariantIndex, dest)
 
-	if this.Day.IsSome() {
-		prim.Encoder.EncodeTo(this.Day.Unwrap(), dest)
+	if se.Day.IsSome() {
+		prim.Encoder.EncodeTo(se.Day.Unwrap(), dest)
 	}
 
-	if this.Month.IsSome() {
-		prim.Encoder.EncodeTo(this.Month.Unwrap(), dest)
+	if se.Month.IsSome() {
+		prim.Encoder.EncodeTo(se.Month.Unwrap(), dest)
 	}
 
-	if this.Year.IsSome() {
-		prim.Encoder.EncodeTo(this.Year.Unwrap(), dest)
+	if se.Year.IsSome() {
+		prim.Encoder.EncodeTo(se.Year.Unwrap(), dest)
 	}
 }
 
-func (this *ComplexEnum) Decode(decoder *prim.Decoder) error {
-	*this = ComplexEnum{}
+func (se *ComplexEnum) Decode(decoder *prim.Decoder) error {
+	*se = ComplexEnum{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&se.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch se.VariantIndex {
 	case 0:
 	case 1:
 		var t uint16
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Day.Set(t)
+		se.Day.Set(t)
 	case 2:
 		var t uint8
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Month.Set(t)
+		se.Month.Set(t)
 	case 3:
 		var t uint32
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Year.Set(t)
+		se.Year.Set(t)
 	default:
 		return errors.New("Unknown ComplexEnum Variant Index while Decoding")
 	}
