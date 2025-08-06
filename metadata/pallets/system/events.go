@@ -10,19 +10,19 @@ type EventExtrinsicSuccess struct {
 	DispatchInfo meta.DispatchInfo
 }
 
-func (this EventExtrinsicSuccess) PalletIndex() uint8 {
+func (ees EventExtrinsicSuccess) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventExtrinsicSuccess) PalletName() string {
+func (ees EventExtrinsicSuccess) PalletName() string {
 	return PalletName
 }
 
-func (this EventExtrinsicSuccess) EventIndex() uint8 {
+func (ees EventExtrinsicSuccess) EventIndex() uint8 {
 	return 0
 }
 
-func (this EventExtrinsicSuccess) EventName() string {
+func (ees EventExtrinsicSuccess) EventName() string {
 	return "ExtrinsicSuccess"
 }
 
@@ -32,19 +32,19 @@ type EventExtrinsicFailed struct {
 	DispatchInfo  meta.DispatchInfo
 }
 
-func (this EventExtrinsicFailed) PalletIndex() uint8 {
+func (eef EventExtrinsicFailed) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventExtrinsicFailed) PalletName() string {
+func (eef EventExtrinsicFailed) PalletName() string {
 	return PalletName
 }
 
-func (this EventExtrinsicFailed) EventIndex() uint8 {
+func (eef EventExtrinsicFailed) EventIndex() uint8 {
 	return 1
 }
 
-func (this EventExtrinsicFailed) EventName() string {
+func (eef EventExtrinsicFailed) EventName() string {
 	return "ExtrinsicFailed"
 }
 
@@ -53,19 +53,19 @@ type EventNewAccount struct {
 	Account primitives.AccountId
 }
 
-func (this EventNewAccount) PalletIndex() uint8 {
+func (ena EventNewAccount) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventNewAccount) PalletName() string {
+func (ena EventNewAccount) PalletName() string {
 	return PalletName
 }
 
-func (this EventNewAccount) EventIndex() uint8 {
+func (ena EventNewAccount) EventIndex() uint8 {
 	return 3
 }
 
-func (this EventNewAccount) EventName() string {
+func (ena EventNewAccount) EventName() string {
 	return "NewAccount"
 }
 
@@ -74,19 +74,19 @@ type EventKilledAccount struct {
 	Account primitives.AccountId
 }
 
-func (this EventKilledAccount) PalletIndex() uint8 {
+func (eka EventKilledAccount) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventKilledAccount) PalletName() string {
+func (eka EventKilledAccount) PalletName() string {
 	return PalletName
 }
 
-func (this EventKilledAccount) EventIndex() uint8 {
+func (eka EventKilledAccount) EventIndex() uint8 {
 	return 4
 }
 
-func (this EventKilledAccount) EventName() string {
+func (eka EventKilledAccount) EventName() string {
 	return "KilledAccount"
 }
 
@@ -96,18 +96,18 @@ type EventRemarked struct {
 	Hash   primitives.H256
 }
 
-func (this EventRemarked) PalletIndex() uint8 {
+func (er EventRemarked) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventRemarked) PalletName() string {
+func (er EventRemarked) PalletName() string {
 	return PalletName
 }
 
-func (this EventRemarked) EventIndex() uint8 {
+func (er EventRemarked) EventIndex() uint8 {
 	return 5
 }
 
-func (this EventRemarked) EventName() string {
+func (er EventRemarked) EventName() string {
 	return "Remarked"
 }

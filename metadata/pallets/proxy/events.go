@@ -10,19 +10,19 @@ type EventProxyExecuted struct {
 	Result metadata.DispatchResult
 }
 
-func (this EventProxyExecuted) PalletIndex() uint8 {
+func (epe EventProxyExecuted) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventProxyExecuted) PalletName() string {
+func (epe EventProxyExecuted) PalletName() string {
 	return PalletName
 }
 
-func (this EventProxyExecuted) EventIndex() uint8 {
+func (epe EventProxyExecuted) EventIndex() uint8 {
 	return 0
 }
 
-func (this EventProxyExecuted) EventName() string {
+func (epe EventProxyExecuted) EventName() string {
 	return "ProxyExecuted"
 }
 
@@ -35,19 +35,19 @@ type EventPureCreated struct {
 	DisambiguationIndex uint16
 }
 
-func (this EventPureCreated) PalletIndex() uint8 {
+func (epc EventPureCreated) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventPureCreated) PalletName() string {
+func (epc EventPureCreated) PalletName() string {
 	return PalletName
 }
 
-func (this EventPureCreated) EventIndex() uint8 {
+func (epc EventPureCreated) EventIndex() uint8 {
 	return 1
 }
 
-func (this EventPureCreated) EventName() string {
+func (epc EventPureCreated) EventName() string {
 	return "PureCreated"
 }
 
@@ -58,19 +58,19 @@ type EventAnnounced struct {
 	CallHash primitives.H256
 }
 
-func (this EventAnnounced) PalletIndex() uint8 {
+func (ea EventAnnounced) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventAnnounced) PalletName() string {
+func (ea EventAnnounced) PalletName() string {
 	return PalletName
 }
 
-func (this EventAnnounced) EventIndex() uint8 {
+func (ea EventAnnounced) EventIndex() uint8 {
 	return 2
 }
 
-func (this EventAnnounced) EventName() string {
+func (ea EventAnnounced) EventName() string {
 	return "Announced"
 }
 
@@ -82,19 +82,19 @@ type EventProxyAdded struct {
 	Delay     uint32
 }
 
-func (this EventProxyAdded) PalletIndex() uint8 {
+func (epa EventProxyAdded) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventProxyAdded) PalletName() string {
+func (epa EventProxyAdded) PalletName() string {
 	return PalletName
 }
 
-func (this EventProxyAdded) EventIndex() uint8 {
+func (epa EventProxyAdded) EventIndex() uint8 {
 	return 3
 }
 
-func (this EventProxyAdded) EventName() string {
+func (epa EventProxyAdded) EventName() string {
 	return "ProxyAdded"
 }
 
@@ -106,18 +106,18 @@ type EventProxyRemoved struct {
 	Delay     uint32
 }
 
-func (this EventProxyRemoved) PalletIndex() uint8 {
+func (epr EventProxyRemoved) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventProxyRemoved) PalletName() string {
+func (epr EventProxyRemoved) PalletName() string {
 	return PalletName
 }
 
-func (this EventProxyRemoved) EventIndex() uint8 {
+func (epr EventProxyRemoved) EventIndex() uint8 {
 	return 4
 }
 
-func (this EventProxyRemoved) EventName() string {
+func (epr EventProxyRemoved) EventName() string {
 	return "ProxyRemoved"
 }

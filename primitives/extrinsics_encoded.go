@@ -10,24 +10,24 @@ type EncodedExtrinsic struct {
 	Value string
 }
 
-func (this *EncodedExtrinsic) Encode() string {
-	return this.Value
+func (e *EncodedExtrinsic) Encode() string {
+	return e.Value
 }
 
-func (this *EncodedExtrinsic) ToHex() string {
-	return this.Value
+func (e *EncodedExtrinsic) ToHex() string {
+	return e.Value
 }
 
-func (this *EncodedExtrinsic) ToHexWith0x() string {
-	return "0x" + this.ToHex()
+func (e *EncodedExtrinsic) ToHexWith0x() string {
+	return "0x" + e.ToHex()
 }
 
-func (this *EncodedExtrinsic) HexToBytes() []byte {
-	return utiles.HexToBytes(this.Value)
+func (e *EncodedExtrinsic) HexToBytes() []byte {
+	return utiles.HexToBytes(e.Value)
 }
 
-func (this *EncodedExtrinsic) Decode(txIndex uint32) (DecodedExtrinsic, error) {
-	return NewDecodedExtrinsic(*this, txIndex)
+func (e *EncodedExtrinsic) Decode(txIndex uint32) (DecodedExtrinsic, error) {
+	return NewDecodedExtrinsic(*e, txIndex)
 }
 
 func NewEncodedExtrinsic(payloadExtra *AlreadyEncoded, payloadCall *AlreadyEncoded, address MultiAddress, signature MultiSignature) EncodedExtrinsic {

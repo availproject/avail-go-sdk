@@ -11,19 +11,19 @@ type EventEndowed struct {
 	FreeBalance metadata.Balance
 }
 
-func (this EventEndowed) PalletIndex() uint8 {
+func (ee EventEndowed) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventEndowed) PalletName() string {
+func (ee EventEndowed) PalletName() string {
 	return PalletName
 }
 
-func (this EventEndowed) EventIndex() uint8 {
+func (ee EventEndowed) EventIndex() uint8 {
 	return 0
 }
 
-func (this EventEndowed) EventName() string {
+func (ee EventEndowed) EventName() string {
 	return "Endowed"
 }
 
@@ -33,19 +33,19 @@ type EventDustLost struct {
 	Amount  metadata.Balance
 }
 
-func (this EventDustLost) PalletIndex() uint8 {
+func (edl EventDustLost) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventDustLost) PalletName() string {
+func (edl EventDustLost) PalletName() string {
 	return PalletName
 }
 
-func (this EventDustLost) EventIndex() uint8 {
+func (edl EventDustLost) EventIndex() uint8 {
 	return 1
 }
 
-func (this EventDustLost) EventName() string {
+func (edl EventDustLost) EventName() string {
 	return "DustLost"
 }
 
@@ -56,19 +56,19 @@ type EventTransfer struct {
 	Amount metadata.Balance
 }
 
-func (this EventTransfer) PalletIndex() uint8 {
+func (et EventTransfer) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventTransfer) PalletName() string {
+func (et EventTransfer) PalletName() string {
 	return PalletName
 }
 
-func (this EventTransfer) EventIndex() uint8 {
+func (et EventTransfer) EventIndex() uint8 {
 	return 2
 }
 
-func (this EventTransfer) EventName() string {
+func (et EventTransfer) EventName() string {
 	return "Transfer"
 }
 
@@ -78,19 +78,19 @@ type EventDeposit struct {
 	Amount metadata.Balance
 }
 
-func (this EventDeposit) PalletIndex() uint8 {
+func (ed EventDeposit) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventDeposit) PalletName() string {
+func (ed EventDeposit) PalletName() string {
 	return PalletName
 }
 
-func (this EventDeposit) EventIndex() uint8 {
+func (ed EventDeposit) EventIndex() uint8 {
 	return 7
 }
 
-func (this EventDeposit) EventName() string {
+func (ed EventDeposit) EventName() string {
 	return "Deposit"
 }
 
@@ -100,18 +100,18 @@ type EventWithdraw struct {
 	Amount metadata.Balance
 }
 
-func (this EventWithdraw) PalletIndex() uint8 {
+func (ew EventWithdraw) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventWithdraw) PalletName() string {
+func (ew EventWithdraw) PalletName() string {
 	return PalletName
 }
 
-func (this EventWithdraw) EventIndex() uint8 {
+func (ew EventWithdraw) EventIndex() uint8 {
 	return 8
 }
 
-func (this EventWithdraw) EventName() string {
+func (ew EventWithdraw) EventName() string {
 	return "Withdraw"
 }

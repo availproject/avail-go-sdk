@@ -22,14 +22,14 @@ type DataAvailabilityTx struct {
 	client *Client
 }
 
-func (this *DataAvailabilityTx) SubmitData(data []byte) Transaction {
+func (dat *DataAvailabilityTx) SubmitData(data []byte) Transaction {
 	call := daPallet.CallSubmitData{Data: data}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(dat.client, pallets.ToPayload(call))
 }
 
-func (this *DataAvailabilityTx) CreateApplicationKey(key []byte) Transaction {
+func (dat *DataAvailabilityTx) CreateApplicationKey(key []byte) Transaction {
 	call := daPallet.CallCreateApplicationKey{Key: key}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(dat.client, pallets.ToPayload(call))
 }
 
 type UtilityTx struct {
@@ -39,27 +39,27 @@ type UtilityTx struct {
 // Send a batch of dispatch calls.
 //
 // May be called from any origin except `None`.
-func (this *UtilityTx) Batch(calls []prim.Call) Transaction {
+func (ut *UtilityTx) Batch(calls []prim.Call) Transaction {
 	call := utPallet.CallBatch{Calls: calls}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(ut.client, pallets.ToPayload(call))
 }
 
 // Send a batch of dispatch calls and atomically execute them.
 // The whole transaction will rollback and fail if any of the calls failed.
 //
 // May be called from any origin except `None`.
-func (this *UtilityTx) BatchAll(calls []prim.Call) Transaction {
+func (ut *UtilityTx) BatchAll(calls []prim.Call) Transaction {
 	call := utPallet.CallBatchAll{Calls: calls}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(ut.client, pallets.ToPayload(call))
 }
 
 // Send a batch of dispatch calls.
 // Unlike `batch`, it allows errors and won't interrupt.
 //
 // May be called from any origin except `None`.
-func (this *UtilityTx) ForceBatch(calls []prim.Call) Transaction {
+func (ut *UtilityTx) ForceBatch(calls []prim.Call) Transaction {
 	call := utPallet.CallForceBatch{Calls: calls}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(ut.client, pallets.ToPayload(call))
 }
 
 // Send a call through an indexed pseudonym of the sender.
@@ -71,9 +71,9 @@ func (this *UtilityTx) ForceBatch(calls []prim.Call) Transaction {
 // because you expect `proxy` to have been used prior in the call stack and you do not want
 // the call restrictions to apply to any sub-accounts), then use `as_multi_threshold_1`
 // in the Multisig pallet instead.
-func (this *UtilityTx) AsDerivate(index uint16, call prim.Call) Transaction {
+func (ut *UtilityTx) AsDerivate(index uint16, call prim.Call) Transaction {
 	c := utPallet.CallAsDerivate{Index: index, Call: call}
-	return NewTransaction(this.client, pallets.ToPayload(c))
+	return NewTransaction(ut.client, pallets.ToPayload(c))
 }
 
 type BalancesTx struct {
@@ -87,16 +87,16 @@ type BalancesTx struct {
 // of the transfer, the account will be reaped.
 //
 // The dispatch origin for this call must be `Signed` by the transactor.
-func (this *BalancesTx) TransferAllowDeath(dest prim.MultiAddress, amount metadata.Balance) Transaction {
+func (bt *BalancesTx) TransferAllowDeath(dest prim.MultiAddress, amount metadata.Balance) Transaction {
 	call := baPallet.CallTransferAlowDeath{Dest: dest, Value: amount.Value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(bt.client, pallets.ToPayload(call))
 }
 
 // Exactly as `TransferAlowDeath`, except the origin must be root and the source account
 // may be specified
-func (this *BalancesTx) ForceTransfer(dest prim.MultiAddress, amount metadata.Balance) Transaction {
+func (bt *BalancesTx) ForceTransfer(dest prim.MultiAddress, amount metadata.Balance) Transaction {
 	call := baPallet.CallForceTransfer{Dest: dest, Value: amount}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(bt.client, pallets.ToPayload(call))
 }
 
 // Transfer the entire transferable balance from the caller account.
@@ -104,16 +104,16 @@ func (this *BalancesTx) ForceTransfer(dest prim.MultiAddress, amount metadata.Ba
 // NOTE: This function only attempts to transfer _transferable_ balances. This means that
 // any locked, reserved, or existential deposits (when `keep_alive` is `true`), will not be
 // transferred by this function.
-func (this *BalancesTx) TransferAll(dest prim.MultiAddress, keepAlive bool) Transaction {
+func (bt *BalancesTx) TransferAll(dest prim.MultiAddress, keepAlive bool) Transaction {
 	call := baPallet.CallTransferAll{Dest: dest, KeepAlive: keepAlive}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(bt.client, pallets.ToPayload(call))
 }
 
 // Same as the `TransferAlowDeath` call, but with a check that the transfer will not
 // kill the origin account.
-func (this *BalancesTx) TransferKeepAlive(dest prim.MultiAddress, amount metadata.Balance) Transaction {
+func (bt *BalancesTx) TransferKeepAlive(dest prim.MultiAddress, amount metadata.Balance) Transaction {
 	call := baPallet.CallTransferKeepAlive{Dest: dest, Value: amount}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(bt.client, pallets.ToPayload(call))
 }
 
 type StakingTx struct {
@@ -122,65 +122,65 @@ type StakingTx struct {
 
 // Take the origin account as a stash and lock up `value` of its balance. `controller` will
 // be the account that controls it.
-func (this *StakingTx) Bond(value metadata.Balance, payee metadata.RewardDestination) Transaction {
+func (st *StakingTx) Bond(value metadata.Balance, payee metadata.RewardDestination) Transaction {
 	call := stPallet.CallBond{Value: value, Payee: payee}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Add some extra amount that have appeared in the stash `free_balance` into the balance up
 // for staking.
-func (this *StakingTx) BondExtra(maxAdditional metadata.Balance) Transaction {
+func (st *StakingTx) BondExtra(maxAdditional metadata.Balance) Transaction {
 	call := stPallet.CallBondExtra{MaxAdditional: maxAdditional}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Schedule a portion of the stash to be unlocked ready for transfer out after the bond
 // period ends. If this leaves an amount actively bonded less than
 // T::Currency::minimum_balance(), then it is increased to the full amount.
-func (this *StakingTx) Unbond(value metadata.Balance) Transaction {
+func (st *StakingTx) Unbond(value metadata.Balance) Transaction {
 	call := stPallet.CallUnbond{Value: value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Remove any unlocked chunks from the `unlocking` queue from our management.
 //
 // This essentially frees up that balance to be used by the stash account to do whatever
 // it wants.
-func (this *StakingTx) WithdrawUnbonded(numSlashingSpans uint32) Transaction {
+func (st *StakingTx) WithdrawUnbonded(numSlashingSpans uint32) Transaction {
 	call := stPallet.CallWithdrawUnbonded{NumSlashingSpans: numSlashingSpans}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Declare the desire to validate for the origin controller.
 //
 // Effects will be felt at the beginning of the next era.
-func (this *StakingTx) Validate(prefs metadata.ValidatorPrefs) Transaction {
+func (st *StakingTx) Validate(prefs metadata.ValidatorPrefs) Transaction {
 	call := stPallet.CallValidate{Prefs: prefs}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Declare the desire to nominate `targets` for the origin controller.
 //
 // Effects will be felt at the beginning of the next era.
-func (this *StakingTx) Nominate(targets []prim.MultiAddress) Transaction {
+func (st *StakingTx) Nominate(targets []prim.MultiAddress) Transaction {
 	call := stPallet.CallNominate{Targets: targets}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Declare no desire to either validate or nominate.
 //
 // Effects will be felt at the beginning of the next era.
-func (this *StakingTx) Chill() Transaction {
+func (st *StakingTx) Chill() Transaction {
 	call := stPallet.CallChill{}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // (Re-)set the payment target for a controller.
 //
 // Effects will be felt instantly (as soon as this function is completed successfully).
-func (this *StakingTx) SetPayee(payee metadata.RewardDestination) Transaction {
+func (st *StakingTx) SetPayee(payee metadata.RewardDestination) Transaction {
 	call := stPallet.CallSetPayee{Payee: payee}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // (Re-)sets the controller of a stash to the stash itself. This function previously
@@ -189,24 +189,24 @@ func (this *StakingTx) SetPayee(payee metadata.RewardDestination) Transaction {
 // to the stash, if it is not already.
 //
 // Effects will be felt instantly (as soon as this function is completed successfully).
-func (this *StakingTx) SetController() Transaction {
+func (st *StakingTx) SetController() Transaction {
 	call := stPallet.CallSetController{}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Pay out next page of the stakers behind a validator for the given era.
 //
 // - `validator_stash` is the stash account of the validator.
 // - `era` may be any era between `[current_era - history_depth; current_era]`.
-func (this *StakingTx) PayoutStakers(validatorStash prim.AccountId, era uint32) Transaction {
+func (st *StakingTx) PayoutStakers(validatorStash prim.AccountId, era uint32) Transaction {
 	call := stPallet.CallPayoutStakers{ValidatorStash: validatorStash, Era: era}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Rebond a portion of the stash scheduled to be unlocked.
-func (this *StakingTx) Rebond(value uint128.Uint128) Transaction {
+func (st *StakingTx) Rebond(value uint128.Uint128) Transaction {
 	call := stPallet.CallRebond{Value: value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Remove all data structures concerning a staker/stash once it is at a state where it can
@@ -221,17 +221,17 @@ func (this *StakingTx) Rebond(value uint128.Uint128) Transaction {
 // It can be called by anyone, as long as `stash` meets the above requirements.
 //
 // Refunds the transaction fees upon successful execution.
-func (this *StakingTx) ReapStash(stash prim.AccountId, numSlashingSpans uint32) Transaction {
+func (st *StakingTx) ReapStash(stash prim.AccountId, numSlashingSpans uint32) Transaction {
 	call := stPallet.CallReapStash{Stash: stash, NumSlashingSpans: numSlashingSpans}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Remove the given nominations from the calling validator.
 //
 // Effects will be felt at the beginning of the next era.
-func (this *StakingTx) Kick(who []prim.MultiAddress) Transaction {
+func (st *StakingTx) Kick(who []prim.MultiAddress) Transaction {
 	call := stPallet.CallKick{Who: who}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Declare a `controller` to stop participating as either a validator or nominator.
@@ -260,17 +260,17 @@ func (this *StakingTx) Kick(who []prim.MultiAddress) Transaction {
 //
 // This can be helpful if bond requirements are updated, and we need to remove old users
 // who do not satisfy these requirements.
-func (this *StakingTx) ChillOther(stash prim.AccountId) Transaction {
+func (st *StakingTx) ChillOther(stash prim.AccountId) Transaction {
 	call := stPallet.CallChillOther{Stash: stash}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Force a validator to have at least the minimum commission. This will not affect a
 // validator who already has a commission greater than or equal to the minimum. Any account
-// can call this.
-func (this *StakingTx) ForceApplyMinCommission(validatorStash prim.AccountId) Transaction {
+// can call s.
+func (st *StakingTx) ForceApplyMinCommission(validatorStash prim.AccountId) Transaction {
 	call := stPallet.CallForceApplyMinCommission{ValidatorStash: validatorStash}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Pay out a page of the stakers behind a validator for the given era and page.
@@ -290,9 +290,9 @@ func (this *StakingTx) ForceApplyMinCommission(validatorStash prim.AccountId) Tr
 // backing a validator to receive the reward. The nominators are not sorted across pages
 // and so it should not be assumed the highest staker would be on the topmost page and vice
 // versa. If rewards are not claimed in [`Config::HistoryDepth`] eras, they are lost.
-func (this *StakingTx) PayoutStakersByPage(validatorStash prim.AccountId, era uint32, page uint32) Transaction {
+func (st *StakingTx) PayoutStakersByPage(validatorStash prim.AccountId, era uint32, page uint32) Transaction {
 	call := stPallet.CallPayoutStakersByPage{ValidatorStash: validatorStash, Era: era, Page: page}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 // Migrates an account's `RewardDestination::Controller` to
@@ -301,9 +301,9 @@ func (this *StakingTx) PayoutStakersByPage(validatorStash prim.AccountId, era ui
 // Effects will be felt instantly (as soon as this function is completed successfully).
 //
 // This will waive the transaction fee if the `payee` is successfully migrated.
-func (this *StakingTx) UpdatePayee(controller prim.AccountId) Transaction {
+func (st *StakingTx) UpdatePayee(controller prim.AccountId) Transaction {
 	call := stPallet.CallUpdatePayee{Controller: controller}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(st.client, pallets.ToPayload(call))
 }
 
 type NominationPoolsTx struct {
@@ -320,9 +320,9 @@ type NominationPoolsTx struct {
 //   - This call will *not* dust the member account, so the member must have at least
 //     `existential deposit + amount` in their account.
 //   - Only a pool with [`PoolState::Open`] can be joined
-func (this *NominationPoolsTx) Join(amount metadata.Balance, poolId uint32) Transaction {
+func (npt *NominationPoolsTx) Join(amount metadata.Balance, poolId uint32) Transaction {
 	call := npPallet.CallJoin{Amount: amount, PoolId: poolId}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Bond `extra` more funds from `origin` into the pool to which they already belong.
@@ -332,9 +332,9 @@ func (this *NominationPoolsTx) Join(amount metadata.Balance, poolId uint32) Tran
 //
 // Bonding extra funds implies an automatic payout of all pending rewards as well.
 // See `bond_extra_other` to bond pending rewards of `other` members.
-func (this *NominationPoolsTx) BondExtra(extra metadata.PoolBondExtra) Transaction {
+func (npt *NominationPoolsTx) BondExtra(extra metadata.PoolBondExtra) Transaction {
 	call := npPallet.CallBondExtra{Extra: extra}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // A bonded member can use this to claim their payout based on the rewards that the pool
@@ -345,9 +345,9 @@ func (this *NominationPoolsTx) BondExtra(extra metadata.PoolBondExtra) Transacti
 // members in the pools stake. Rewards do not "expire".
 //
 // See `claim_payout_other` to caim rewards on bahalf of some `other` pool member.
-func (this *NominationPoolsTx) ClaimPayout() Transaction {
+func (npt *NominationPoolsTx) ClaimPayout() Transaction {
 	call := npPallet.CallClaimPayout{}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Unbond up to `unbonding_points` of the `member_account`'s funds from the pool. It
@@ -381,9 +381,9 @@ func (this *NominationPoolsTx) ClaimPayout() Transaction {
 // are available). However, it may not be possible to release the current unlocking chunks,
 // in which case, the result of this call will likely be the `NoMoreChunks` error from the
 // staking system.
-func (this *NominationPoolsTx) Unbond(memberAccount prim.MultiAddress, unbondingPoints uint128.Uint128) Transaction {
+func (npt *NominationPoolsTx) Unbond(memberAccount prim.MultiAddress, unbondingPoints uint128.Uint128) Transaction {
 	call := npPallet.CallUnbond{MemberAccount: memberAccount, UnbondingPoints: unbondingPoints}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Call `withdraw_unbonded` for the pools account. This call can be made by any account.
@@ -392,9 +392,9 @@ func (this *NominationPoolsTx) Unbond(memberAccount prim.MultiAddress, unbonding
 // can be cleared by withdrawing. In the case there are too many unlocking chunks, the user
 // would probably see an error like `NoMoreChunks` emitted from the staking system when
 // they attempt to unbond.
-func (this *NominationPoolsTx) PoolWithdrawUnbonded(poolId uint32, numSlashingSpans uint32) Transaction {
+func (npt *NominationPoolsTx) PoolWithdrawUnbonded(poolId uint32, numSlashingSpans uint32) Transaction {
 	call := npPallet.CallPoolWithdrawUnbonded{PoolId: poolId, NumSlashingSpans: numSlashingSpans}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Withdraw unbonded funds from `member_account`. If no bonded funds can be unbonded, an
@@ -416,9 +416,9 @@ func (this *NominationPoolsTx) PoolWithdrawUnbonded(poolId uint32, numSlashingSp
 // # Note
 //
 // If the target is the depositor, the pool will be destroyed.
-func (this *NominationPoolsTx) WithdrawUnbonded(memberAccount prim.MultiAddress, numSlashingSpans uint32) Transaction {
+func (npt *NominationPoolsTx) WithdrawUnbonded(memberAccount prim.MultiAddress, numSlashingSpans uint32) Transaction {
 	call := npPallet.CallWithdrawUnbonded{MemberAccount: memberAccount, NumSlashingSpans: numSlashingSpans}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Create a new delegation pool.
@@ -438,9 +438,9 @@ func (this *NominationPoolsTx) WithdrawUnbonded(memberAccount prim.MultiAddress,
 //
 // In addition to `amount`, the caller will transfer the existential deposit; so the caller
 // needs at have at least `amount + existential_deposit` transferable.
-func (this *NominationPoolsTx) Create(amount metadata.Balance, root prim.MultiAddress, nominator prim.MultiAddress, bouncer prim.MultiAddress) Transaction {
+func (npt *NominationPoolsTx) Create(amount metadata.Balance, root prim.MultiAddress, nominator prim.MultiAddress, bouncer prim.MultiAddress) Transaction {
 	call := npPallet.CallCreate{Amount: amount, Root: root, Nominator: nominator, Bouncer: bouncer}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Create a new delegation pool with a previously used pool id
@@ -449,9 +449,9 @@ func (this *NominationPoolsTx) Create(amount metadata.Balance, root prim.MultiAd
 //
 // same as `create` with the inclusion of
 // * `pool_id` - `A valid PoolId.
-func (this *NominationPoolsTx) CreateWithPoolId(amount metadata.Balance, root prim.MultiAddress, nominator prim.MultiAddress, bouncer prim.MultiAddress, poolId uint32) Transaction {
+func (npt *NominationPoolsTx) CreateWithPoolId(amount metadata.Balance, root prim.MultiAddress, nominator prim.MultiAddress, bouncer prim.MultiAddress, poolId uint32) Transaction {
 	call := npPallet.CallCreateWithPoolId{Amount: amount, Root: root, Nominator: nominator, Bouncer: bouncer, PoolId: poolId}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Nominate on behalf of the pool.
@@ -461,9 +461,9 @@ func (this *NominationPoolsTx) CreateWithPoolId(amount metadata.Balance, root pr
 //
 // This directly forward the call to the staking pallet, on behalf of the pool bonded
 // account.
-func (this *NominationPoolsTx) Nominate(poolId uint32, validators []prim.AccountId) Transaction {
+func (npt *NominationPoolsTx) Nominate(poolId uint32, validators []prim.AccountId) Transaction {
 	call := npPallet.CallNominate{PoolId: poolId, Validators: validators}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Set a new state for the pool.
@@ -476,18 +476,18 @@ func (this *NominationPoolsTx) Nominate(poolId uint32, validators []prim.Account
 //  1. signed by the bouncer, or the root role of the pool,
 //  2. if the pool conditions to be open are NOT met (as described by `ok_to_be_open`), and
 //     then the state of the pool can be permissionlessly changed to `Destroying`.
-func (this *NominationPoolsTx) SetState(poolId uint32, state metadata.PoolState) Transaction {
+func (npt *NominationPoolsTx) SetState(poolId uint32, state metadata.PoolState) Transaction {
 	call := npPallet.CallSetState{PoolId: poolId, State: state}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Set a new metadata for the pool.
 //
 // The dispatch origin of this call must be signed by the bouncer, or the root role of the
 // pool.
-func (this *NominationPoolsTx) SetMetadata(poolId uint32, metadata []byte) Transaction {
+func (npt *NominationPoolsTx) SetMetadata(poolId uint32, metadata []byte) Transaction {
 	call := npPallet.CallSetMetadata{PoolId: poolId, Metadata: metadata}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Update the roles of the pool.
@@ -497,9 +497,9 @@ func (this *NominationPoolsTx) SetMetadata(poolId uint32, metadata []byte) Trans
 //
 // It emits an event, notifying UIs of the role change. This event is quite relevant to
 // most pool members and they should be informed of changes to pool roles.
-func (this *NominationPoolsTx) UpdateRoles(poolId uint32, newRoot metadata.PoolRoleConfig, newNominator metadata.PoolRoleConfig, newBouncer metadata.PoolRoleConfig) Transaction {
+func (npt *NominationPoolsTx) UpdateRoles(poolId uint32, newRoot metadata.PoolRoleConfig, newNominator metadata.PoolRoleConfig, newBouncer metadata.PoolRoleConfig) Transaction {
 	call := npPallet.CallUpdateRoles{PoolId: poolId, NewRoot: newRoot, NewNominator: newNominator, NewBouncer: newBouncer}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Chill on behalf of the pool.
@@ -509,9 +509,9 @@ func (this *NominationPoolsTx) UpdateRoles(poolId uint32, newRoot metadata.PoolR
 //
 // This directly forward the call to the staking pallet, on behalf of the pool bonded
 // account.
-func (this *NominationPoolsTx) Chill(poolId uint32) Transaction {
+func (npt *NominationPoolsTx) Chill(poolId uint32) Transaction {
 	call := npPallet.CallChill{PoolId: poolId}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // `origin` bonds funds from `extra` for some pool member `member` into their respective
@@ -523,9 +523,9 @@ func (this *NominationPoolsTx) Chill(poolId uint32) Transaction {
 // In the case of `origin != other`, `origin` can only bond extra pending rewards of
 // `other` members assuming set_claim_permission for the given member is
 // `PermissionlessAll` or `PermissionlessCompound`.
-func (this *NominationPoolsTx) BondExtraOther(member prim.MultiAddress, extra metadata.PoolBondExtra) Transaction {
+func (npt *NominationPoolsTx) BondExtraOther(member prim.MultiAddress, extra metadata.PoolBondExtra) Transaction {
 	call := npPallet.CallBondExtraOther{Member: member, Extra: extra}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Allows a pool member to set a claim permission to allow or disallow permissionless
@@ -540,18 +540,18 @@ func (this *NominationPoolsTx) BondExtraOther(member prim.MultiAddress, extra me
 //
 // * `origin` - Member of a pool.
 // * `actor` - Account to claim reward. // improve this
-func (this *NominationPoolsTx) SetClaimPermission(permission metadata.PoolClaimPermission) Transaction {
+func (npt *NominationPoolsTx) SetClaimPermission(permission metadata.PoolClaimPermission) Transaction {
 	call := npPallet.CallSetClaimPermission{Permission: permission}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // `origin` can claim payouts on some pool member `other`'s behalf.
 //
 // Pool member `other` must have a `PermissionlessAll` or `PermissionlessWithdraw` in order
 // for this call to be successful.
-func (this *NominationPoolsTx) ClaimPayoutOther(other prim.AccountId) Transaction {
+func (npt *NominationPoolsTx) ClaimPayoutOther(other prim.AccountId) Transaction {
 	call := npPallet.CallClaimPayoutOther{Other: other}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Set the commission of a pool.
@@ -560,9 +560,9 @@ func (this *NominationPoolsTx) ClaimPayoutOther(other prim.AccountId) Transactio
 // tuple. Where a `current` of `None` is provided, any current commission will be removed.
 //
 // - If a `None` is supplied to `new_commission`, existing commission will be removed.
-func (this *NominationPoolsTx) SetCommission(poolId uint32, newCommission prim.Option[metadata.Tuple2[metadata.Perbill, prim.AccountId]]) Transaction {
+func (npt *NominationPoolsTx) SetCommission(poolId uint32, newCommission prim.Option[metadata.Tuple2[metadata.Perbill, prim.AccountId]]) Transaction {
 	call := npPallet.CallSetCommission{PoolId: poolId, NewCommission: newCommission}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Set the maximum commission of a pool.
@@ -570,18 +570,18 @@ func (this *NominationPoolsTx) SetCommission(poolId uint32, newCommission prim.O
 //   - Initial max can be set to any `Perbill`, and only smaller values thereafter.
 //   - Current commission will be lowered in the event it is higher than a new max
 //     commission.
-func (this *NominationPoolsTx) SetCommissionMax(poolId uint32, maxCommission metadata.Perbill) Transaction {
+func (npt *NominationPoolsTx) SetCommissionMax(poolId uint32, maxCommission metadata.Perbill) Transaction {
 	call := npPallet.CallSetCommissionMax{PoolId: poolId, MaxCommission: maxCommission}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Set the commission change rate for a pool.
 //
 // Initial change rate is not bounded, whereas subsequent updates can only be more
 // restrictive than the current.
-func (this *NominationPoolsTx) SetCommissionChangeRate(poolId uint32, changeRate metadata.PoolCommissionChangeRate) Transaction {
+func (npt *NominationPoolsTx) SetCommissionChangeRate(poolId uint32, changeRate metadata.PoolCommissionChangeRate) Transaction {
 	call := npPallet.CallSetCommissionChangeRate{PoolId: poolId, ChangeRate: changeRate}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Claim pending commission.
@@ -589,9 +589,9 @@ func (this *NominationPoolsTx) SetCommissionChangeRate(poolId uint32, changeRate
 // The dispatch origin of this call must be signed by the `root` role of the pool. Pending
 // commission is paid out and added to total claimed commission`. Total pending commission
 // is reset to zero. the current.
-func (this *NominationPoolsTx) ClaimCommission(poolId uint32) Transaction {
+func (npt *NominationPoolsTx) ClaimCommission(poolId uint32) Transaction {
 	call := npPallet.CallClaimCommission{PoolId: poolId}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Top up the deficit or withdraw the excess ED from the pool.
@@ -601,18 +601,18 @@ func (this *NominationPoolsTx) ClaimCommission(poolId uint32) Transaction {
 // insufficient to cover the ED deficit of the pool or vice-versa where there is excess
 // deposit to the pool. This call allows anyone to adjust the ED deposit of the
 // pool by either topping up the deficit or claiming the excess.
-func (this *NominationPoolsTx) AdjustPoolDeposit(poolId uint32) Transaction {
+func (npt *NominationPoolsTx) AdjustPoolDeposit(poolId uint32) Transaction {
 	call := npPallet.CallAdjustPoolDeposit{PoolId: poolId}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 // Set or remove a pool's commission claim permission.
 //
 // Determines who can claim the pool's pending commission. Only the `Root` role of the pool
 // is able to conifigure commission claim permissions.
-func (this *NominationPoolsTx) SetCommissionClaimPermission(poolId uint32, permission prim.Option[metadata.CommissionClaimPermission]) Transaction {
+func (npt *NominationPoolsTx) SetCommissionClaimPermission(poolId uint32, permission prim.Option[metadata.CommissionClaimPermission]) Transaction {
 	call := npPallet.CallSetCommissionClaimPermission{PoolId: poolId, Permission: permission}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(npt.client, pallets.ToPayload(call))
 }
 
 type SystemTx struct {
@@ -622,109 +622,109 @@ type SystemTx struct {
 // Make some on-chain remark.
 //
 // Can be executed by every `origin`
-func (this *SystemTx) Remark(remark []byte) Transaction {
+func (syt *SystemTx) Remark(remark []byte) Transaction {
 	call := syPallet.CallRemark{Remark: remark}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(syt.client, pallets.ToPayload(call))
 }
 
 // Make some on-chain remark and emit event
-func (this *SystemTx) RemarkWithEvent(remark []byte) Transaction {
+func (syt *SystemTx) RemarkWithEvent(remark []byte) Transaction {
 	call := syPallet.CallRemarkWithEvent{Remark: remark}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(syt.client, pallets.ToPayload(call))
 }
 
 type VectorTx struct {
 	client *Client
 }
 
-func (this *VectorTx) FulfillCall(functionId prim.H256, input []byte, output []byte, proof []byte, slot uint64) Transaction {
+func (vt *VectorTx) FulfillCall(functionId prim.H256, input []byte, output []byte, proof []byte, slot uint64) Transaction {
 	call := vcPallet.CallFulfillCall{FunctionId: functionId, Input: input, Output: output, Proof: proof, Slot: slot}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) Execute(slot uint64, addrMessage metadata.VectorMessage, accountProof []byte, storageProof []byte) Transaction {
+func (vt *VectorTx) Execute(slot uint64, addrMessage metadata.VectorMessage, accountProof []byte, storageProof []byte) Transaction {
 	call := vcPallet.CallExecute{Slot: slot, AddrMessage: addrMessage, AccountProof: accountProof, StorageProof: storageProof}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SourceChainFroze(sourceChainId uint32, frozen bool) Transaction {
+func (vt *VectorTx) SourceChainFroze(sourceChainId uint32, frozen bool) Transaction {
 	call := vcPallet.CallSourceChainFroze{SourceChainId: sourceChainId, Frozen: frozen}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SendMessage(message metadata.VectorMessage, To prim.H256, domain uint32) Transaction {
+func (vt *VectorTx) SendMessage(message metadata.VectorMessage, To prim.H256, domain uint32) Transaction {
 	call := vcPallet.CallSendMessage{Message: message, To: To, Domain: domain}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetPoseidonHash(period uint64, poseidonHash []byte) Transaction {
+func (vt *VectorTx) SetPoseidonHash(period uint64, poseidonHash []byte) Transaction {
 	call := vcPallet.CallSetPoseidonHash{Period: period, PoseidonHash: poseidonHash}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetBroadcaster(broadcasterDomain uint32, broadcaster prim.H256) Transaction {
+func (vt *VectorTx) SetBroadcaster(broadcasterDomain uint32, broadcaster prim.H256) Transaction {
 	call := vcPallet.CallSetBroadcaster{BroadcasterDomain: broadcasterDomain, Broadcaster: broadcaster}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetWhitelistedDomains(value []uint32) Transaction {
+func (vt *VectorTx) SetWhitelistedDomains(value []uint32) Transaction {
 	call := vcPallet.CallSetWhitelistedDomains{Value: value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetConfiguration(value metadata.VectorConfiguration) Transaction {
+func (vt *VectorTx) SetConfiguration(value metadata.VectorConfiguration) Transaction {
 	call := vcPallet.CallSetConfiguration{Value: value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetFunctionsIds(value prim.Option[metadata.Tuple2[prim.H256, prim.H256]]) Transaction {
+func (vt *VectorTx) SetFunctionsIds(value prim.Option[metadata.Tuple2[prim.H256, prim.H256]]) Transaction {
 	call := vcPallet.CallSetFunctionsIds{Value: value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetStepVerificationKey(value prim.Option[[]byte]) Transaction {
+func (vt *VectorTx) SetStepVerificationKey(value prim.Option[[]byte]) Transaction {
 	call := vcPallet.CallSetStepVerificationKey{Value: value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetRotateVerificationKey(value prim.Option[[]byte]) Transaction {
+func (vt *VectorTx) SetRotateVerificationKey(value prim.Option[[]byte]) Transaction {
 	call := vcPallet.CallSetRotateVerificationKey{Value: value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) FailedSendMessageTxs(failedTxs []uint32) Transaction {
+func (vt *VectorTx) FailedSendMessageTxs(failedTxs []uint32) Transaction {
 	call := vcPallet.CallFailedSendMessageTxs{FailedTxs: failedTxs}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetUpdater(updater prim.H256) Transaction {
+func (vt *VectorTx) SetUpdater(updater prim.H256) Transaction {
 	call := vcPallet.CallSetUpdater{Updater: updater}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) Fulfill(proof []byte, publicValues []byte) Transaction {
+func (vt *VectorTx) Fulfill(proof []byte, publicValues []byte) Transaction {
 	call := vcPallet.CallFulfill{Proof: proof, PublicValues: publicValues}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetSp1VerificationKey(sp1Vk prim.H256) Transaction {
+func (vt *VectorTx) SetSp1VerificationKey(sp1Vk prim.H256) Transaction {
 	call := vcPallet.CallSetSp1VerificationKey{Sp1Vk: sp1Vk}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) SetSyncCommitteeHash(period uint64, Hash prim.H256) Transaction {
+func (vt *VectorTx) SetSyncCommitteeHash(period uint64, Hash prim.H256) Transaction {
 	call := vcPallet.CallSetSyncCommitteeHash{Period: period, Hash: Hash}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) EnableMock(value bool) Transaction {
+func (vt *VectorTx) EnableMock(value bool) Transaction {
 	call := vcPallet.CallEnableMock{Value: value}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
-func (this *VectorTx) MockFulfill(publicValues []byte) Transaction {
+func (vt *VectorTx) MockFulfill(publicValues []byte) Transaction {
 	call := vcPallet.CallMockFulfill{PublicValues: publicValues}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(vt.client, pallets.ToPayload(call))
 }
 
 type SudoTx struct {
@@ -732,9 +732,9 @@ type SudoTx struct {
 }
 
 // Authenticates the sudo key and dispatches a function call with `Root` origin.
-func (this *SudoTx) Sudo(call prim.Call) Transaction {
+func (sdt *SudoTx) Sudo(call prim.Call) Transaction {
 	c := sdPallet.CallSudo{Call: call}
-	return NewTransaction(this.client, pallets.ToPayload(c))
+	return NewTransaction(sdt.client, pallets.ToPayload(c))
 }
 
 // Authenticates the sudo key and dispatches a function call with `Root` origin.
@@ -742,18 +742,18 @@ func (this *SudoTx) Sudo(call prim.Call) Transaction {
 // Sudo user to specify the weight of the call.
 //
 // The dispatch origin for this call must be _Signed_.
-func (this *SudoTx) SudoUncheckedWeight(call prim.Call) Transaction {
+func (sdt *SudoTx) SudoUncheckedWeight(call prim.Call) Transaction {
 	c := sdPallet.CallSudoUncheckedWeight{Call: call}
-	return NewTransaction(this.client, pallets.ToPayload(c))
+	return NewTransaction(sdt.client, pallets.ToPayload(c))
 }
 
 // Authenticates the sudo key and dispatches a function call with `Signed` origin from
 // a given account.
 //
 // The dispatch origin for this call must be _Signed_.
-func (this *SudoTx) SudoAs(who prim.MultiAddress, call prim.Call) Transaction {
+func (sdt *SudoTx) SudoAs(who prim.MultiAddress, call prim.Call) Transaction {
 	c := sdPallet.CallSudoAs{Who: who, Call: call}
-	return NewTransaction(this.client, pallets.ToPayload(c))
+	return NewTransaction(sdt.client, pallets.ToPayload(c))
 }
 
 type SessionTx struct {
@@ -763,9 +763,9 @@ type SessionTx struct {
 // Sets the session key(s) of the function caller to `keys`.
 // Allows an account to set its session key prior to becoming a validator.
 // This doesn't take effect until the next session.
-func (this *SessionTx) SetKeys(keys metadata.SessionKeys, proof []byte) Transaction {
+func (set *SessionTx) SetKeys(keys metadata.SessionKeys, proof []byte) Transaction {
 	call := sePallet.CallSetKeys{Keys: keys, Proof: proof}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(set.client, pallets.ToPayload(call))
 }
 
 // Removes any session key(s) of the function caller.
@@ -776,9 +776,9 @@ func (this *SessionTx) SetKeys(keys metadata.SessionKeys, proof []byte) Transact
 // convertible to a validator ID using the chain's typical addressing system (this usually
 // means being a controller account) or directly convertible into a validator ID (which
 // usually means being a stash account).
-func (this *SessionTx) PurgeKeys() Transaction {
+func (set *SessionTx) PurgeKeys() Transaction {
 	call := sePallet.CallPurgeKeys{}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(set.client, pallets.ToPayload(call))
 }
 
 type ProxyTx struct {
@@ -794,9 +794,9 @@ type ProxyTx struct {
 // - `Real`: The account that the proxy will make a call on behalf of.
 // - `ForceProxyType`: Specify the exact proxy type to be used and checked for this call.
 // - `Call`: The call to be made by the `real` account.
-func (this *ProxyTx) Proxy(real prim.MultiAddress, forceProxyType prim.Option[metadata.ProxyType], call prim.Call) Transaction {
+func (pt *ProxyTx) Proxy(real prim.MultiAddress, forceProxyType prim.Option[metadata.ProxyType], call prim.Call) Transaction {
 	c := pxPallet.CallProxy{Real: real, ForceProxyType: forceProxyType, Call: call}
-	return NewTransaction(this.client, pallets.ToPayload(c))
+	return NewTransaction(pt.client, pallets.ToPayload(c))
 }
 
 // Register a proxy account for the sender that is able to make calls on its behalf.
@@ -808,9 +808,9 @@ func (this *ProxyTx) Proxy(real prim.MultiAddress, forceProxyType prim.Option[me
 // - `ProxyType`: The permissions allowed for this proxy account.
 // - `Delay`: The announcement period required of the initial proxy. Will generally be
 // zero.
-func (this *ProxyTx) AddProxy(delegate prim.MultiAddress, proxyType metadata.ProxyType, delay uint32) Transaction {
+func (pt *ProxyTx) AddProxy(delegate prim.MultiAddress, proxyType metadata.ProxyType, delay uint32) Transaction {
 	call := pxPallet.CallAddProxy{Delegate: delegate, ProxyType: proxyType, Delay: delay}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(pt.client, pallets.ToPayload(call))
 }
 
 // Unregister a proxy account for the sender.
@@ -821,9 +821,9 @@ func (this *ProxyTx) AddProxy(delegate prim.MultiAddress, proxyType metadata.Pro
 // - `Delegate`: The account that the `caller` would like to remove as a proxy.
 // - `ProxyType`: The permissions currently enabled for the removed proxy account.
 // - `Delay`:  Will generally be zero.
-func (this *ProxyTx) RemoveProxy(delegate prim.MultiAddress, proxyType metadata.ProxyType, delay uint32) Transaction {
+func (pt *ProxyTx) RemoveProxy(delegate prim.MultiAddress, proxyType metadata.ProxyType, delay uint32) Transaction {
 	call := pxPallet.CallRemoveProxy{Delegate: delegate, ProxyType: proxyType, Delay: delay}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(pt.client, pallets.ToPayload(call))
 }
 
 // Unregister all proxy accounts for the sender.
@@ -832,9 +832,9 @@ func (this *ProxyTx) RemoveProxy(delegate prim.MultiAddress, proxyType metadata.
 //
 // WARNING: This may be called on accounts created by `pure`, however if done, then
 // the unreserved fees will be inaccessible. **All access to this account will be lost.**
-func (this *ProxyTx) RemoveProxies() Transaction {
+func (pt *ProxyTx) RemoveProxies() Transaction {
 	call := pxPallet.CallRemoveProxies{}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(pt.client, pallets.ToPayload(call))
 }
 
 // Spawn a fresh new account that is guaranteed to be otherwise inaccessible, and
@@ -855,9 +855,9 @@ func (this *ProxyTx) RemoveProxies() Transaction {
 // same sender, with the same parameters.
 //
 // Fails if there are insufficient funds to pay for deposit.
-func (this *ProxyTx) CreatePure(proxyType metadata.ProxyType, delay uint32, index uint16) Transaction {
+func (pt *ProxyTx) CreatePure(proxyType metadata.ProxyType, delay uint32, index uint16) Transaction {
 	call := pxPallet.CallCreatePure{ProxyType: proxyType, Delay: delay, Index: index}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(pt.client, pallets.ToPayload(call))
 }
 
 // Removes a previously spawned pure proxy.
@@ -876,9 +876,9 @@ func (this *ProxyTx) CreatePure(proxyType metadata.ProxyType, delay uint32, inde
 //
 // Fails with `NoPermission` in case the caller is not a previously created pure
 // account whose `pure` call has corresponding parameters.
-func (this *ProxyTx) KillPure(spawner prim.MultiAddress, proxyType metadata.ProxyType, index uint16, height uint32, extIndex uint32) Transaction {
+func (pt *ProxyTx) KillPure(spawner prim.MultiAddress, proxyType metadata.ProxyType, index uint16, height uint32, extIndex uint32) Transaction {
 	call := pxPallet.CallKillPure{Spawner: spawner, ProxyType: proxyType, Index: index, Height: height, ExtIndex: extIndex}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(pt.client, pallets.ToPayload(call))
 }
 
 // Publish the hash of a proxy-call that will be made in the future.
@@ -896,9 +896,9 @@ func (this *ProxyTx) KillPure(spawner prim.MultiAddress, proxyType metadata.Prox
 // Parameters:
 // - `Real`: The account that the proxy will make a call on behalf of.
 // - `CallHash`: The hash of the call to be made by the `real` account.
-func (this *ProxyTx) Announce(real prim.MultiAddress, callHash prim.H256) Transaction {
+func (pt *ProxyTx) Announce(real prim.MultiAddress, callHash prim.H256) Transaction {
 	call := pxPallet.CallAnnounce{Real: real, CallHash: callHash}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(pt.client, pallets.ToPayload(call))
 }
 
 // Remove a given announcement.
@@ -911,9 +911,9 @@ func (this *ProxyTx) Announce(real prim.MultiAddress, callHash prim.H256) Transa
 // Parameters:
 // - `Real`: The account that the proxy will make a call on behalf of.
 // - `CallHash`: The hash of the call to be made by the `real` account.
-func (this *ProxyTx) RemoveAnnouncement(real prim.MultiAddress, callHash prim.H256) Transaction {
+func (pt *ProxyTx) RemoveAnnouncement(real prim.MultiAddress, callHash prim.H256) Transaction {
 	call := pxPallet.CallRemoveAnnouncement{Real: real, CallHash: callHash}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(pt.client, pallets.ToPayload(call))
 }
 
 // Remove the given announcement of a delegate.
@@ -926,9 +926,9 @@ func (this *ProxyTx) RemoveAnnouncement(real prim.MultiAddress, callHash prim.H2
 // Parameters:
 // - `Delegate`: The account that previously announced the call.
 // - `CallHash`: The hash of the call to be made.
-func (this *ProxyTx) RejectAnnouncement(delegate prim.MultiAddress, callHash prim.H256) Transaction {
+func (pt *ProxyTx) RejectAnnouncement(delegate prim.MultiAddress, callHash prim.H256) Transaction {
 	call := pxPallet.CallRejectAnnouncement{Delegate: delegate, CallHash: callHash}
-	return NewTransaction(this.client, pallets.ToPayload(call))
+	return NewTransaction(pt.client, pallets.ToPayload(call))
 }
 
 // Dispatch the given `call` from an account that the sender is authorized for through
@@ -942,7 +942,7 @@ func (this *ProxyTx) RejectAnnouncement(delegate prim.MultiAddress, callHash pri
 // - `Real`: The account that the proxy will make a call on behalf of.
 // - `ForceProxyType`: Specify the exact proxy type to be used and checked for this call.
 // - `Call`: The call to be made by the `real` account.
-func (this *ProxyTx) ProxyAnnounced(delegate prim.MultiAddress, real prim.MultiAddress, forceProxyType prim.Option[metadata.ProxyType], call prim.Call) Transaction {
+func (pt *ProxyTx) ProxyAnnounced(delegate prim.MultiAddress, real prim.MultiAddress, forceProxyType prim.Option[metadata.ProxyType], call prim.Call) Transaction {
 	c := pxPallet.CallProxyAnnounced{Delegate: delegate, Real: real, ForceProxyType: forceProxyType, Call: call}
-	return NewTransaction(this.client, pallets.ToPayload(c))
+	return NewTransaction(pt.client, pallets.ToPayload(c))
 }

@@ -10,16 +10,16 @@ type StorageNextAppId struct {
 	Value uint32 `scale:"compact"`
 }
 
-func (this *StorageNextAppId) PalletName() string {
+func (snai *StorageNextAppId) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageNextAppId) StorageName() string {
+func (snai *StorageNextAppId) StorageName() string {
 	return "NextAppId"
 }
 
-func (this *StorageNextAppId) Fetch(blockStorage interfaces.BlockStorageT) (uint32, error) {
-	val, err := GenericFetch[StorageNextAppId](blockStorage, this)
+func (snai *StorageNextAppId) Fetch(blockStorage interfaces.BlockStorageT) (uint32, error) {
+	val, err := GenericFetch[StorageNextAppId](blockStorage, snai)
 	if err != nil {
 		return 0, err
 	}
@@ -39,22 +39,22 @@ type StorageAppKeys struct {
 	AppId uint32 `scale:"compact"`
 }
 
-func (this *StorageAppKeys) PalletName() string {
+func (sak *StorageAppKeys) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageAppKeys) StorageName() string {
+func (sak *StorageAppKeys) StorageName() string {
 	return "AppKeys"
 }
 
-func (this *StorageAppKeys) MapKeyHasher() uint8 {
+func (sak *StorageAppKeys) MapKeyHasher() uint8 {
 	return Blake2_128ConcatHasher
 }
 
-func (this *StorageAppKeys) Fetch(blockStorage interfaces.BlockStorageT, key StorageAppKeysKey) (prim.Option[StorageAppKeysEntry], error) {
-	return GenericMapFetch[StorageAppKeys](blockStorage, key, this)
+func (sak *StorageAppKeys) Fetch(blockStorage interfaces.BlockStorageT, key StorageAppKeysKey) (prim.Option[StorageAppKeysEntry], error) {
+	return GenericMapFetch[StorageAppKeys](blockStorage, key, sak)
 }
 
-func (this *StorageAppKeys) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageAppKeysEntry, error) {
-	return GenericMapKeysFetch[StorageAppKeys, StorageAppKeysKey](blockStorage, this)
+func (sak *StorageAppKeys) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageAppKeysEntry, error) {
+	return GenericMapKeysFetch[StorageAppKeys, StorageAppKeysKey](blockStorage, sak)
 }

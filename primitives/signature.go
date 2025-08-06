@@ -38,23 +38,23 @@ func NewMultiSignatureEcdsa(value H520) MultiSignature {
 	return signature
 }
 
-func (this *MultiSignature) EncodeTo(dest *string) {
-	if this.Ed25519.IsSome() {
+func (m *MultiSignature) EncodeTo(dest *string) {
+	if m.Ed25519.IsSome() {
 		Encoder.EncodeTo(uint8(0), dest)
-		Encoder.EncodeTo(this.Ed25519.Unwrap(), dest)
-	} else if this.Sr25519.IsSome() {
+		Encoder.EncodeTo(m.Ed25519.Unwrap(), dest)
+	} else if m.Sr25519.IsSome() {
 		Encoder.EncodeTo(uint8(1), dest)
-		Encoder.EncodeTo(this.Sr25519.Unwrap(), dest)
-	} else if this.Ecdsa.IsSome() {
+		Encoder.EncodeTo(m.Sr25519.Unwrap(), dest)
+	} else if m.Ecdsa.IsSome() {
 		Encoder.EncodeTo(uint8(2), dest)
-		Encoder.EncodeTo(this.Ecdsa.Unwrap(), dest)
+		Encoder.EncodeTo(m.Ecdsa.Unwrap(), dest)
 	} else {
 		panic("Something Went Wrong with MultiSignature EncodeTo")
 	}
 
 }
 
-func (this *MultiSignature) Decode(decoder *Decoder) error {
+func (m *MultiSignature) Decode(decoder *Decoder) error {
 	result := emptyMultiSignature()
 	variantIndex := uint8(0)
 	decoder.Decode(&variantIndex)
@@ -80,6 +80,6 @@ func (this *MultiSignature) Decode(decoder *Decoder) error {
 		return errors.New(fmt.Sprintf(`MultiSignature Decode failure. Unknown Variant index: %v`, variantIndex))
 	}
 
-	*this = result
+	*m = result
 	return nil
 }

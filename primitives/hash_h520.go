@@ -11,16 +11,16 @@ type H520 struct {
 	Value [65]byte
 }
 
-func (this *H520) ToHex() string {
-	return SUtiles.BytesToHex(this.Value[:])
+func (h *H520) ToHex() string {
+	return SUtiles.BytesToHex(h.Value[:])
 }
 
-func (this *H520) ToHexWith0x() string {
-	return "0x" + this.ToHex()
+func (h *H520) ToHexWith0x() string {
+	return "0x" + h.ToHex()
 }
 
-func (this *H520) ToRpcParam() string {
-	return "\"" + this.ToHexWith0x() + "\""
+func (h *H520) ToRpcParam() string {
+	return "\"" + h.ToHexWith0x() + "\""
 }
 
 func NewH520FromHexString(hexString string) (H520, error) {

@@ -1,25 +1,23 @@
 package system
 
-import ()
-
 // Make some on-chain remark.
 type CallRemark struct {
 	Remark []byte
 }
 
-func (this CallRemark) PalletIndex() uint8 {
+func (cr CallRemark) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallRemark) PalletName() string {
+func (cr CallRemark) PalletName() string {
 	return PalletName
 }
 
-func (this CallRemark) CallIndex() uint8 {
+func (cr CallRemark) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallRemark) CallName() string {
+func (cr CallRemark) CallName() string {
 	return "remark"
 }
 
@@ -28,18 +26,18 @@ type CallRemarkWithEvent struct {
 	Remark []byte
 }
 
-func (this CallRemarkWithEvent) PalletIndex() uint8 {
+func (crwe CallRemarkWithEvent) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallRemarkWithEvent) PalletName() string {
+func (crwe CallRemarkWithEvent) PalletName() string {
 	return PalletName
 }
 
-func (this CallRemarkWithEvent) CallIndex() uint8 {
+func (crwe CallRemarkWithEvent) CallIndex() uint8 {
 	return 7
 }
 
-func (this CallRemarkWithEvent) CallName() string {
+func (crwe CallRemarkWithEvent) CallName() string {
 	return "remark_with_event"
 }

@@ -13,18 +13,18 @@ type EventTransactionFeePaid struct {
 	Tip       uint128.Uint128
 }
 
-func (this EventTransactionFeePaid) PalletIndex() uint8 {
+func (etfp EventTransactionFeePaid) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventTransactionFeePaid) PalletName() string {
+func (etfp EventTransactionFeePaid) PalletName() string {
 	return PalletName
 }
 
-func (this EventTransactionFeePaid) EventIndex() uint8 {
+func (etfp EventTransactionFeePaid) EventIndex() uint8 {
 	return 0
 }
 
-func (this EventTransactionFeePaid) EventName() string {
+func (etfp EventTransactionFeePaid) EventName() string {
 	return "TransactionFeePaid"
 }

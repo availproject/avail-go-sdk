@@ -24,69 +24,69 @@ func NewMultiAddressId(value AccountId) MultiAddress {
 	return address
 }
 
-func (this MultiAddress) ToAccountId() Option[AccountId] {
-	if this.Id.IsSome() {
-		return Some(this.Id.Unwrap())
+func (m MultiAddress) ToAccountId() Option[AccountId] {
+	if m.Id.IsSome() {
+		return Some(m.Id.Unwrap())
 	}
 	return None[AccountId]()
 }
 
-func (this *MultiAddress) EncodeTo(dest *string) {
-	Encoder.EncodeTo(this.VariantIndex, dest)
+func (m *MultiAddress) EncodeTo(dest *string) {
+	Encoder.EncodeTo(m.VariantIndex, dest)
 
-	if this.Id.IsSome() {
-		Encoder.EncodeTo(this.Id.Unwrap(), dest)
-	} else if this.Index.IsSome() {
-		Encoder.EncodeTo(this.Index.Unwrap(), dest)
-	} else if this.Raw.IsSome() {
-		Encoder.EncodeTo(this.Raw.Unwrap(), dest)
-	} else if this.Address32.IsSome() {
-		Encoder.EncodeTo(this.Address32.Unwrap(), dest)
-	} else if this.Address20.IsSome() {
-		Encoder.EncodeTo(this.Address20.Unwrap(), dest)
+	if m.Id.IsSome() {
+		Encoder.EncodeTo(m.Id.Unwrap(), dest)
+	} else if m.Index.IsSome() {
+		Encoder.EncodeTo(m.Index.Unwrap(), dest)
+	} else if m.Raw.IsSome() {
+		Encoder.EncodeTo(m.Raw.Unwrap(), dest)
+	} else if m.Address32.IsSome() {
+		Encoder.EncodeTo(m.Address32.Unwrap(), dest)
+	} else if m.Address20.IsSome() {
+		Encoder.EncodeTo(m.Address20.Unwrap(), dest)
 	} else {
 		panic("Something Went Wrong with MultiAddress EncodeTo")
 	}
 }
 
-func (this *MultiAddress) Decode(decoder *Decoder) error {
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+func (m *MultiAddress) Decode(decoder *Decoder) error {
+	if err := decoder.Decode(&m.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch m.VariantIndex {
 	case 0:
 		value := AccountId{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Id = Some(value)
+		m.Id = Some(value)
 	case 1:
 		value := uint32(0)
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Index = Some(value)
+		m.Index = Some(value)
 	case 2:
 		value := []byte{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Raw = Some(value)
+		m.Raw = Some(value)
 	case 3:
 		value := [32]byte{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Address32 = Some(value)
+		m.Address32 = Some(value)
 	case 4:
 		value := [20]byte{}
 		if err := decoder.Decode(&value); err != nil {
 			return err
 		}
-		this.Address20 = Some(value)
+		m.Address20 = Some(value)
 	default:
-		return errors.New(fmt.Sprintf(`MultiAddress Decode failure. Unknown Variant index: %v`, this.VariantIndex))
+		return errors.New(fmt.Sprintf(`MultiAddress Decode failure. Unknown Variant index: %v`, m.VariantIndex))
 	}
 
 	return nil
@@ -96,24 +96,24 @@ type AccountId struct {
 	Value H256
 }
 
-func (this AccountId) ToSS58() string {
-	return subkey.SS58Encode(this.Value.Value[:], 42)
+func (a AccountId) ToSS58() string {
+	return subkey.SS58Encode(a.Value.Value[:], 42)
 }
 
-func (this AccountId) ToAddress() string {
-	return this.ToSS58()
+func (a AccountId) ToAddress() string {
+	return a.ToSS58()
 }
 
-func (this AccountId) ToHuman() string {
-	return this.ToSS58()
+func (a AccountId) ToHuman() string {
+	return a.ToSS58()
 }
 
-func (this AccountId) ToString() string {
-	return this.Value.ToHex()
+func (a AccountId) ToString() string {
+	return a.Value.ToHex()
 }
 
-func (this AccountId) ToMultiAddress() MultiAddress {
-	return NewMultiAddressId(this)
+func (a AccountId) ToMultiAddress() MultiAddress {
+	return NewMultiAddressId(a)
 }
 
 func NewAccountIdFromKeyPair(keyPair subkey.KeyPair) AccountId {

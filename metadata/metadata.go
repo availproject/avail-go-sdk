@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+
 	"github.com/availproject/avail-go-sdk/primitives"
 
 	gsrpcScale "github.com/centrifuge/go-substrate-rpc-client/v4/scale"
@@ -26,12 +27,12 @@ func NewMetadata(rawMetadata string) (Metadata, error) {
 	return metadata, nil
 }
 
-func (this *Metadata) PalletCallName(palletIndex uint8, callIndex uint8) (string, string, error) {
-	pallet := this.FindPalletMetadata(palletIndex)
+func (metadata *Metadata) PalletCallName(palletIndex uint8, callIndex uint8) (string, string, error) {
+	pallet := metadata.FindPalletMetadata(palletIndex)
 	if pallet == nil {
 		return "", "", errors.New("Metadata Failure. Failed to find Pallet")
 	}
-	v14 := this.Value.AsMetadataV14
+	v14 := metadata.Value.AsMetadataV14
 
 	if !pallet.HasCalls {
 		return "", "", errors.New("Metadata Failure. Pallet has no Calls")
@@ -53,12 +54,12 @@ func (this *Metadata) PalletCallName(palletIndex uint8, callIndex uint8) (string
 	return "", "", errors.New(fmt.Sprintf(`Metadata Failure. Failed to find pallet and event names. Pallet Index: %v, Call Index: %v`, palletIndex, callIndex))
 }
 
-func (this *Metadata) PalletEventName(palletIndex uint8, eventIndex uint8) (string, string, error) {
-	pallet := this.FindPalletMetadata(palletIndex)
+func (metadata *Metadata) PalletEventName(palletIndex uint8, eventIndex uint8) (string, string, error) {
+	pallet := metadata.FindPalletMetadata(palletIndex)
 	if pallet == nil {
 		return "", "", errors.New("Metadata Failure. Failed to find Pallet")
 	}
-	v14 := this.Value.AsMetadataV14
+	v14 := metadata.Value.AsMetadataV14
 
 	if !pallet.HasEvents {
 		return "", "", errors.New("Metadata Failure. Pallet has no events")
@@ -80,8 +81,8 @@ func (this *Metadata) PalletEventName(palletIndex uint8, eventIndex uint8) (stri
 	return "", "", errors.New(fmt.Sprintf(`Metadata Failure. Failed to find pallet and event names. Pallet Index: %v, Event Index: %v`, palletIndex, eventIndex))
 }
 
-func (this *Metadata) FindPalletMetadata(palletIndex uint8) *gsrpcTypes.PalletMetadataV14 {
-	v14 := this.Value.AsMetadataV14
+func (metadata *Metadata) FindPalletMetadata(palletIndex uint8) *gsrpcTypes.PalletMetadataV14 {
+	v14 := metadata.Value.AsMetadataV14
 	for i := range v14.Pallets {
 		if uint8(v14.Pallets[i].Index) == palletIndex {
 			return &v14.Pallets[i]
@@ -91,9 +92,9 @@ func (this *Metadata) FindPalletMetadata(palletIndex uint8) *gsrpcTypes.PalletMe
 	return nil
 }
 
-func (this *Metadata) DecodeEvent(palletIndex uint8, eventIndex uint8, decoder *primitives.Decoder) error {
-	v14 := this.Value.AsMetadataV14
-	pallet := this.FindPalletMetadata(palletIndex)
+func (metadata *Metadata) DecodeEvent(palletIndex uint8, eventIndex uint8, decoder *primitives.Decoder) error {
+	v14 := metadata.Value.AsMetadataV14
+	pallet := metadata.FindPalletMetadata(palletIndex)
 	if pallet == nil {
 		return errors.New("Metadata Failure. Failed to find Pallet")
 	}
@@ -116,7 +117,7 @@ func (this *Metadata) DecodeEvent(palletIndex uint8, eventIndex uint8, decoder *
 			fields := variants[i].Fields
 			for j := range fields {
 				if typ, ok1 := v14.EfficientLookup[fields[j].Type.Int64()]; ok1 {
-					this.decodeMetadataValue(decoder, typ, false)
+					metadata.decodeMetadataValue(decoder, typ, false)
 				}
 			}
 		}
@@ -127,8 +128,8 @@ func (this *Metadata) DecodeEvent(palletIndex uint8, eventIndex uint8, decoder *
 	return nil
 }
 
-func (this *Metadata) GetTypeFromId(id int64) *gsrpcTypes.Si1Type {
-	v14 := this.Value.AsMetadataV14
+func (metadata *Metadata) GetTypeFromId(id int64) *gsrpcTypes.Si1Type {
+	v14 := metadata.Value.AsMetadataV14
 
 	if typ, ok1 := v14.EfficientLookup[id]; ok1 {
 		return typ
@@ -137,8 +138,8 @@ func (this *Metadata) GetTypeFromId(id int64) *gsrpcTypes.Si1Type {
 	return nil
 }
 
-func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gsrpcTypes.Si1Type, isCompact bool) error {
-	v14 := this.Value.AsMetadataV14
+func (metadata *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gsrpcTypes.Si1Type, isCompact bool) error {
+	v14 := metadata.Value.AsMetadataV14
 
 	/* 	path := ""
 	   	for _, str := range value.Path {
@@ -157,7 +158,7 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 		for i := 0; i < int(arr.Len); i++ {
 			callId := value.Def.Array.Type.Int64()
 			if typ, ok := v14.EfficientLookup[callId]; ok {
-				if err := this.decodeMetadataValue(decoder, typ, isCompact); err != nil {
+				if err := metadata.decodeMetadataValue(decoder, typ, isCompact); err != nil {
 					return err
 				}
 			} else {
@@ -173,7 +174,7 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 		for i := range tuple {
 			callId := tuple[i].Int64()
 			if typ, ok := v14.EfficientLookup[callId]; ok {
-				this.decodeMetadataValue(decoder, typ, isCompact)
+				metadata.decodeMetadataValue(decoder, typ, isCompact)
 			} else {
 				return errors.New(fmt.Sprintf(`Metadata failure. Failed to find type with id: %v`, callId))
 			}
@@ -192,7 +193,7 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 		callId := seq.Type.Int64()
 		for i := 0; i < int(len.Value); i++ {
 			if typ, ok := v14.EfficientLookup[callId]; ok {
-				if err := this.decodeMetadataValue(decoder, typ, isCompact); err != nil {
+				if err := metadata.decodeMetadataValue(decoder, typ, isCompact); err != nil {
 					return err
 				}
 			} else {
@@ -206,7 +207,7 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 	if value.Def.IsCompact {
 		callId := value.Def.Compact.Type.Int64()
 		if typ, ok := v14.EfficientLookup[callId]; ok {
-			if err := this.decodeMetadataValue(decoder, typ, true); err != nil {
+			if err := metadata.decodeMetadataValue(decoder, typ, true); err != nil {
 				return err
 			}
 		} else {
@@ -221,7 +222,7 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 		for i := range fields {
 			callId := fields[i].Type.Int64()
 			if typ, ok := v14.EfficientLookup[callId]; ok {
-				if err := this.decodeMetadataValue(decoder, typ, isCompact); err != nil {
+				if err := metadata.decodeMetadataValue(decoder, typ, isCompact); err != nil {
 					return err
 				}
 			} else {
@@ -250,7 +251,7 @@ func (this *Metadata) decodeMetadataValue(decoder *primitives.Decoder, value *gs
 			for j := range fields {
 				callId := fields[j].Type.Int64()
 				if typ, ok := v14.EfficientLookup[callId]; ok {
-					if err := this.decodeMetadataValue(decoder, typ, isCompact); err != nil {
+					if err := metadata.decodeMetadataValue(decoder, typ, isCompact); err != nil {
 						return err
 					}
 				} else {

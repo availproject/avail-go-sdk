@@ -14,13 +14,13 @@ type kateRPC struct {
 	client *Client
 }
 
-func (this *kateRPC) BlockLength(blockHash prim.Option[prim.H256]) (metadata.BlockLength, error) {
+func (k *kateRPC) BlockLength(blockHash prim.Option[prim.H256]) (metadata.BlockLength, error) {
 	var params = &RPCParams{}
 	if blockHash.IsSome() {
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	rawJson, err := this.client.RequestWithRetry("kate_blockLength", params.Build())
+	rawJson, err := k.client.RequestWithRetry("kate_blockLength", params.Build())
 	if err != nil {
 		return metadata.BlockLength{}, err
 	}
@@ -58,7 +58,7 @@ func (this *kateRPC) BlockLength(blockHash prim.Option[prim.H256]) (metadata.Blo
 	return res, nil
 }
 
-func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Option[prim.H256]) (metadata.ProofResponse, error) {
+func (k *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Option[prim.H256]) (metadata.ProofResponse, error) {
 	res := metadata.ProofResponse{}
 	var params = &RPCParams{}
 	params.AddUint32(transactionIndex)
@@ -66,7 +66,7 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	rawJson, err := this.client.RequestWithRetry("kate_queryDataProof", params.Build())
+	rawJson, err := k.client.RequestWithRetry("kate_queryDataProof", params.Build())
 	if err != nil {
 		return res, err
 	}
@@ -221,7 +221,7 @@ func (this *kateRPC) QueryDataProof(transactionIndex uint32, blockHash prim.Opti
 	return res, nil
 }
 
-func (this *kateRPC) QueryProof(cells []KateCell, blockHash prim.Option[prim.H256]) ([]GDataProof, error) {
+func (k *kateRPC) QueryProof(cells []KateCell, blockHash prim.Option[prim.H256]) ([]GDataProof, error) {
 	var params = &RPCParams{}
 	res := []GDataProof{}
 
@@ -239,7 +239,7 @@ func (this *kateRPC) QueryProof(cells []KateCell, blockHash prim.Option[prim.H25
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	rawJson, err := this.client.RequestWithRetry("kate_queryProof", params.Build())
+	rawJson, err := k.client.RequestWithRetry("kate_queryProof", params.Build())
 	if err != nil {
 		return res, err
 	}
@@ -275,7 +275,7 @@ type KateCell struct {
 
 type GDataProof = metadata.Tuple2[string, [48]byte]
 
-func (this *kateRPC) QueryRows(rows []uint32, blockHash prim.Option[prim.H256]) ([][]string, error) {
+func (k *kateRPC) QueryRows(rows []uint32, blockHash prim.Option[prim.H256]) ([][]string, error) {
 	var params = &RPCParams{}
 	res := [][]string{}
 
@@ -293,7 +293,7 @@ func (this *kateRPC) QueryRows(rows []uint32, blockHash prim.Option[prim.H256]) 
 		params.AddH256(blockHash.Unwrap())
 	}
 
-	rawJson, err := this.client.RequestWithRetry("kate_queryRows", params.Build())
+	rawJson, err := k.client.RequestWithRetry("kate_queryRows", params.Build())
 	if err != nil {
 		return res, err
 	}

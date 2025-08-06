@@ -35,47 +35,47 @@ func NewClient(endpoint string) *Client {
 	return client
 }
 
-func (this *Client) BlockNumber(blockHash prim.H256) (uint32, error) {
-	header, err := this.Rpc.Chain.GetHeader(prim.Some(blockHash))
+func (c *Client) BlockNumber(blockHash prim.H256) (uint32, error) {
+	header, err := c.Rpc.Chain.GetHeader(prim.Some(blockHash))
 	return header.Number, err
 }
 
-func (this *Client) BestBlockNumber() (uint32, error) {
-	header, err := this.Rpc.Chain.GetHeader(prim.None[prim.H256]())
+func (c *Client) BestBlockNumber() (uint32, error) {
+	header, err := c.Rpc.Chain.GetHeader(prim.None[prim.H256]())
 	return header.Number, err
 }
 
-func (this *Client) FinalizedBlockNumber() (uint32, error) {
-	hash, err := this.FinalizedBlockHash()
+func (c *Client) FinalizedBlockNumber() (uint32, error) {
+	hash, err := c.FinalizedBlockHash()
 	if err != nil {
 		return uint32(0), err
 	}
-	header, err := this.Rpc.Chain.GetHeader(prim.Some(hash))
+	header, err := c.Rpc.Chain.GetHeader(prim.Some(hash))
 	return header.Number, err
 }
 
-func (this *Client) BlockHash(blockNumber uint32) (prim.H256, error) {
-	return this.Rpc.Chain.GetBlockHash(prim.Some(blockNumber))
+func (c *Client) BlockHash(blockNumber uint32) (prim.H256, error) {
+	return c.Rpc.Chain.GetBlockHash(prim.Some(blockNumber))
 }
 
-func (this *Client) BestBlockHash() (prim.H256, error) {
-	return this.Rpc.Chain.GetBlockHash(prim.None[uint32]())
+func (c *Client) BestBlockHash() (prim.H256, error) {
+	return c.Rpc.Chain.GetBlockHash(prim.None[uint32]())
 }
 
-func (this *Client) FinalizedBlockHash() (prim.H256, error) {
-	return this.Rpc.Chain.GetFinalizedHead()
+func (c *Client) FinalizedBlockHash() (prim.H256, error) {
+	return c.Rpc.Chain.GetFinalizedHead()
 }
 
-func (this *Client) TransactionState(txHash prim.H256, finalized bool) ([]meta.TransactionState, error) {
-	return this.Rpc.Transaction.State(txHash, finalized)
+func (c *Client) TransactionState(txHash prim.H256, finalized bool) ([]meta.TransactionState, error) {
+	return c.Rpc.Transaction.State(txHash, finalized)
 }
 
-func (this *Client) EventsAt(at prim.Option[prim.H256]) (EventRecords, error) {
-	eventsRaw, err := this.Rpc.State.GetEvents(at)
+func (c *Client) EventsAt(at prim.Option[prim.H256]) (EventRecords, error) {
+	eventsRaw, err := c.Rpc.State.GetEvents(at)
 	if err != nil {
 		return EventRecords{}, err
 	}
-	events, err := NewEvents(prim.Hex.FromHex(eventsRaw), this.Metadata())
+	events, err := NewEvents(prim.Hex.FromHex(eventsRaw), c.Metadata())
 	if err != nil {
 		return EventRecords{}, err
 	}
@@ -88,9 +88,9 @@ func (this *Client) EventsAt(at prim.Option[prim.H256]) (EventRecords, error) {
 	return eventRecord, nil
 }
 
-func (this *Client) StorageAt(at prim.Option[prim.H256]) (BlockStorage, error) {
+func (c *Client) StorageAt(at prim.Option[prim.H256]) (BlockStorage, error) {
 	if at.IsNone() {
-		hash, err := this.Rpc.Chain.GetBlockHash(prim.None[uint32]())
+		hash, err := c.Rpc.Chain.GetBlockHash(prim.None[uint32]())
 		if err != nil {
 			return BlockStorage{}, err
 		}
@@ -98,21 +98,21 @@ func (this *Client) StorageAt(at prim.Option[prim.H256]) (BlockStorage, error) {
 	}
 
 	return BlockStorage{
-		client: this,
+		client: c,
 		at:     at.Unwrap(),
 	}, nil
 }
 
-func (this *Client) RPCBlockAt(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
-	primBlock, err := this.Rpc.Chain.GetBlock(blockHash)
+func (c *Client) RPCBlockAt(blockHash prim.Option[prim.H256]) (RPCBlock, error) {
+	primBlock, err := c.Rpc.Chain.GetBlock(blockHash)
 	if err != nil {
 		return RPCBlock{}, err
 	}
 	return NewRPCBlockFromPrimBlock(primBlock)
 }
 
-func (this *Client) InitMetadata(at prim.Option[prim.H256]) error {
-	scaleMetadata, err := this.Rpc.State.GetMetadata(at)
+func (c *Client) InitMetadata(at prim.Option[prim.H256]) error {
+	scaleMetadata, err := c.Rpc.State.GetMetadata(at)
 	if err != nil {
 		return err
 	}
@@ -121,30 +121,30 @@ func (this *Client) InitMetadata(at prim.Option[prim.H256]) error {
 		return err
 	}
 
-	this.metadata = &metadata
+	c.metadata = &metadata
 	return nil
 }
 
-func (this *Client) InitRuntimeVersion(at prim.Option[prim.H256]) error {
-	runtimeVersion, err := this.Rpc.State.GetRuntimeVersion(at)
+func (c *Client) InitRuntimeVersion(at prim.Option[prim.H256]) error {
+	runtimeVersion, err := c.Rpc.State.GetRuntimeVersion(at)
 	if err != nil {
 		return err
 	}
-	this.RuntimeVersion = &runtimeVersion
+	c.RuntimeVersion = &runtimeVersion
 
-	genesisHash, err := this.Rpc.ChainSpec.V1GenesisHash()
+	genesisHash, err := c.Rpc.ChainSpec.V1GenesisHash()
 	if err != nil {
 		return err
 	}
-	this.GenesisHash = &genesisHash
+	c.GenesisHash = &genesisHash
 
 	return nil
 }
 
-func (this *Client) RequestWithRetry(method string, params string) (string, error) {
+func (c *Client) RequestWithRetry(method string, params string) (string, error) {
 	retryCount := 3
 	for {
-		res, err := this.Request(method, params)
+		res, err := c.Request(method, params)
 		if err != nil {
 			var sdkError *SDKError
 			if !errors.As(err, &sdkError) || sdkError.Code != 0 {
@@ -170,8 +170,8 @@ func (this *Client) RequestWithRetry(method string, params string) (string, erro
 	}
 }
 
-func (this *Client) Request(method string, params string) (prim.Option[string], error) {
-	responseBodyBytes, err := this.RequestRaw(method, params)
+func (c *Client) Request(method string, params string) (prim.Option[string], error) {
+	responseBodyBytes, err := c.RequestRaw(method, params)
 	if err != nil {
 		return prim.None[string](), err
 	}
@@ -212,7 +212,7 @@ func (this *Client) Request(method string, params string) (prim.Option[string], 
 	return prim.Some(result), nil
 }
 
-func (this *Client) RequestRaw(method string, params string) ([]byte, error) {
+func (c *Client) RequestRaw(method string, params string) ([]byte, error) {
 	rawJSON := []byte(`{
 		"id": 1,
 		"jsonrpc": "2.0",
@@ -223,13 +223,13 @@ func (this *Client) RequestRaw(method string, params string) ([]byte, error) {
 	requestBodyString := fmt.Sprintf(string(rawJSON), method, params)
 	requestBodyBytes := []byte(requestBodyString)
 
-	request, err := http.NewRequest("POST", this.endpoint, bytes.NewBuffer(requestBodyBytes))
+	request, err := http.NewRequest("POST", c.endpoint, bytes.NewBuffer(requestBodyBytes))
 	if err != nil {
 		return []byte{}, err
 	}
 
 	request.Header.Add("Content-Type", "application/json")
-	response, err := this.client.Do(request)
+	response, err := c.client.Do(request)
 	if err != nil {
 		return []byte{}, newError(err, ErrorCode000)
 	}
@@ -253,12 +253,12 @@ func (this *Client) RequestRaw(method string, params string) ([]byte, error) {
 	return responseBodyBytes, nil
 }
 
-func (this *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {
-	return this.Rpc.Author.SubmitExtrinsic(tx.ToHexWith0x())
+func (c *Client) Send(tx prim.EncodedExtrinsic) (prim.H256, error) {
+	return c.Rpc.Author.SubmitExtrinsic(tx.ToHexWith0x())
 }
 
-func (this *Client) Metadata() *meta.Metadata {
-	return this.metadata
+func (c *Client) Metadata() *meta.Metadata {
+	return c.metadata
 }
 
 type RPCBlock struct {

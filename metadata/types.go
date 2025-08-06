@@ -29,16 +29,16 @@ func NewBalanceFromBigInt(value *big.Int) Balance {
 	return Balance{Value: uint128.FromBig(value)}
 }
 
-func (this Balance) String() string {
-	return this.ToHuman()
+func (bal Balance) String() string {
+	return bal.ToHuman()
 }
 
-func (this Balance) ToString() string {
-	return this.ToHuman()
+func (bal Balance) ToString() string {
+	return bal.ToHuman()
 }
 
-func (this Balance) ToHuman() string {
-	var stringValue = this.Value.String()
+func (bal Balance) ToHuman() string {
+	var stringValue = bal.Value.String()
 
 	if len(stringValue) <= 18 {
 		var result = "0."
@@ -72,64 +72,64 @@ func (this Balance) ToHuman() string {
 	return result + " Avail"
 }
 
-// Add returns this+v.
-func (this Balance) Add(v Balance) Balance {
-	return Balance{Value: this.Value.Add(v.Value)}
+// Add returns bal+v.
+func (bal Balance) Add(v Balance) Balance {
+	return Balance{Value: bal.Value.Add(v.Value)}
 }
 
-// Add64 returns this+v.
-func (this Balance) Add64(v uint64) Balance {
-	return Balance{Value: this.Value.Add64(v)}
+// Add64 returns bal+v.
+func (bal Balance) Add64(v uint64) Balance {
+	return Balance{Value: bal.Value.Add64(v)}
 }
 
-// Add128 returns this+v.
-func (this Balance) Add128(v uint128.Uint128) Balance {
-	return Balance{Value: this.Value.Add(v)}
+// Add128 returns bal+v.
+func (bal Balance) Add128(v uint128.Uint128) Balance {
+	return Balance{Value: bal.Value.Add(v)}
 }
 
-// Sub returns this-v.
-func (this Balance) Sub(v Balance) Balance {
-	return Balance{Value: this.Value.Sub(v.Value)}
+// Sub returns bal-v.
+func (bal Balance) Sub(v Balance) Balance {
+	return Balance{Value: bal.Value.Sub(v.Value)}
 }
 
-// Sub64 returns this-v.
-func (this Balance) Sub64(v uint64) Balance {
-	return Balance{Value: this.Value.Sub64(v)}
+// Sub64 returns bal-v.
+func (bal Balance) Sub64(v uint64) Balance {
+	return Balance{Value: bal.Value.Sub64(v)}
 }
 
-// Sub128 returns this-v.
-func (this Balance) Sub128(v uint128.Uint128) Balance {
-	return Balance{Value: this.Value.Sub(v)}
+// Sub128 returns bal-v.
+func (bal Balance) Sub128(v uint128.Uint128) Balance {
+	return Balance{Value: bal.Value.Sub(v)}
 }
 
-// Mul returns this*v.
-func (this Balance) Mul(v Balance) Balance {
-	return Balance{Value: this.Value.Mul(v.Value)}
+// Mul returns bal*v.
+func (bal Balance) Mul(v Balance) Balance {
+	return Balance{Value: bal.Value.Mul(v.Value)}
 }
 
-// Mul64 returns this*v.
-func (this Balance) Mul64(v uint64) Balance {
-	return Balance{Value: this.Value.Mul64(v)}
+// Mul64 returns bal*v.
+func (bal Balance) Mul64(v uint64) Balance {
+	return Balance{Value: bal.Value.Mul64(v)}
 }
 
-// Mul128 returns this*v.
-func (this Balance) Mul128(v uint128.Uint128) Balance {
-	return Balance{Value: this.Value.Mul(v)}
+// Mul128 returns bal*v.
+func (bal Balance) Mul128(v uint128.Uint128) Balance {
+	return Balance{Value: bal.Value.Mul(v)}
 }
 
-// Div returns this/v.
-func (this Balance) Div(v Balance) Balance {
-	return Balance{Value: this.Value.Div(v.Value)}
+// Div returns bal/v.
+func (bal Balance) Div(v Balance) Balance {
+	return Balance{Value: bal.Value.Div(v.Value)}
 }
 
-// Div64 returns this/v.
-func (this Balance) Div64(v uint64) Balance {
-	return Balance{Value: this.Value.Div64(v)}
+// Div64 returns bal/v.
+func (bal Balance) Div64(v uint64) Balance {
+	return Balance{Value: bal.Value.Div64(v)}
 }
 
-// Div128 returns this/v.
-func (this Balance) Div128(v uint128.Uint128) Balance {
-	return Balance{Value: this.Value.Div(v)}
+// Div128 returns bal/v.
+func (bal Balance) Div128(v uint128.Uint128) Balance {
+	return Balance{Value: bal.Value.Div(v)}
 }
 
 func removeTrailingZeros(s string) string {
@@ -164,12 +164,12 @@ type DispatchClass struct {
 	VariantIndex uint8
 }
 
-func (this DispatchClass) ToHuman() string {
-	return this.ToString()
+func (dc DispatchClass) ToHuman() string {
+	return dc.ToString()
 }
 
-func (this DispatchClass) ToString() string {
-	switch this.VariantIndex {
+func (dc DispatchClass) ToString() string {
+	switch dc.VariantIndex {
 	case 0:
 		return "Normal"
 	case 1:
@@ -181,8 +181,8 @@ func (this DispatchClass) ToString() string {
 	}
 }
 
-func (this DispatchClass) String() string {
-	return this.ToString()
+func (dc DispatchClass) String() string {
+	return dc.ToString()
 }
 
 // Do not add, remove or change any of the field members.
@@ -190,8 +190,8 @@ type Pays struct {
 	VariantIndex uint8
 }
 
-func (this Pays) ToString() string {
-	switch this.VariantIndex {
+func (pays Pays) ToString() string {
+	switch pays.VariantIndex {
 	case 0:
 		return "Yes"
 	case 1:
@@ -217,12 +217,12 @@ type DispatchError struct {
 	Transactional prim.Option[TransactionalError]
 }
 
-func (this DispatchError) ToHuman() string {
-	return this.ToString()
+func (de DispatchError) ToHuman() string {
+	return de.ToString()
 }
 
-func (this DispatchError) ToString() string {
-	switch this.VariantIndex {
+func (de DispatchError) ToString() string {
+	switch de.VariantIndex {
 	case 0:
 		return "Other"
 	case 1:
@@ -230,7 +230,7 @@ func (this DispatchError) ToString() string {
 	case 2:
 		return "BadOrigin"
 	case 3:
-		return fmt.Sprintf("Module. Index %v", this.Module.Unwrap().Index)
+		return fmt.Sprintf("Module. Index %v", de.Module.Unwrap().Index)
 	case 4:
 		return "ConsumerRemaining"
 	case 5:
@@ -238,11 +238,11 @@ func (this DispatchError) ToString() string {
 	case 6:
 		return "TooManyConsumers"
 	case 7:
-		return fmt.Sprintf("Token. %v", this.Token.Unwrap().ToHuman())
+		return fmt.Sprintf("Token. %v", de.Token.Unwrap().ToHuman())
 	case 8:
-		return fmt.Sprintf("Arithmetic. %v", this.Arithmetic.Unwrap().ToHuman())
+		return fmt.Sprintf("Arithmetic. %v", de.Arithmetic.Unwrap().ToHuman())
 	case 9:
-		return fmt.Sprintf("Transactional. %v", this.Transactional.Unwrap().ToString())
+		return fmt.Sprintf("Transactional. %v", de.Transactional.Unwrap().ToString())
 	case 10:
 		return "Exhausted"
 	case 11:
@@ -256,34 +256,34 @@ func (this DispatchError) ToString() string {
 	}
 }
 
-func (this *DispatchError) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (de *DispatchError) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(de.VariantIndex, dest)
 
-	if this.Module.IsSome() {
-		prim.Encoder.EncodeTo(this.Module.Unwrap(), dest)
+	if de.Module.IsSome() {
+		prim.Encoder.EncodeTo(de.Module.Unwrap(), dest)
 	}
 
-	if this.Token.IsSome() {
-		prim.Encoder.EncodeTo(this.Token.Unwrap(), dest)
+	if de.Token.IsSome() {
+		prim.Encoder.EncodeTo(de.Token.Unwrap(), dest)
 	}
 
-	if this.Arithmetic.IsSome() {
-		prim.Encoder.EncodeTo(this.Arithmetic.Unwrap(), dest)
+	if de.Arithmetic.IsSome() {
+		prim.Encoder.EncodeTo(de.Arithmetic.Unwrap(), dest)
 	}
 
-	if this.Transactional.IsSome() {
-		prim.Encoder.EncodeTo(this.Transactional.Unwrap(), dest)
+	if de.Transactional.IsSome() {
+		prim.Encoder.EncodeTo(de.Transactional.Unwrap(), dest)
 	}
 }
 
-func (this *DispatchError) Decode(decoder *prim.Decoder) error {
-	*this = DispatchError{}
+func (de *DispatchError) Decode(decoder *prim.Decoder) error {
+	*de = DispatchError{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&de.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch de.VariantIndex {
 	case 0:
 	case 1:
 	case 2:
@@ -292,7 +292,7 @@ func (this *DispatchError) Decode(decoder *prim.Decoder) error {
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Module.Set(t)
+		de.Module.Set(t)
 	case 4:
 	case 5:
 	case 6:
@@ -301,19 +301,19 @@ func (this *DispatchError) Decode(decoder *prim.Decoder) error {
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Token.Set(t)
+		de.Token.Set(t)
 	case 8:
 		var t ArithmeticError
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Arithmetic.Set(t)
+		de.Arithmetic.Set(t)
 	case 9:
 		var t TransactionalError
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Transactional.Set(t)
+		de.Transactional.Set(t)
 	case 10:
 	case 11:
 	case 12:
@@ -336,12 +336,12 @@ type TokenError struct {
 	VariantIndex uint8
 }
 
-func (this TokenError) ToHuman() string {
-	return this.ToString()
+func (te TokenError) ToHuman() string {
+	return te.ToString()
 }
 
-func (this TokenError) ToString() string {
-	switch this.VariantIndex {
+func (te TokenError) ToString() string {
+	switch te.VariantIndex {
 	case 0:
 		return "FundsUnavailable"
 	case 1:
@@ -372,12 +372,12 @@ type ArithmeticError struct {
 	VariantIndex uint8
 }
 
-func (this ArithmeticError) ToHuman() string {
-	return this.ToString()
+func (te ArithmeticError) ToHuman() string {
+	return te.ToString()
 }
 
-func (this ArithmeticError) ToString() string {
-	switch this.VariantIndex {
+func (te ArithmeticError) ToString() string {
+	switch te.VariantIndex {
 	case 0:
 		return "Underflow"
 	case 1:
@@ -394,12 +394,12 @@ type TransactionalError struct {
 	VariantIndex uint8
 }
 
-func (this TransactionalError) ToHuman() string {
-	return this.ToString()
+func (te TransactionalError) ToHuman() string {
+	return te.ToString()
 }
 
-func (this TransactionalError) ToString() string {
-	switch this.VariantIndex {
+func (te TransactionalError) ToString() string {
+	switch te.VariantIndex {
 	case 0:
 		return "LimitReached"
 	case 1:
@@ -438,12 +438,12 @@ func NewPerbillFromU8(percent uint8) Perbill {
 	return Perbill{Value: value}
 }
 
-func (this Perbill) ToString() string {
-	return this.ToHuman()
+func (perbill Perbill) ToString() string {
+	return perbill.ToHuman()
 }
 
-func (this Perbill) ToHuman() string {
-	stringValue := strconv.FormatUint(uint64(this.Value), 10)
+func (perbill Perbill) ToHuman() string {
+	stringValue := strconv.FormatUint(uint64(perbill.Value), 10)
 
 	if len(stringValue) <= 7 {
 		addZeros := 7 - len(stringValue)
@@ -487,12 +487,12 @@ type RewardDestination struct {
 	Account      prim.Option[prim.AccountId]
 }
 
-func (this RewardDestination) ToHuman() string {
-	return this.ToString()
+func (rd RewardDestination) ToHuman() string {
+	return rd.ToString()
 }
 
-func (this RewardDestination) ToString() string {
-	switch this.VariantIndex {
+func (rd RewardDestination) ToString() string {
+	switch rd.VariantIndex {
 	case 0:
 		return "Staked"
 	case 1:
@@ -500,7 +500,7 @@ func (this RewardDestination) ToString() string {
 	case 2:
 		return "Controller"
 	case 3:
-		return fmt.Sprintf("Account: %v", this.Account.Unwrap().ToHuman())
+		return fmt.Sprintf("Account: %v", rd.Account.Unwrap().ToHuman())
 	case 4:
 		return "None"
 	default:
@@ -508,22 +508,22 @@ func (this RewardDestination) ToString() string {
 	}
 }
 
-func (this *RewardDestination) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (rd *RewardDestination) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(rd.VariantIndex, dest)
 
-	if this.Account.IsSome() {
-		prim.Encoder.EncodeTo(this.Account.Unwrap(), dest)
+	if rd.Account.IsSome() {
+		prim.Encoder.EncodeTo(rd.Account.Unwrap(), dest)
 	}
 }
 
-func (this *RewardDestination) Decode(decoder *prim.Decoder) error {
-	*this = RewardDestination{}
+func (rd *RewardDestination) Decode(decoder *prim.Decoder) error {
+	*rd = RewardDestination{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&rd.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch rd.VariantIndex {
 	case 0:
 	case 1:
 	case 2:
@@ -532,7 +532,7 @@ func (this *RewardDestination) Decode(decoder *prim.Decoder) error {
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Account.Set(t)
+		rd.Account.Set(t)
 	case 4:
 	default:
 		return errors.New("Unknown RewardDestination Variant Index while Decoding")
@@ -558,44 +558,44 @@ type CommissionClaimPermission struct {
 	Account      prim.Option[prim.AccountId]
 }
 
-func (this CommissionClaimPermission) ToHuman() string {
-	return this.ToString()
+func (ccp CommissionClaimPermission) ToHuman() string {
+	return ccp.ToString()
 }
 
-func (this CommissionClaimPermission) ToString() string {
-	switch this.VariantIndex {
+func (ccp CommissionClaimPermission) ToString() string {
+	switch ccp.VariantIndex {
 	case 0:
 		return "Permissionless"
 	case 1:
-		return fmt.Sprintf("Account: %v", this.Account.Unwrap().ToHuman())
+		return fmt.Sprintf("Account: %v", ccp.Account.Unwrap().ToHuman())
 	default:
 		panic("Unknown CommissionClaimPermission Variant Index")
 	}
 }
 
-func (this *CommissionClaimPermission) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (ccp *CommissionClaimPermission) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(ccp.VariantIndex, dest)
 
-	if this.Account.IsSome() {
-		prim.Encoder.EncodeTo(this.Account.Unwrap(), dest)
+	if ccp.Account.IsSome() {
+		prim.Encoder.EncodeTo(ccp.Account.Unwrap(), dest)
 	}
 }
 
-func (this *CommissionClaimPermission) Decode(decoder *prim.Decoder) error {
-	*this = CommissionClaimPermission{}
+func (ccp *CommissionClaimPermission) Decode(decoder *prim.Decoder) error {
+	*ccp = CommissionClaimPermission{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&ccp.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch ccp.VariantIndex {
 	case 0:
 	case 1:
 		var t prim.AccountId
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Account.Set(t)
+		ccp.Account.Set(t)
 	default:
 		return errors.New("Unknown RewardDestination Variant Index while Decoding")
 	}
@@ -614,12 +614,12 @@ type PoolState struct {
 	VariantIndex uint8
 }
 
-func (this PoolState) ToHuman() string {
-	return this.ToString()
+func (ps PoolState) ToHuman() string {
+	return ps.ToString()
 }
 
-func (this PoolState) ToString() string {
-	switch this.VariantIndex {
+func (ps PoolState) ToString() string {
+	switch ps.VariantIndex {
 	case 0:
 		return "Open"
 	case 1:
@@ -631,18 +631,18 @@ func (this PoolState) ToString() string {
 	}
 }
 
-func (this *PoolState) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (ps *PoolState) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(ps.VariantIndex, dest)
 }
 
-func (this *PoolState) Decode(decoder *prim.Decoder) error {
-	*this = PoolState{}
+func (ps *PoolState) Decode(decoder *prim.Decoder) error {
+	*ps = PoolState{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&ps.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch ps.VariantIndex {
 	case 0:
 	case 1:
 	case 2:
@@ -670,12 +670,12 @@ type PoolClaimPermission struct {
 	VariantIndex uint8
 }
 
-func (this PoolClaimPermission) ToHuman() string {
-	return this.ToString()
+func (pcp PoolClaimPermission) ToHuman() string {
+	return pcp.ToString()
 }
 
-func (this PoolClaimPermission) ToString() string {
-	switch this.VariantIndex {
+func (pcp PoolClaimPermission) ToString() string {
+	switch pcp.VariantIndex {
 	case 0:
 		return "Permissioned"
 	case 1:
@@ -689,18 +689,18 @@ func (this PoolClaimPermission) ToString() string {
 	}
 }
 
-func (this *PoolClaimPermission) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (pcp *PoolClaimPermission) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(pcp.VariantIndex, dest)
 }
 
-func (this *PoolClaimPermission) Decode(decoder *prim.Decoder) error {
-	*this = PoolClaimPermission{}
+func (pcp *PoolClaimPermission) Decode(decoder *prim.Decoder) error {
+	*pcp = PoolClaimPermission{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&pcp.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch pcp.VariantIndex {
 	case 0:
 	case 1:
 	case 2:
@@ -735,12 +735,12 @@ type Judgement struct {
 	FeePaid      prim.Option[Balance]
 }
 
-func (this Judgement) ToHuman() string {
-	return this.ToString()
+func (j Judgement) ToHuman() string {
+	return j.ToString()
 }
 
-func (this Judgement) ToString() string {
-	switch this.VariantIndex {
+func (j Judgement) ToString() string {
+	switch j.VariantIndex {
 	case 0:
 		return "Unknown"
 	case 1:
@@ -760,29 +760,29 @@ func (this Judgement) ToString() string {
 	}
 }
 
-func (this *Judgement) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (j *Judgement) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(j.VariantIndex, dest)
 
-	if this.FeePaid.IsSome() {
-		prim.Encoder.EncodeTo(this.FeePaid.Unwrap(), dest)
+	if j.FeePaid.IsSome() {
+		prim.Encoder.EncodeTo(j.FeePaid.Unwrap(), dest)
 	}
 }
 
-func (this *Judgement) Decode(decoder *prim.Decoder) error {
-	*this = Judgement{}
+func (j *Judgement) Decode(decoder *prim.Decoder) error {
+	*j = Judgement{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&j.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch j.VariantIndex {
 	case 0:
 	case 1:
 		var t Balance
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.FeePaid.Set(t)
+		j.FeePaid.Set(t)
 	case 2:
 	case 3:
 	case 4:
@@ -836,472 +836,472 @@ type IdentityData struct {
 	ShaThree256  prim.Option[prim.H256]
 }
 
-func (this IdentityData) ToHuman() string {
-	return this.ToString()
+func (id IdentityData) ToHuman() string {
+	return id.ToString()
 }
 
-func (this IdentityData) ToString() string {
-	switch this.VariantIndex {
+func (id IdentityData) ToString() string {
+	switch id.VariantIndex {
 	case 0:
 		return "None"
 	case 1:
 		return "Raw0"
 	case 2:
-		v := this.Raw1.Unwrap()
+		v := id.Raw1.Unwrap()
 		return string(v[:])
 	case 3:
-		v := this.Raw2.Unwrap()
+		v := id.Raw2.Unwrap()
 		return string(v[:])
 	case 4:
-		v := this.Raw3.Unwrap()
+		v := id.Raw3.Unwrap()
 		return string(v[:])
 	case 5:
-		v := this.Raw4.Unwrap()
+		v := id.Raw4.Unwrap()
 		return string(v[:])
 	case 6:
-		v := this.Raw5.Unwrap()
+		v := id.Raw5.Unwrap()
 		return string(v[:])
 	case 7:
-		v := this.Raw6.Unwrap()
+		v := id.Raw6.Unwrap()
 		return string(v[:])
 	case 8:
-		v := this.Raw7.Unwrap()
+		v := id.Raw7.Unwrap()
 		return string(v[:])
 	case 9:
-		v := this.Raw8.Unwrap()
+		v := id.Raw8.Unwrap()
 		return string(v[:])
 	case 10:
-		v := this.Raw9.Unwrap()
+		v := id.Raw9.Unwrap()
 		return string(v[:])
 	case 11:
-		v := this.Raw10.Unwrap()
+		v := id.Raw10.Unwrap()
 		return string(v[:])
 	case 12:
-		v := this.Raw11.Unwrap()
+		v := id.Raw11.Unwrap()
 		return string(v[:])
 	case 13:
-		v := this.Raw12.Unwrap()
+		v := id.Raw12.Unwrap()
 		return string(v[:])
 	case 14:
-		v := this.Raw13.Unwrap()
+		v := id.Raw13.Unwrap()
 		return string(v[:])
 	case 15:
-		v := this.Raw14.Unwrap()
+		v := id.Raw14.Unwrap()
 		return string(v[:])
 	case 16:
-		v := this.Raw15.Unwrap()
+		v := id.Raw15.Unwrap()
 		return string(v[:])
 	case 17:
-		v := this.Raw16.Unwrap()
+		v := id.Raw16.Unwrap()
 		return string(v[:])
 	case 18:
-		v := this.Raw17.Unwrap()
+		v := id.Raw17.Unwrap()
 		return string(v[:])
 	case 19:
-		v := this.Raw18.Unwrap()
+		v := id.Raw18.Unwrap()
 		return string(v[:])
 	case 20:
-		v := this.Raw19.Unwrap()
+		v := id.Raw19.Unwrap()
 		return string(v[:])
 	case 21:
-		v := this.Raw20.Unwrap()
+		v := id.Raw20.Unwrap()
 		return string(v[:])
 	case 22:
-		v := this.Raw21.Unwrap()
+		v := id.Raw21.Unwrap()
 		return string(v[:])
 	case 23:
-		v := this.Raw22.Unwrap()
+		v := id.Raw22.Unwrap()
 		return string(v[:])
 	case 24:
-		v := this.Raw23.Unwrap()
+		v := id.Raw23.Unwrap()
 		return string(v[:])
 	case 25:
-		v := this.Raw24.Unwrap()
+		v := id.Raw24.Unwrap()
 		return string(v[:])
 	case 26:
-		v := this.Raw25.Unwrap()
+		v := id.Raw25.Unwrap()
 		return string(v[:])
 	case 27:
-		v := this.Raw26.Unwrap()
+		v := id.Raw26.Unwrap()
 		return string(v[:])
 	case 28:
-		v := this.Raw27.Unwrap()
+		v := id.Raw27.Unwrap()
 		return string(v[:])
 	case 29:
-		v := this.Raw28.Unwrap()
+		v := id.Raw28.Unwrap()
 		return string(v[:])
 	case 30:
-		v := this.Raw29.Unwrap()
+		v := id.Raw29.Unwrap()
 		return string(v[:])
 	case 31:
-		v := this.Raw30.Unwrap()
+		v := id.Raw30.Unwrap()
 		return string(v[:])
 	case 32:
-		v := this.Raw31.Unwrap()
+		v := id.Raw31.Unwrap()
 		return string(v[:])
 	case 33:
-		v := this.Raw32.Unwrap()
+		v := id.Raw32.Unwrap()
 		return string(v[:])
 	case 34:
-		v := this.BlakeTwo256.Unwrap()
+		v := id.BlakeTwo256.Unwrap()
 		return v.ToHexWith0x()
 	case 35:
-		v := this.Sha256.Unwrap()
+		v := id.Sha256.Unwrap()
 		return v.ToHexWith0x()
 	case 36:
-		v := this.Keccak256.Unwrap()
+		v := id.Keccak256.Unwrap()
 		return v.ToHexWith0x()
 	case 37:
-		v := this.ShaThree256.Unwrap()
+		v := id.ShaThree256.Unwrap()
 		return v.ToHexWith0x()
 	default:
 		panic("Unknown IdentityData Variant Index")
 	}
 }
 
-func (this *IdentityData) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
-	if this.Raw1.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw1.Unwrap(), dest)
+func (id *IdentityData) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(id.VariantIndex, dest)
+	if id.Raw1.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw1.Unwrap(), dest)
 	}
-	if this.Raw2.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw2.Unwrap(), dest)
+	if id.Raw2.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw2.Unwrap(), dest)
 	}
-	if this.Raw3.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw3.Unwrap(), dest)
+	if id.Raw3.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw3.Unwrap(), dest)
 	}
-	if this.Raw4.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw4.Unwrap(), dest)
+	if id.Raw4.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw4.Unwrap(), dest)
 	}
-	if this.Raw5.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw5.Unwrap(), dest)
+	if id.Raw5.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw5.Unwrap(), dest)
 	}
-	if this.Raw6.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw6.Unwrap(), dest)
+	if id.Raw6.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw6.Unwrap(), dest)
 	}
-	if this.Raw7.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw7.Unwrap(), dest)
+	if id.Raw7.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw7.Unwrap(), dest)
 	}
-	if this.Raw8.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw8.Unwrap(), dest)
+	if id.Raw8.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw8.Unwrap(), dest)
 	}
-	if this.Raw9.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw9.Unwrap(), dest)
+	if id.Raw9.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw9.Unwrap(), dest)
 	}
-	if this.Raw10.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw10.Unwrap(), dest)
+	if id.Raw10.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw10.Unwrap(), dest)
 	}
-	if this.Raw11.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw11.Unwrap(), dest)
+	if id.Raw11.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw11.Unwrap(), dest)
 	}
-	if this.Raw12.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw12.Unwrap(), dest)
+	if id.Raw12.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw12.Unwrap(), dest)
 	}
-	if this.Raw13.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw13.Unwrap(), dest)
+	if id.Raw13.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw13.Unwrap(), dest)
 	}
-	if this.Raw14.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw14.Unwrap(), dest)
+	if id.Raw14.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw14.Unwrap(), dest)
 	}
-	if this.Raw15.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw15.Unwrap(), dest)
+	if id.Raw15.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw15.Unwrap(), dest)
 	}
-	if this.Raw16.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw16.Unwrap(), dest)
+	if id.Raw16.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw16.Unwrap(), dest)
 	}
-	if this.Raw17.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw17.Unwrap(), dest)
+	if id.Raw17.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw17.Unwrap(), dest)
 	}
-	if this.Raw18.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw18.Unwrap(), dest)
+	if id.Raw18.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw18.Unwrap(), dest)
 	}
-	if this.Raw19.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw19.Unwrap(), dest)
+	if id.Raw19.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw19.Unwrap(), dest)
 	}
-	if this.Raw20.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw20.Unwrap(), dest)
+	if id.Raw20.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw20.Unwrap(), dest)
 	}
-	if this.Raw21.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw21.Unwrap(), dest)
+	if id.Raw21.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw21.Unwrap(), dest)
 	}
-	if this.Raw22.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw22.Unwrap(), dest)
+	if id.Raw22.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw22.Unwrap(), dest)
 	}
-	if this.Raw23.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw23.Unwrap(), dest)
+	if id.Raw23.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw23.Unwrap(), dest)
 	}
-	if this.Raw24.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw24.Unwrap(), dest)
+	if id.Raw24.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw24.Unwrap(), dest)
 	}
-	if this.Raw25.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw25.Unwrap(), dest)
+	if id.Raw25.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw25.Unwrap(), dest)
 	}
-	if this.Raw26.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw26.Unwrap(), dest)
+	if id.Raw26.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw26.Unwrap(), dest)
 	}
-	if this.Raw27.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw27.Unwrap(), dest)
+	if id.Raw27.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw27.Unwrap(), dest)
 	}
-	if this.Raw28.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw28.Unwrap(), dest)
+	if id.Raw28.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw28.Unwrap(), dest)
 	}
-	if this.Raw29.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw29.Unwrap(), dest)
+	if id.Raw29.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw29.Unwrap(), dest)
 	}
-	if this.Raw30.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw30.Unwrap(), dest)
+	if id.Raw30.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw30.Unwrap(), dest)
 	}
-	if this.Raw31.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw31.Unwrap(), dest)
+	if id.Raw31.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw31.Unwrap(), dest)
 	}
-	if this.Raw32.IsSome() {
-		prim.Encoder.EncodeTo(this.Raw32.Unwrap(), dest)
+	if id.Raw32.IsSome() {
+		prim.Encoder.EncodeTo(id.Raw32.Unwrap(), dest)
 	}
-	if this.BlakeTwo256.IsSome() {
-		prim.Encoder.EncodeTo(this.BlakeTwo256.Unwrap(), dest)
+	if id.BlakeTwo256.IsSome() {
+		prim.Encoder.EncodeTo(id.BlakeTwo256.Unwrap(), dest)
 	}
-	if this.Sha256.IsSome() {
-		prim.Encoder.EncodeTo(this.Sha256.Unwrap(), dest)
+	if id.Sha256.IsSome() {
+		prim.Encoder.EncodeTo(id.Sha256.Unwrap(), dest)
 	}
-	if this.Keccak256.IsSome() {
-		prim.Encoder.EncodeTo(this.Keccak256.Unwrap(), dest)
+	if id.Keccak256.IsSome() {
+		prim.Encoder.EncodeTo(id.Keccak256.Unwrap(), dest)
 	}
-	if this.ShaThree256.IsSome() {
-		prim.Encoder.EncodeTo(this.ShaThree256.Unwrap(), dest)
+	if id.ShaThree256.IsSome() {
+		prim.Encoder.EncodeTo(id.ShaThree256.Unwrap(), dest)
 	}
 }
 
-func (this *IdentityData) Decode(decoder *prim.Decoder) error {
-	*this = IdentityData{}
+func (id *IdentityData) Decode(decoder *prim.Decoder) error {
+	*id = IdentityData{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&id.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch id.VariantIndex {
 	case 0:
 	case 1:
 		var t [0]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw0.Set(t)
+		id.Raw0.Set(t)
 	case 2:
 		var t [1]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw1.Set(t)
+		id.Raw1.Set(t)
 	case 3:
 		var t [2]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw2.Set(t)
+		id.Raw2.Set(t)
 	case 4:
 		var t [3]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw3.Set(t)
+		id.Raw3.Set(t)
 	case 5:
 		var t [4]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw4.Set(t)
+		id.Raw4.Set(t)
 	case 6:
 		var t [5]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw5.Set(t)
+		id.Raw5.Set(t)
 	case 7:
 		var t [6]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw6.Set(t)
+		id.Raw6.Set(t)
 	case 8:
 		var t [7]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw7.Set(t)
+		id.Raw7.Set(t)
 	case 9:
 		var t [8]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw8.Set(t)
+		id.Raw8.Set(t)
 	case 10:
 		var t [9]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw9.Set(t)
+		id.Raw9.Set(t)
 	case 11:
 		var t [10]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw10.Set(t)
+		id.Raw10.Set(t)
 	case 12:
 		var t [11]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw11.Set(t)
+		id.Raw11.Set(t)
 	case 13:
 		var t [12]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw12.Set(t)
+		id.Raw12.Set(t)
 	case 14:
 		var t [13]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw13.Set(t)
+		id.Raw13.Set(t)
 	case 15:
 		var t [14]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw14.Set(t)
+		id.Raw14.Set(t)
 	case 16:
 		var t [15]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw15.Set(t)
+		id.Raw15.Set(t)
 	case 17:
 		var t [16]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw16.Set(t)
+		id.Raw16.Set(t)
 	case 18:
 		var t [17]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw17.Set(t)
+		id.Raw17.Set(t)
 	case 19:
 		var t [18]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw18.Set(t)
+		id.Raw18.Set(t)
 	case 20:
 		var t [19]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw19.Set(t)
+		id.Raw19.Set(t)
 	case 21:
 		var t [20]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw20.Set(t)
+		id.Raw20.Set(t)
 	case 22:
 		var t [21]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw21.Set(t)
+		id.Raw21.Set(t)
 	case 23:
 		var t [22]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw22.Set(t)
+		id.Raw22.Set(t)
 	case 24:
 		var t [23]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw23.Set(t)
+		id.Raw23.Set(t)
 	case 25:
 		var t [24]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw24.Set(t)
+		id.Raw24.Set(t)
 	case 26:
 		var t [25]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw25.Set(t)
+		id.Raw25.Set(t)
 	case 27:
 		var t [26]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw26.Set(t)
+		id.Raw26.Set(t)
 	case 28:
 		var t [27]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw27.Set(t)
+		id.Raw27.Set(t)
 	case 29:
 		var t [28]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw28.Set(t)
+		id.Raw28.Set(t)
 	case 30:
 		var t [29]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw29.Set(t)
+		id.Raw29.Set(t)
 	case 31:
 		var t [30]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw30.Set(t)
+		id.Raw30.Set(t)
 	case 32:
 		var t [31]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw31.Set(t)
+		id.Raw31.Set(t)
 	case 33:
 		var t [32]byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Raw32.Set(t)
+		id.Raw32.Set(t)
 	case 34:
 		var t prim.H256
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.BlakeTwo256.Set(t)
+		id.BlakeTwo256.Set(t)
 	case 35:
 		var t prim.H256
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Sha256.Set(t)
+		id.Sha256.Set(t)
 	case 36:
 		var t prim.H256
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Keccak256.Set(t)
+		id.Keccak256.Set(t)
 	case 37:
 		var t prim.H256
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.ShaThree256.Set(t)
+		id.ShaThree256.Set(t)
 	default:
 		return errors.New("Unknown IdentityData Variant Index while Decoding")
 	}
@@ -1314,44 +1314,44 @@ type DispatchResult struct {
 	Err          prim.Option[DispatchError]
 }
 
-func (this DispatchResult) ToHuman() string {
-	return this.ToString()
+func (dr DispatchResult) ToHuman() string {
+	return dr.ToString()
 }
 
-func (this DispatchResult) ToString() string {
-	switch this.VariantIndex {
+func (dr DispatchResult) ToString() string {
+	switch dr.VariantIndex {
 	case 0:
 		return "Ok"
 	case 1:
-		return fmt.Sprintf(`Err: %v`, this.Err.Unwrap().ToHuman())
+		return fmt.Sprintf(`Err: %v`, dr.Err.Unwrap().ToHuman())
 	default:
 		panic("Unknown DispatchResult Variant Index")
 	}
 }
 
-func (this *DispatchResult) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (dr *DispatchResult) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(dr.VariantIndex, dest)
 
-	if this.Err.IsSome() {
-		prim.Encoder.EncodeTo(this.Err.Unwrap(), dest)
+	if dr.Err.IsSome() {
+		prim.Encoder.EncodeTo(dr.Err.Unwrap(), dest)
 	}
 }
 
-func (this *DispatchResult) Decode(decoder *prim.Decoder) error {
-	*this = DispatchResult{}
+func (dr *DispatchResult) Decode(decoder *prim.Decoder) error {
+	*dr = DispatchResult{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&dr.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch dr.VariantIndex {
 	case 0:
 	case 1:
 		var t DispatchError
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Err.Set(t)
+		dr.Err.Set(t)
 	default:
 		return errors.New("Unknown DispatchResult Variant Index while Decoding")
 	}
@@ -1364,14 +1364,14 @@ type PoolBondExtra struct {
 	FreeBalance  prim.Option[Balance]
 }
 
-func (this PoolBondExtra) ToHuman() string {
-	return this.ToString()
+func (pbe PoolBondExtra) ToHuman() string {
+	return pbe.ToString()
 }
 
-func (this PoolBondExtra) ToString() string {
-	switch this.VariantIndex {
+func (pbe PoolBondExtra) ToString() string {
+	switch pbe.VariantIndex {
 	case 0:
-		return fmt.Sprintf("Free Balance: %v", this.FreeBalance.Unwrap().ToHuman())
+		return fmt.Sprintf("Free Balance: %v", pbe.FreeBalance.Unwrap().ToHuman())
 	case 1:
 		return "Rewards"
 	default:
@@ -1379,28 +1379,28 @@ func (this PoolBondExtra) ToString() string {
 	}
 }
 
-func (this *PoolBondExtra) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (pbe *PoolBondExtra) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(pbe.VariantIndex, dest)
 
-	if this.FreeBalance.IsSome() {
-		prim.Encoder.EncodeTo(this.FreeBalance.Unwrap(), dest)
+	if pbe.FreeBalance.IsSome() {
+		prim.Encoder.EncodeTo(pbe.FreeBalance.Unwrap(), dest)
 	}
 }
 
-func (this *PoolBondExtra) Decode(decoder *prim.Decoder) error {
-	*this = PoolBondExtra{}
+func (pbe *PoolBondExtra) Decode(decoder *prim.Decoder) error {
+	*pbe = PoolBondExtra{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&pbe.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch pbe.VariantIndex {
 	case 0:
 		var t Balance
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.FreeBalance.Set(t)
+		pbe.FreeBalance.Set(t)
 	case 1:
 	default:
 		return errors.New("Unknown PoolBondExtra Variant Index while Decoding")
@@ -1414,16 +1414,16 @@ type PoolRoleConfig struct {
 	Set          prim.Option[prim.AccountId]
 }
 
-func (this PoolRoleConfig) ToHuman() string {
-	return this.ToString()
+func (prc PoolRoleConfig) ToHuman() string {
+	return prc.ToString()
 }
 
-func (this PoolRoleConfig) ToString() string {
-	switch this.VariantIndex {
+func (prc PoolRoleConfig) ToString() string {
+	switch prc.VariantIndex {
 	case 0:
 		return "Noop"
 	case 1:
-		return fmt.Sprintf("Set: %v", this.Set.Unwrap().ToHuman())
+		return fmt.Sprintf("Set: %v", prc.Set.Unwrap().ToHuman())
 	case 2:
 		return "Remove"
 	default:
@@ -1431,29 +1431,29 @@ func (this PoolRoleConfig) ToString() string {
 	}
 }
 
-func (this *PoolRoleConfig) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (prc *PoolRoleConfig) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(prc.VariantIndex, dest)
 
-	if this.Set.IsSome() {
-		prim.Encoder.EncodeTo(this.Set.Unwrap(), dest)
+	if prc.Set.IsSome() {
+		prim.Encoder.EncodeTo(prc.Set.Unwrap(), dest)
 	}
 }
 
-func (this *PoolRoleConfig) Decode(decoder *prim.Decoder) error {
-	*this = PoolRoleConfig{}
+func (prc *PoolRoleConfig) Decode(decoder *prim.Decoder) error {
+	*prc = PoolRoleConfig{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&prc.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch prc.VariantIndex {
 	case 0:
 	case 1:
 		var t prim.AccountId
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.Set.Set(t)
+		prc.Set.Set(t)
 	case 2:
 	default:
 		return errors.New("Unknown PoolRoleConfig Variant Index while Decoding")
@@ -1480,54 +1480,54 @@ type MessageFungibleToken struct {
 	Amount  Balance `scale:"compact"`
 }
 
-func (this VectorMessage) ToHuman() string {
-	return this.ToString()
+func (vm VectorMessage) ToHuman() string {
+	return vm.ToString()
 }
 
-func (this VectorMessage) ToString() string {
-	switch this.VariantIndex {
+func (vm VectorMessage) ToString() string {
+	switch vm.VariantIndex {
 	case 0:
-		return fmt.Sprintf("ArbitraryMessage: %v", string(this.ArbitraryMessage.Unwrap()))
+		return fmt.Sprintf("ArbitraryMessage: %v", string(vm.ArbitraryMessage.Unwrap()))
 	case 1:
-		v := this.FungibleToken.Unwrap()
+		v := vm.FungibleToken.Unwrap()
 		return fmt.Sprintf("FungibleToken: Asset Id: %v,  Amount: %v", v.AssetId, v.Amount.String())
 	default:
 		panic("Unknown VectorMessage Variant Index")
 	}
 }
 
-func (this *VectorMessage) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (vm *VectorMessage) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(vm.VariantIndex, dest)
 
-	if this.ArbitraryMessage.IsSome() {
-		prim.Encoder.EncodeTo(this.ArbitraryMessage.Unwrap(), dest)
+	if vm.ArbitraryMessage.IsSome() {
+		prim.Encoder.EncodeTo(vm.ArbitraryMessage.Unwrap(), dest)
 	}
 
-	if this.FungibleToken.IsSome() {
-		prim.Encoder.EncodeTo(this.FungibleToken.Unwrap(), dest)
+	if vm.FungibleToken.IsSome() {
+		prim.Encoder.EncodeTo(vm.FungibleToken.Unwrap(), dest)
 	}
 }
 
-func (this *VectorMessage) Decode(decoder *prim.Decoder) error {
-	*this = VectorMessage{}
+func (vm *VectorMessage) Decode(decoder *prim.Decoder) error {
+	*vm = VectorMessage{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&vm.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch vm.VariantIndex {
 	case 0:
 		var t []byte
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.ArbitraryMessage.Set(t)
+		vm.ArbitraryMessage.Set(t)
 	case 1:
 		var t MessageFungibleToken
 		if err := decoder.Decode(&t); err != nil {
 			return err
 		}
-		this.FungibleToken.Set(t)
+		vm.FungibleToken.Set(t)
 	default:
 		return errors.New("Unknown VectorMessage Variant Index while Decoding")
 	}
@@ -1582,12 +1582,12 @@ type ProxyType struct {
 	VariantIndex uint8
 }
 
-func (this ProxyType) ToHuman() string {
-	return this.ToString()
+func (pt ProxyType) ToHuman() string {
+	return pt.ToString()
 }
 
-func (this ProxyType) ToString() string {
-	switch this.VariantIndex {
+func (pt ProxyType) ToString() string {
+	switch pt.VariantIndex {
 	case 0:
 		return "Any"
 	case 1:
@@ -1605,18 +1605,18 @@ func (this ProxyType) ToString() string {
 	}
 }
 
-func (this *ProxyType) EncodeTo(dest *string) {
-	prim.Encoder.EncodeTo(this.VariantIndex, dest)
+func (pt *ProxyType) EncodeTo(dest *string) {
+	prim.Encoder.EncodeTo(pt.VariantIndex, dest)
 }
 
-func (this *ProxyType) Decode(decoder *prim.Decoder) error {
-	*this = ProxyType{}
+func (pt *ProxyType) Decode(decoder *prim.Decoder) error {
+	*pt = ProxyType{}
 
-	if err := decoder.Decode(&this.VariantIndex); err != nil {
+	if err := decoder.Decode(&pt.VariantIndex); err != nil {
 		return err
 	}
 
-	switch this.VariantIndex {
+	switch pt.VariantIndex {
 	case 0:
 	case 1:
 	case 2:

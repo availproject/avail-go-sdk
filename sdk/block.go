@@ -14,24 +14,24 @@ type Filter struct {
 	TxSigner prim.Option[prim.AccountId]
 }
 
-func (this Filter) WAppId(value uint32) Filter {
-	this.AppId = prim.Some(value)
-	return this
+func (f Filter) WAppId(value uint32) Filter {
+	f.AppId = prim.Some(value)
+	return f
 }
 
-func (this Filter) WTxHash(value prim.H256) Filter {
-	this.TxHash = prim.Some(value)
-	return this
+func (f Filter) WTxHash(value prim.H256) Filter {
+	f.TxHash = prim.Some(value)
+	return f
 }
 
-func (this Filter) WTxIndex(value uint32) Filter {
-	this.TxIndex = prim.Some(value)
-	return this
+func (f Filter) WTxIndex(value uint32) Filter {
+	f.TxIndex = prim.Some(value)
+	return f
 }
 
-func (this Filter) WTxSigner(value prim.AccountId) Filter {
-	this.TxSigner = prim.Some(value)
-	return this
+func (f Filter) WTxSigner(value prim.AccountId) Filter {
+	f.TxSigner = prim.Some(value)
+	return f
 }
 
 type Block struct {
@@ -77,10 +77,10 @@ func NewFinalizedBlock(client *Client) (Block, error) {
 	return NewBlock(client, hash)
 }
 
-func (this *Block) Transactions(filter Filter) []BlockTransaction {
-	extrinsics := this.Block.Extrinsics
+func (b *Block) Transactions(filter Filter) []BlockTransaction {
+	extrinsics := b.Block.Extrinsics
 	result := []BlockTransaction{}
-	for i := range this.Block.Extrinsics {
+	for i := range b.Block.Extrinsics {
 		ext := &extrinsics[i]
 
 		if filter.AppId.IsSome() {
@@ -111,15 +111,15 @@ func (this *Block) Transactions(filter Filter) []BlockTransaction {
 			}
 		}
 
-		txEvents := this.EventsForTransaction(extrinsics[i].TxIndex)
-		result = append(result, NewBlockTransaction(this.client, &extrinsics[i], txEvents))
+		txEvents := b.EventsForTransaction(extrinsics[i].TxIndex)
+		result = append(result, NewBlockTransaction(b.client, &extrinsics[i], txEvents))
 	}
 
 	return result
 }
 
-func (this *Block) DataSubmissions(filter Filter) []DataSubmission {
-	extrinsics := this.Block.Extrinsics
+func (b *Block) DataSubmissions(filter Filter) []DataSubmission {
+	extrinsics := b.Block.Extrinsics
 	result := []DataSubmission{}
 	for i := range extrinsics {
 		ext := &extrinsics[i]
@@ -160,22 +160,22 @@ func (this *Block) DataSubmissions(filter Filter) []DataSubmission {
 	return result
 }
 
-func (this *Block) EventsForTransaction(txIndex uint32) prim.Option[EventRecords] {
-	if this.events.IsNone() {
+func (b *Block) EventsForTransaction(txIndex uint32) prim.Option[EventRecords] {
+	if b.events.IsNone() {
 		return prim.None[EventRecords]()
 	}
 
-	if txIndex >= uint32(len(this.Block.Extrinsics)) {
+	if txIndex >= uint32(len(b.Block.Extrinsics)) {
 		return prim.None[EventRecords]()
 	}
 
-	allEvents := this.events.Unwrap()
+	allEvents := b.events.Unwrap()
 	txEvents := EventFilterByTxIndex(allEvents, txIndex)
 	return prim.Some(txEvents)
 }
 
-func (this *Block) Events() prim.Option[EventRecords] {
-	return this.events
+func (b *Block) Events() prim.Option[EventRecords] {
+	return b.events
 }
 
 func sameSignature(tx *prim.DecodedExtrinsic, accountId prim.AccountId) bool {

@@ -11,99 +11,99 @@ type Option[T any] struct {
 	isSet bool
 }
 
-func (this *Option[T]) EncodeTo(dest *string) {
-	if !this.isSet {
+func (o *Option[T]) EncodeTo(dest *string) {
+	if !o.isSet {
 		Encoder.EncodeTo(uint8(0), dest)
 		return
 	}
 	Encoder.EncodeTo(uint8(1), dest)
-	Encoder.EncodeTo(this.value, dest)
+	Encoder.EncodeTo(o.value, dest)
 }
 
-func (this *Option[T]) Decode(decoder *Decoder) error {
+func (o *Option[T]) Decode(decoder *Decoder) error {
 	hasValue := uint8(0)
 	if err := decoder.Decode(&hasValue); err != nil {
 		return err
 	}
 	if hasValue == 1 {
-		this.isSet = true
-		if err := decoder.Decode(&this.value); err != nil {
+		o.isSet = true
+		if err := decoder.Decode(&o.value); err != nil {
 			return err
 		}
 	} else {
-		this.isSet = false
+		o.isSet = false
 	}
 
 	return nil
 }
 
-func (this *Option[T]) Set(value T) {
-	this.value = value
-	this.isSet = true
+func (o *Option[T]) Set(value T) {
+	o.value = value
+	o.isSet = true
 }
 
-func (this *Option[T]) Unset() {
+func (o *Option[T]) Unset() {
 	var t T
-	this.value = t
-	this.isSet = false
+	o.value = t
+	o.isSet = false
 }
 
-func (this Option[T]) IsSome() bool {
-	return this.isSet
+func (o Option[T]) IsSome() bool {
+	return o.isSet
 }
 
-func (this Option[T]) IsNone() bool {
-	return !this.isSet
+func (o Option[T]) IsNone() bool {
+	return !o.isSet
 }
 
-func (this Option[T]) String() string {
-	if this.isSet {
-		return fmt.Sprintf("Some(%v)", this.value)
+func (o Option[T]) String() string {
+	if o.isSet {
+		return fmt.Sprintf("Some(%v)", o.value)
 	} else {
 		return "None"
 	}
 }
 
-func (this Option[T]) ToString() string {
-	return this.String()
+func (o Option[T]) ToString() string {
+	return o.String()
 }
 
-func (this Option[T]) ToHuman() string {
-	return this.String()
+func (o Option[T]) ToHuman() string {
+	return o.String()
 }
 
 // This function does not panic when no value is set.
 //
 // If Set, returns set value.
 // If Not Set, returns default value.
-func (this Option[T]) Unwrap() T {
-	if this.isSet == false {
+func (o Option[T]) Unwrap() T {
+	if o.isSet == false {
 		var t T
 		return t
 	}
-	return this.value
+	return o.value
 }
 
 // This function will panic when no value is set.
 //
 // If Set, returns set value.
 // If Not Set, panics
-func (this Option[T]) UnsafeUnwrap() T {
-	if this.isSet == false {
+func (o Option[T]) UnsafeUnwrap() T {
+	if o.isSet == false {
 		panic("Option is not set.")
 	}
-	return this.value
+	return o.value
 }
 
 // This function does not panic when no value is set.
 //
 // If Set, returns set value.
 // If Not Set, returns value specified as parameter.
-func (this Option[T]) UnwrapOr(elseValue T) T {
-	if this.isSet == false {
+func (o Option[T]) UnwrapOr(elseValue T) T {
+	if o.isSet == false {
 		return elseValue
 	}
-	return this.value
+	return o.value
 }
 
 func Some[T any](value T) Option[T] {

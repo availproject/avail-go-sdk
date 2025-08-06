@@ -9,19 +9,19 @@ type EventSudid struct {
 	SudoResult metadata.DispatchResult
 }
 
-func (this EventSudid) PalletIndex() uint8 {
+func (es EventSudid) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventSudid) PalletName() string {
+func (es EventSudid) PalletName() string {
 	return PalletName
 }
 
-func (this EventSudid) EventIndex() uint8 {
+func (es EventSudid) EventIndex() uint8 {
 	return 0
 }
 
-func (this EventSudid) EventName() string {
+func (es EventSudid) EventName() string {
 	return "Sudid"
 }
 
@@ -30,18 +30,18 @@ type EventSudoAsDone struct {
 	SudoResult metadata.DispatchResult
 }
 
-func (this EventSudoAsDone) PalletIndex() uint8 {
+func (esad EventSudoAsDone) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventSudoAsDone) PalletName() string {
+func (esad EventSudoAsDone) PalletName() string {
 	return PalletName
 }
 
-func (this EventSudoAsDone) EventIndex() uint8 {
+func (esad EventSudoAsDone) EventIndex() uint8 {
 	return 3
 }
 
-func (this EventSudoAsDone) EventName() string {
+func (esad EventSudoAsDone) EventName() string {
 	return "SudoAsDone"
 }

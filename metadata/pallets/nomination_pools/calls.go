@@ -22,19 +22,19 @@ type CallJoin struct {
 	PoolId uint32
 }
 
-func (this CallJoin) PalletIndex() uint8 {
+func (cj CallJoin) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallJoin) PalletName() string {
+func (cj CallJoin) PalletName() string {
 	return PalletName
 }
 
-func (this CallJoin) CallIndex() uint8 {
+func (cj CallJoin) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallJoin) CallName() string {
+func (cj CallJoin) CallName() string {
 	return "join"
 }
 
@@ -49,19 +49,19 @@ type CallBondExtra struct {
 	Extra metadata.PoolBondExtra
 }
 
-func (this CallBondExtra) PalletIndex() uint8 {
+func (cbe CallBondExtra) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallBondExtra) PalletName() string {
+func (cbe CallBondExtra) PalletName() string {
 	return PalletName
 }
 
-func (this CallBondExtra) CallIndex() uint8 {
+func (cbe CallBondExtra) CallIndex() uint8 {
 	return 1
 }
 
-func (this CallBondExtra) CallName() string {
+func (cbe CallBondExtra) CallName() string {
 	return "bond_extra"
 }
 
@@ -75,19 +75,19 @@ func (this CallBondExtra) CallName() string {
 // See `claim_payout_other` to caim rewards on bahalf of some `other` pool member.
 type CallClaimPayout struct{}
 
-func (this CallClaimPayout) PalletIndex() uint8 {
+func (ccp CallClaimPayout) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallClaimPayout) PalletName() string {
+func (ccp CallClaimPayout) PalletName() string {
 	return PalletName
 }
 
-func (this CallClaimPayout) CallIndex() uint8 {
+func (ccp CallClaimPayout) CallIndex() uint8 {
 	return 2
 }
 
-func (this CallClaimPayout) CallName() string {
+func (ccp CallClaimPayout) CallName() string {
 	return "claim_payout"
 }
 
@@ -127,19 +127,19 @@ type CallUnbond struct {
 	UnbondingPoints uint128.Uint128 `scale:"compact"`
 }
 
-func (this CallUnbond) PalletIndex() uint8 {
+func (cu CallUnbond) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallUnbond) PalletName() string {
+func (cu CallUnbond) PalletName() string {
 	return PalletName
 }
 
-func (this CallUnbond) CallIndex() uint8 {
+func (cu CallUnbond) CallIndex() uint8 {
 	return 3
 }
 
-func (this CallUnbond) CallName() string {
+func (cu CallUnbond) CallName() string {
 	return "unbond"
 }
 
@@ -154,19 +154,19 @@ type CallPoolWithdrawUnbonded struct {
 	NumSlashingSpans uint32
 }
 
-func (this CallPoolWithdrawUnbonded) PalletIndex() uint8 {
+func (cpwu CallPoolWithdrawUnbonded) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallPoolWithdrawUnbonded) PalletName() string {
+func (cpwu CallPoolWithdrawUnbonded) PalletName() string {
 	return PalletName
 }
 
-func (this CallPoolWithdrawUnbonded) CallIndex() uint8 {
+func (cpwu CallPoolWithdrawUnbonded) CallIndex() uint8 {
 	return 4
 }
 
-func (this CallPoolWithdrawUnbonded) CallName() string {
+func (cpwu CallPoolWithdrawUnbonded) CallName() string {
 	return "pool_withdraw_unbonded"
 }
 
@@ -194,19 +194,19 @@ type CallWithdrawUnbonded struct {
 	NumSlashingSpans uint32
 }
 
-func (this CallWithdrawUnbonded) PalletIndex() uint8 {
+func (cwu CallWithdrawUnbonded) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallWithdrawUnbonded) PalletName() string {
+func (cwu CallWithdrawUnbonded) PalletName() string {
 	return PalletName
 }
 
-func (this CallWithdrawUnbonded) CallIndex() uint8 {
+func (cwu CallWithdrawUnbonded) CallIndex() uint8 {
 	return 5
 }
 
-func (this CallWithdrawUnbonded) CallName() string {
+func (cwu CallWithdrawUnbonded) CallName() string {
 	return "withdraw_unbonded"
 }
 
@@ -232,19 +232,19 @@ type CallCreate struct {
 	Bouncer   prim.MultiAddress
 }
 
-func (this CallCreate) PalletIndex() uint8 {
+func (cc CallCreate) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallCreate) PalletName() string {
+func (cc CallCreate) PalletName() string {
 	return PalletName
 }
 
-func (this CallCreate) CallIndex() uint8 {
+func (cc CallCreate) CallIndex() uint8 {
 	return 6
 }
 
-func (this CallCreate) CallName() string {
+func (cc CallCreate) CallName() string {
 	return "create"
 }
 
@@ -262,19 +262,19 @@ type CallCreateWithPoolId struct {
 	PoolId    uint32
 }
 
-func (this CallCreateWithPoolId) PalletIndex() uint8 {
+func (ccwp CallCreateWithPoolId) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallCreateWithPoolId) PalletName() string {
+func (ccwp CallCreateWithPoolId) PalletName() string {
 	return PalletName
 }
 
-func (this CallCreateWithPoolId) CallIndex() uint8 {
+func (ccwp CallCreateWithPoolId) CallIndex() uint8 {
 	return 7
 }
 
-func (this CallCreateWithPoolId) CallName() string {
+func (ccwp CallCreateWithPoolId) CallName() string {
 	return "create_with_pool_id"
 }
 
@@ -290,19 +290,19 @@ type CallNominate struct {
 	Validators []prim.AccountId
 }
 
-func (this CallNominate) PalletIndex() uint8 {
+func (cn CallNominate) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallNominate) PalletName() string {
+func (cn CallNominate) PalletName() string {
 	return PalletName
 }
 
-func (this CallNominate) CallIndex() uint8 {
+func (cn CallNominate) CallIndex() uint8 {
 	return 8
 }
 
-func (this CallNominate) CallName() string {
+func (cn CallNominate) CallName() string {
 	return "nominate"
 }
 
@@ -321,19 +321,19 @@ type CallSetState struct {
 	State  metadata.PoolState
 }
 
-func (this CallSetState) PalletIndex() uint8 {
+func (css CallSetState) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetState) PalletName() string {
+func (css CallSetState) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetState) CallIndex() uint8 {
+func (css CallSetState) CallIndex() uint8 {
 	return 9
 }
 
-func (this CallSetState) CallName() string {
+func (css CallSetState) CallName() string {
 	return "set_state"
 }
 
@@ -346,19 +346,19 @@ type CallSetMetadata struct {
 	Metadata []byte
 }
 
-func (this CallSetMetadata) PalletIndex() uint8 {
+func (csm CallSetMetadata) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetMetadata) PalletName() string {
+func (csm CallSetMetadata) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetMetadata) CallIndex() uint8 {
+func (csm CallSetMetadata) CallIndex() uint8 {
 	return 10
 }
 
-func (this CallSetMetadata) CallName() string {
+func (csm CallSetMetadata) CallName() string {
 	return "set_metadata"
 }
 
@@ -376,19 +376,19 @@ type CallUpdateRoles struct {
 	NewBouncer   metadata.PoolRoleConfig
 }
 
-func (this CallUpdateRoles) PalletIndex() uint8 {
+func (cur CallUpdateRoles) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallUpdateRoles) PalletName() string {
+func (cur CallUpdateRoles) PalletName() string {
 	return PalletName
 }
 
-func (this CallUpdateRoles) CallIndex() uint8 {
+func (cur CallUpdateRoles) CallIndex() uint8 {
 	return 12
 }
 
-func (this CallUpdateRoles) CallName() string {
+func (cur CallUpdateRoles) CallName() string {
 	return "update_roles"
 }
 
@@ -403,19 +403,19 @@ type CallChill struct {
 	PoolId uint32
 }
 
-func (this CallChill) PalletIndex() uint8 {
+func (cc CallChill) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallChill) PalletName() string {
+func (cc CallChill) PalletName() string {
 	return PalletName
 }
 
-func (this CallChill) CallIndex() uint8 {
+func (cc CallChill) CallIndex() uint8 {
 	return 13
 }
 
-func (this CallChill) CallName() string {
+func (cc CallChill) CallName() string {
 	return "chill"
 }
 
@@ -433,19 +433,19 @@ type CallBondExtraOther struct {
 	Extra  metadata.PoolBondExtra
 }
 
-func (this CallBondExtraOther) PalletIndex() uint8 {
+func (cbeo CallBondExtraOther) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallBondExtraOther) PalletName() string {
+func (cbeo CallBondExtraOther) PalletName() string {
 	return PalletName
 }
 
-func (this CallBondExtraOther) CallIndex() uint8 {
+func (cbeo CallBondExtraOther) CallIndex() uint8 {
 	return 14
 }
 
-func (this CallBondExtraOther) CallName() string {
+func (cbeo CallBondExtraOther) CallName() string {
 	return "bond_extra_other"
 }
 
@@ -460,19 +460,19 @@ type CallSetClaimPermission struct {
 	Permission metadata.PoolClaimPermission
 }
 
-func (this CallSetClaimPermission) PalletIndex() uint8 {
+func (cscp CallSetClaimPermission) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetClaimPermission) PalletName() string {
+func (cscp CallSetClaimPermission) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetClaimPermission) CallIndex() uint8 {
+func (cscp CallSetClaimPermission) CallIndex() uint8 {
 	return 15
 }
 
-func (this CallSetClaimPermission) CallName() string {
+func (cscp CallSetClaimPermission) CallName() string {
 	return "set_claim_permission"
 }
 
@@ -484,19 +484,19 @@ type CallClaimPayoutOther struct {
 	Other prim.AccountId
 }
 
-func (this CallClaimPayoutOther) PalletIndex() uint8 {
+func (ccpo CallClaimPayoutOther) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallClaimPayoutOther) PalletName() string {
+func (ccpo CallClaimPayoutOther) PalletName() string {
 	return PalletName
 }
 
-func (this CallClaimPayoutOther) CallIndex() uint8 {
+func (ccpo CallClaimPayoutOther) CallIndex() uint8 {
 	return 16
 }
 
-func (this CallClaimPayoutOther) CallName() string {
+func (ccpo CallClaimPayoutOther) CallName() string {
 	return "claim_payout_other"
 }
 
@@ -511,19 +511,19 @@ type CallSetCommission struct {
 	NewCommission prim.Option[metadata.Tuple2[metadata.Perbill, prim.AccountId]]
 }
 
-func (this CallSetCommission) PalletIndex() uint8 {
+func (csc CallSetCommission) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetCommission) PalletName() string {
+func (csc CallSetCommission) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetCommission) CallIndex() uint8 {
+func (csc CallSetCommission) CallIndex() uint8 {
 	return 17
 }
 
-func (this CallSetCommission) CallName() string {
+func (csc CallSetCommission) CallName() string {
 	return "set_commission"
 }
 
@@ -537,19 +537,19 @@ type CallSetCommissionMax struct {
 	MaxCommission metadata.Perbill
 }
 
-func (this CallSetCommissionMax) PalletIndex() uint8 {
+func (cscm CallSetCommissionMax) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetCommissionMax) PalletName() string {
+func (cscm CallSetCommissionMax) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetCommissionMax) CallIndex() uint8 {
+func (cscm CallSetCommissionMax) CallIndex() uint8 {
 	return 18
 }
 
-func (this CallSetCommissionMax) CallName() string {
+func (cscm CallSetCommissionMax) CallName() string {
 	return "set_commission_max"
 }
 
@@ -562,19 +562,19 @@ type CallSetCommissionChangeRate struct {
 	ChangeRate metadata.PoolCommissionChangeRate
 }
 
-func (this CallSetCommissionChangeRate) PalletIndex() uint8 {
+func (csccr CallSetCommissionChangeRate) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetCommissionChangeRate) PalletName() string {
+func (csccr CallSetCommissionChangeRate) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetCommissionChangeRate) CallIndex() uint8 {
+func (csccr CallSetCommissionChangeRate) CallIndex() uint8 {
 	return 19
 }
 
-func (this CallSetCommissionChangeRate) CallName() string {
+func (csccr CallSetCommissionChangeRate) CallName() string {
 	return "set_commission_change_rate"
 }
 
@@ -587,19 +587,19 @@ type CallClaimCommission struct {
 	PoolId uint32
 }
 
-func (this CallClaimCommission) PalletIndex() uint8 {
+func (ccc CallClaimCommission) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallClaimCommission) PalletName() string {
+func (ccc CallClaimCommission) PalletName() string {
 	return PalletName
 }
 
-func (this CallClaimCommission) CallIndex() uint8 {
+func (ccc CallClaimCommission) CallIndex() uint8 {
 	return 20
 }
 
-func (this CallClaimCommission) CallName() string {
+func (ccc CallClaimCommission) CallName() string {
 	return "claim_commission"
 }
 
@@ -614,19 +614,19 @@ type CallAdjustPoolDeposit struct {
 	PoolId uint32
 }
 
-func (this CallAdjustPoolDeposit) PalletIndex() uint8 {
+func (capd CallAdjustPoolDeposit) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallAdjustPoolDeposit) PalletName() string {
+func (capd CallAdjustPoolDeposit) PalletName() string {
 	return PalletName
 }
 
-func (this CallAdjustPoolDeposit) CallIndex() uint8 {
+func (capd CallAdjustPoolDeposit) CallIndex() uint8 {
 	return 21
 }
 
-func (this CallAdjustPoolDeposit) CallName() string {
+func (capd CallAdjustPoolDeposit) CallName() string {
 	return "adjust_pool_deposit"
 }
 
@@ -639,18 +639,18 @@ type CallSetCommissionClaimPermission struct {
 	Permission prim.Option[metadata.CommissionClaimPermission]
 }
 
-func (this CallSetCommissionClaimPermission) PalletIndex() uint8 {
+func (csccp CallSetCommissionClaimPermission) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetCommissionClaimPermission) PalletName() string {
+func (csccp CallSetCommissionClaimPermission) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetCommissionClaimPermission) CallIndex() uint8 {
+func (csccp CallSetCommissionClaimPermission) CallIndex() uint8 {
 	return 22
 }
 
-func (this CallSetCommissionClaimPermission) CallName() string {
+func (csccp CallSetCommissionClaimPermission) CallName() string {
 	return "set_commission_claim_permission"
 }

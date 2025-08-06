@@ -19,19 +19,19 @@ type CallAsMultiThreshold1 struct {
 	Call             prim.Call
 }
 
-func (this CallAsMultiThreshold1) PalletIndex() uint8 {
+func (camt CallAsMultiThreshold1) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallAsMultiThreshold1) PalletName() string {
+func (camt CallAsMultiThreshold1) PalletName() string {
 	return PalletName
 }
 
-func (this CallAsMultiThreshold1) CallIndex() uint8 {
+func (camt CallAsMultiThreshold1) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallAsMultiThreshold1) CallName() string {
+func (camt CallAsMultiThreshold1) CallName() string {
 	return "as_multi_threshold_1"
 }
 
@@ -68,19 +68,19 @@ type CallAsMulti struct {
 	MaxWeight        metadata.Weight
 }
 
-func (this CallAsMulti) PalletIndex() uint8 {
+func (cam CallAsMulti) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallAsMulti) PalletName() string {
+func (cam CallAsMulti) PalletName() string {
 	return PalletName
 }
 
-func (this CallAsMulti) CallIndex() uint8 {
+func (cam CallAsMulti) CallIndex() uint8 {
 	return 1
 }
 
-func (this CallAsMulti) CallName() string {
+func (cam CallAsMulti) CallName() string {
 	return "as_multi"
 }
 
@@ -110,19 +110,19 @@ type CallApproveAsMulti struct {
 	MaxWeight        metadata.Weight
 }
 
-func (this CallApproveAsMulti) PalletIndex() uint8 {
+func (caam CallApproveAsMulti) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallApproveAsMulti) PalletName() string {
+func (caam CallApproveAsMulti) PalletName() string {
 	return PalletName
 }
 
-func (this CallApproveAsMulti) CallIndex() uint8 {
+func (caam CallApproveAsMulti) CallIndex() uint8 {
 	return 2
 }
 
-func (this CallApproveAsMulti) CallName() string {
+func (caam CallApproveAsMulti) CallName() string {
 	return "approve_as_multi"
 }
 
@@ -144,18 +144,18 @@ type CallCancelAsMulti struct {
 	CallHash         prim.H256
 }
 
-func (this CallCancelAsMulti) PalletIndex() uint8 {
+func (ccam CallCancelAsMulti) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallCancelAsMulti) PalletName() string {
+func (ccam CallCancelAsMulti) PalletName() string {
 	return PalletName
 }
 
-func (this CallCancelAsMulti) CallIndex() uint8 {
+func (ccam CallCancelAsMulti) CallIndex() uint8 {
 	return 3
 }
 
-func (this CallCancelAsMulti) CallName() string {
+func (ccam CallCancelAsMulti) CallName() string {
 	return "cancel_as_multi"
 }

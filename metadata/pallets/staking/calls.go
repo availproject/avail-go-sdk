@@ -14,19 +14,19 @@ type CallBond struct {
 	Payee metadata.RewardDestination
 }
 
-func (this CallBond) PalletIndex() uint8 {
+func (cb CallBond) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallBond) PalletName() string {
+func (cb CallBond) PalletName() string {
 	return PalletName
 }
 
-func (this CallBond) CallIndex() uint8 {
+func (cb CallBond) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallBond) CallName() string {
+func (cb CallBond) CallName() string {
 	return "bond"
 }
 
@@ -36,19 +36,19 @@ type CallBondExtra struct {
 	MaxAdditional metadata.Balance `scale:"compact"`
 }
 
-func (this CallBondExtra) PalletIndex() uint8 {
+func (cbe CallBondExtra) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallBondExtra) PalletName() string {
+func (cbe CallBondExtra) PalletName() string {
 	return PalletName
 }
 
-func (this CallBondExtra) CallIndex() uint8 {
+func (cbe CallBondExtra) CallIndex() uint8 {
 	return 1
 }
 
-func (this CallBondExtra) CallName() string {
+func (cbe CallBondExtra) CallName() string {
 	return "bond_extra"
 }
 
@@ -59,19 +59,19 @@ type CallUnbond struct {
 	Value metadata.Balance `scale:"compact"`
 }
 
-func (this CallUnbond) PalletIndex() uint8 {
+func (cu CallUnbond) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallUnbond) PalletName() string {
+func (cu CallUnbond) PalletName() string {
 	return PalletName
 }
 
-func (this CallUnbond) CallIndex() uint8 {
+func (cu CallUnbond) CallIndex() uint8 {
 	return 2
 }
 
-func (this CallUnbond) CallName() string {
+func (cu CallUnbond) CallName() string {
 	return "unbond"
 }
 
@@ -83,19 +83,19 @@ type CallWithdrawUnbonded struct {
 	NumSlashingSpans uint32
 }
 
-func (this CallWithdrawUnbonded) PalletIndex() uint8 {
+func (cwu CallWithdrawUnbonded) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallWithdrawUnbonded) PalletName() string {
+func (cwu CallWithdrawUnbonded) PalletName() string {
 	return PalletName
 }
 
-func (this CallWithdrawUnbonded) CallIndex() uint8 {
+func (cwu CallWithdrawUnbonded) CallIndex() uint8 {
 	return 3
 }
 
-func (this CallWithdrawUnbonded) CallName() string {
+func (cwu CallWithdrawUnbonded) CallName() string {
 	return "withdraw_unbonded"
 }
 
@@ -106,19 +106,19 @@ type CallValidate struct {
 	Prefs metadata.ValidatorPrefs
 }
 
-func (this CallValidate) PalletIndex() uint8 {
+func (cv CallValidate) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallValidate) PalletName() string {
+func (cv CallValidate) PalletName() string {
 	return PalletName
 }
 
-func (this CallValidate) CallIndex() uint8 {
+func (cv CallValidate) CallIndex() uint8 {
 	return 4
 }
 
-func (this CallValidate) CallName() string {
+func (cv CallValidate) CallName() string {
 	return "validate"
 }
 
@@ -129,19 +129,19 @@ type CallNominate struct {
 	Targets []prim.MultiAddress
 }
 
-func (this CallNominate) PalletIndex() uint8 {
+func (cn CallNominate) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallNominate) PalletName() string {
+func (cn CallNominate) PalletName() string {
 	return PalletName
 }
 
-func (this CallNominate) CallIndex() uint8 {
+func (cn CallNominate) CallIndex() uint8 {
 	return 5
 }
 
-func (this CallNominate) CallName() string {
+func (cn CallNominate) CallName() string {
 	return "nominate"
 }
 
@@ -150,19 +150,19 @@ func (this CallNominate) CallName() string {
 // Effects will be felt at the beginning of the next era.
 type CallChill struct{}
 
-func (this CallChill) PalletIndex() uint8 {
+func (cc CallChill) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallChill) PalletName() string {
+func (cc CallChill) PalletName() string {
 	return PalletName
 }
 
-func (this CallChill) CallIndex() uint8 {
+func (cc CallChill) CallIndex() uint8 {
 	return 6
 }
 
-func (this CallChill) CallName() string {
+func (cc CallChill) CallName() string {
 	return "chill"
 }
 
@@ -173,19 +173,19 @@ type CallSetPayee struct {
 	Payee metadata.RewardDestination
 }
 
-func (this CallSetPayee) PalletIndex() uint8 {
+func (csp CallSetPayee) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetPayee) PalletName() string {
+func (csp CallSetPayee) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetPayee) CallIndex() uint8 {
+func (csp CallSetPayee) CallIndex() uint8 {
 	return 7
 }
 
-func (this CallSetPayee) CallName() string {
+func (csp CallSetPayee) CallName() string {
 	return "set_payee"
 }
 
@@ -197,19 +197,19 @@ func (this CallSetPayee) CallName() string {
 // Effects will be felt instantly (as soon as this function is completed successfully).
 type CallSetController struct{}
 
-func (this CallSetController) PalletIndex() uint8 {
+func (csc CallSetController) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetController) PalletName() string {
+func (csc CallSetController) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetController) CallIndex() uint8 {
+func (csc CallSetController) CallIndex() uint8 {
 	return 8
 }
 
-func (this CallSetController) CallName() string {
+func (csc CallSetController) CallName() string {
 	return "set_controller"
 }
 
@@ -222,19 +222,19 @@ type CallPayoutStakers struct {
 	Era            uint32
 }
 
-func (this CallPayoutStakers) PalletIndex() uint8 {
+func (cps CallPayoutStakers) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallPayoutStakers) PalletName() string {
+func (cps CallPayoutStakers) PalletName() string {
 	return PalletName
 }
 
-func (this CallPayoutStakers) CallIndex() uint8 {
+func (cps CallPayoutStakers) CallIndex() uint8 {
 	return 18
 }
 
-func (this CallPayoutStakers) CallName() string {
+func (cps CallPayoutStakers) CallName() string {
 	return "payout_stakers"
 }
 
@@ -243,19 +243,19 @@ type CallRebond struct {
 	Value uint128.Uint128 `scale:"compact"`
 }
 
-func (this CallRebond) PalletIndex() uint8 {
+func (cr CallRebond) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallRebond) PalletName() string {
+func (cr CallRebond) PalletName() string {
 	return PalletName
 }
 
-func (this CallRebond) CallIndex() uint8 {
+func (cr CallRebond) CallIndex() uint8 {
 	return 19
 }
 
-func (this CallRebond) CallName() string {
+func (cr CallRebond) CallName() string {
 	return "rebond"
 }
 
@@ -276,19 +276,19 @@ type CallReapStash struct {
 	NumSlashingSpans uint32
 }
 
-func (this CallReapStash) PalletIndex() uint8 {
+func (crs CallReapStash) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallReapStash) PalletName() string {
+func (crs CallReapStash) PalletName() string {
 	return PalletName
 }
 
-func (this CallReapStash) CallIndex() uint8 {
+func (crs CallReapStash) CallIndex() uint8 {
 	return 20
 }
 
-func (this CallReapStash) CallName() string {
+func (crs CallReapStash) CallName() string {
 	return "reap_stash"
 }
 
@@ -299,19 +299,19 @@ type CallKick struct {
 	Who []prim.MultiAddress
 }
 
-func (this CallKick) PalletIndex() uint8 {
+func (ck CallKick) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallKick) PalletName() string {
+func (ck CallKick) PalletName() string {
 	return PalletName
 }
 
-func (this CallKick) CallIndex() uint8 {
+func (ck CallKick) CallIndex() uint8 {
 	return 21
 }
 
-func (this CallKick) CallName() string {
+func (ck CallKick) CallName() string {
 	return "kick"
 }
 
@@ -345,19 +345,19 @@ type CallChillOther struct {
 	Stash prim.AccountId
 }
 
-func (this CallChillOther) PalletIndex() uint8 {
+func (cco CallChillOther) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallChillOther) PalletName() string {
+func (cco CallChillOther) PalletName() string {
 	return PalletName
 }
 
-func (this CallChillOther) CallIndex() uint8 {
+func (cco CallChillOther) CallIndex() uint8 {
 	return 23
 }
 
-func (this CallChillOther) CallName() string {
+func (cco CallChillOther) CallName() string {
 	return "chill_other"
 }
 
@@ -368,19 +368,19 @@ type CallForceApplyMinCommission struct {
 	ValidatorStash prim.AccountId
 }
 
-func (this CallForceApplyMinCommission) PalletIndex() uint8 {
+func (cfamc CallForceApplyMinCommission) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallForceApplyMinCommission) PalletName() string {
+func (cfamc CallForceApplyMinCommission) PalletName() string {
 	return PalletName
 }
 
-func (this CallForceApplyMinCommission) CallIndex() uint8 {
+func (cfamc CallForceApplyMinCommission) CallIndex() uint8 {
 	return 24
 }
 
-func (this CallForceApplyMinCommission) CallName() string {
+func (cfamc CallForceApplyMinCommission) CallName() string {
 	return "force_apply_min_commission"
 }
 
@@ -407,19 +407,19 @@ type CallPayoutStakersByPage struct {
 	Page           uint32
 }
 
-func (this CallPayoutStakersByPage) PalletIndex() uint8 {
+func (cpsbp CallPayoutStakersByPage) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallPayoutStakersByPage) PalletName() string {
+func (cpsbp CallPayoutStakersByPage) PalletName() string {
 	return PalletName
 }
 
-func (this CallPayoutStakersByPage) CallIndex() uint8 {
+func (cpsbp CallPayoutStakersByPage) CallIndex() uint8 {
 	return 26
 }
 
-func (this CallPayoutStakersByPage) CallName() string {
+func (cpsbp CallPayoutStakersByPage) CallName() string {
 	return "payout_stakers_by_page"
 }
 
@@ -433,18 +433,18 @@ type CallUpdatePayee struct {
 	Controller prim.AccountId
 }
 
-func (this CallUpdatePayee) PalletIndex() uint8 {
+func (cup CallUpdatePayee) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallUpdatePayee) PalletName() string {
+func (cup CallUpdatePayee) PalletName() string {
 	return PalletName
 }
 
-func (this CallUpdatePayee) CallIndex() uint8 {
+func (cup CallUpdatePayee) CallIndex() uint8 {
 	return 27
 }
 
-func (this CallUpdatePayee) CallName() string {
+func (cup CallUpdatePayee) CallName() string {
 	return "update_payee"
 }

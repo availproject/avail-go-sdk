@@ -2,6 +2,7 @@ package examples
 
 import (
 	"fmt"
+
 	"github.com/availproject/avail-go-sdk/metadata/pallets"
 
 	daPallet "github.com/availproject/avail-go-sdk/metadata/pallets/data_availability"
@@ -12,19 +13,19 @@ type CustomTransaction struct {
 	Value []byte
 }
 
-func (this CustomTransaction) PalletName() string {
+func (ct CustomTransaction) PalletName() string {
 	return "DataAvailability"
 }
 
-func (this CustomTransaction) PalletIndex() uint8 {
+func (ct CustomTransaction) PalletIndex() uint8 {
 	return 29
 }
 
-func (this CustomTransaction) CallName() string {
+func (ct CustomTransaction) CallName() string {
 	return "submit_data"
 }
 
-func (this CustomTransaction) CallIndex() uint8 {
+func (ct CustomTransaction) CallIndex() uint8 {
 	return 1
 }
 

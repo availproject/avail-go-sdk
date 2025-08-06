@@ -61,104 +61,104 @@ type Indexer struct {
 	lock     sync.Mutex
 }
 
-func (this *Indexer) Init() {
-	hash, err := this.sdk.Client.FinalizedBlockHash()
+func (indexer *Indexer) Init() {
+	hash, err := indexer.sdk.Client.FinalizedBlockHash()
 	PanicOnError(err)
 
-	block, err := SDK.NewBlock(this.sdk.Client, hash)
+	block, err := SDK.NewBlock(indexer.sdk.Client, hash)
 	PanicOnError(err)
 
-	number, err := this.sdk.Client.BlockNumber(hash)
+	number, err := indexer.sdk.Client.BlockNumber(hash)
 	PanicOnError(err)
 
-	this.lock.Lock()
-	this.block.block = block
-	this.block.hash = hash
-	this.block.height = number
-	this.lock.Unlock()
+	indexer.lock.Lock()
+	indexer.block.block = block
+	indexer.block.hash = hash
+	indexer.block.height = number
+	indexer.lock.Unlock()
 
 }
 
-func (this *Indexer) Run() {
+func (indexer *Indexer) Run() {
 	for {
-		block, shutdown := this.fetchBlock()
+		block, shutdown := indexer.fetchBlock()
 		if shutdown {
 			return
 		}
 
-		this.lock.Lock()
-		this.block.block = block.block
-		this.block.hash = block.hash
-		this.block.height = block.height
-		this.lock.Unlock()
+		indexer.lock.Lock()
+		indexer.block.block = block.block
+		indexer.block.hash = block.hash
+		indexer.block.height = block.height
+		indexer.lock.Unlock()
 	}
 }
 
-func (this *Indexer) fetchBlock() (IndexedBlock, bool) {
+func (indexer *Indexer) fetchBlock() (IndexedBlock, bool) {
 	for {
-		if this.shutdown {
+		if indexer.shutdown {
 			return IndexedBlock{}, true
 		}
 
-		hash, err := this.sdk.Client.FinalizedBlockHash()
+		hash, err := indexer.sdk.Client.FinalizedBlockHash()
 		PanicOnError(err)
-		if this.block.hash == hash {
+		if indexer.block.hash == hash {
 			time.Sleep(15 * time.Second)
 			continue
 		}
 
-		block, err := SDK.NewBlock(this.sdk.Client, hash)
+		block, err := SDK.NewBlock(indexer.sdk.Client, hash)
 		PanicOnError(err)
 
-		number, err := this.sdk.Client.BlockNumber(hash)
+		number, err := indexer.sdk.Client.BlockNumber(hash)
 		PanicOnError(err)
 
 		return IndexedBlock{hash: hash, height: number, block: block}, false
 	}
 }
 
-func (this *Indexer) GetBlock(blockNumber uint32) IndexedBlock {
+func (indexer *Indexer) GetBlock(blockNumber uint32) IndexedBlock {
 	for {
-		if this.shutdown {
+		if indexer.shutdown {
 			return IndexedBlock{}
 		}
 
-		this.lock.Lock()
-		block := this.block
-		this.lock.Unlock()
+		indexer.lock.Lock()
+		block := indexer.block
+		indexer.lock.Unlock()
 
-		if blockNumber > this.block.height {
+		if blockNumber > indexer.block.height {
 			time.Sleep(15 * time.Second)
 			continue
 		}
 
-		if blockNumber == this.block.height {
+		if blockNumber == indexer.block.height {
 			return block
 		}
 
-		hash, err := this.sdk.Client.BlockHash(blockNumber)
+		hash, err := indexer.sdk.Client.BlockHash(blockNumber)
 		PanicOnError(err)
 
-		oldBlock, err := SDK.NewBlock(this.sdk.Client, hash)
+		oldBlock, err := SDK.NewBlock(indexer.sdk.Client, hash)
 		PanicOnError(err)
 
-		number, err := this.sdk.Client.BlockNumber(hash)
+		number, err := indexer.sdk.Client.BlockNumber(hash)
 		PanicOnError(err)
 
 		return IndexedBlock{hash: hash, height: number, block: oldBlock}
 	}
 }
 
-func (this *Indexer) Shutdown() {
-	this.shutdown = true
+func (indexer *Indexer) Shutdown() {
+	indexer.shutdown = true
 }
 
-func (this *Indexer) Callback(cb func(IndexedBlock)) *BlockSubscription {
-	sub := this.Subscribe()
+func (indexer *Indexer) Callback(cb func(IndexedBlock)) *BlockSubscription {
+	sub := indexer.Subscribe()
 	go func() {
 		for {
 			block := sub.Fetch()
-			if this.shutdown || sub.Shutdown {
+			if indexer.shutdown || sub.Shutdown {
 				return
 			}
 
@@ -169,8 +169,8 @@ func (this *Indexer) Callback(cb func(IndexedBlock)) *BlockSubscription {
 	return &sub
 }
 
-func (this *Indexer) Subscribe() BlockSubscription {
-	return BlockSubscription{Height: this.block.height, indexer: this}
+func (indexer *Indexer) Subscribe() BlockSubscription {
+	return BlockSubscription{Height: indexer.block.height, indexer: indexer}
 }
 
 type BlockSubscription struct {
@@ -179,13 +179,13 @@ type BlockSubscription struct {
 	Shutdown bool
 }
 
-func (this *BlockSubscription) Fetch() IndexedBlock {
-	if this.Shutdown {
+func (indexer *BlockSubscription) Fetch() IndexedBlock {
+	if indexer.Shutdown {
 		return IndexedBlock{}
 	}
 
-	block := this.indexer.GetBlock(this.Height)
-	this.Height += 1
+	block := indexer.indexer.GetBlock(indexer.Height)
+	indexer.Height += 1
 
 	return block
 }

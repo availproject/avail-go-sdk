@@ -12,22 +12,22 @@ type StorageIdentityOfEntry = StorageEntry[StorageIdentityOfKey, StorageIdentity
 
 type StorageIdentityOf struct{}
 
-func (this *StorageIdentityOf) PalletName() string {
+func (sio *StorageIdentityOf) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageIdentityOf) StorageName() string {
+func (sio *StorageIdentityOf) StorageName() string {
 	return "IdentityOf"
 }
 
-func (this *StorageIdentityOf) MapKeyHasher() uint8 {
+func (sio *StorageIdentityOf) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageIdentityOf) Fetch(blockStorage interfaces.BlockStorageT, key StorageIdentityOfKey) (prim.Option[StorageIdentityOfEntry], error) {
-	return GenericMapFetch[StorageIdentityOfValue](blockStorage, key, this)
+func (sio *StorageIdentityOf) Fetch(blockStorage interfaces.BlockStorageT, key StorageIdentityOfKey) (prim.Option[StorageIdentityOfEntry], error) {
+	return GenericMapFetch[StorageIdentityOfValue](blockStorage, key, sio)
 }
 
-func (this *StorageIdentityOf) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageIdentityOfEntry, error) {
-	return GenericMapKeysFetch[StorageIdentityOfValue, StorageIdentityOfKey](blockStorage, this)
+func (sio *StorageIdentityOf) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageIdentityOfEntry, error) {
+	return GenericMapKeysFetch[StorageIdentityOfValue, StorageIdentityOfKey](blockStorage, sio)
 }
