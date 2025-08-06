@@ -4,18 +4,18 @@ type AlreadyEncoded struct {
 	Value string
 }
 
-func (this *AlreadyEncoded) EncodeTo(dest *string) {
-	*dest += this.Value
+func (a *AlreadyEncoded) EncodeTo(dest *string) {
+	*dest += a.Value
 }
 
-func (this *AlreadyEncoded) ToHex() string {
-	return this.Value
+func (a *AlreadyEncoded) ToHex() string {
+	return a.Value
 }
 
-func (this *AlreadyEncoded) ToHexWith0x() string {
-	return "0x" + this.Value
+func (a *AlreadyEncoded) ToHexWith0x() string {
+	return "0x" + a.Value
 }
 
-func (this *AlreadyEncoded) ToBytes() []byte {
-	return Hex.FromHex(this.Value)
+func (a *AlreadyEncoded) ToBytes() []byte {
+	return Hex.FromHex(a.Value)
 }

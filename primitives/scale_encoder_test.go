@@ -291,12 +291,12 @@ type DummyStruct2 struct {
 	value uint32
 }
 
-func (this DummyStruct2) EncodeTo(dest *string) {
+func (d DummyStruct2) EncodeTo(dest *string) {
 	*dest = "Success"
 }
 
-func (this *DummyStruct2) Decode(decoder *Decoder) error {
-	this.value = uint32(0xbeef)
+func (d *DummyStruct2) Decode(decoder *Decoder) error {
+	d.value = uint32(0xbeef)
 	return nil
 }
 
@@ -304,7 +304,7 @@ type DummyStruct3 struct {
 	value uint32
 }
 
-func (this *DummyStruct3) EncodeTo(dest *string) {
+func (d *DummyStruct3) EncodeTo(dest *string) {
 	*dest = "Success"
 }
 

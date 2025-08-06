@@ -11,16 +11,16 @@ type H512 struct {
 	Value [64]byte
 }
 
-func (this *H512) ToHex() string {
-	return SUtiles.BytesToHex(this.Value[:])
+func (h *H512) ToHex() string {
+	return SUtiles.BytesToHex(h.Value[:])
 }
 
-func (this *H512) ToHexWith0x() string {
-	return "0x" + this.ToHex()
+func (h *H512) ToHexWith0x() string {
+	return "0x" + h.ToHex()
 }
 
-func (this *H512) ToRpcParam() string {
-	return "\"" + this.ToHexWith0x() + "\""
+func (h *H512) ToRpcParam() string {
+	return "\"" + h.ToHexWith0x() + "\""
 }
 
 func NewH512FromHexString(hexString string) (H512, error) {

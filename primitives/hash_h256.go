@@ -11,28 +11,28 @@ type H256 struct {
 	Value [32]byte
 }
 
-func (this H256) ToHex() string {
-	return SUtiles.BytesToHex(this.Value[:])
+func (h H256) ToHex() string {
+	return SUtiles.BytesToHex(h.Value[:])
 }
 
-func (this H256) ToHexWith0x() string {
-	return "0x" + this.ToHex()
+func (h H256) ToHexWith0x() string {
+	return "0x" + h.ToHex()
 }
 
-func (this H256) ToHuman() string {
-	return this.ToHexWith0x()
+func (h H256) ToHuman() string {
+	return h.ToHexWith0x()
 }
 
-func (this H256) ToString() string {
-	return this.ToHexWith0x()
+func (h H256) ToString() string {
+	return h.ToHexWith0x()
 }
 
-func (this H256) String() string {
-	return this.ToHexWith0x()
+func (h H256) String() string {
+	return h.ToHexWith0x()
 }
 
-func (this H256) ToRpcParam() string {
-	return "\"" + this.ToHexWith0x() + "\""
+func (h H256) ToRpcParam() string {
+	return "\"" + h.ToHexWith0x() + "\""
 }
 
 func NewH256FromHexString(hexString string) (H256, error) {

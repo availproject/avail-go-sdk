@@ -34,18 +34,18 @@ func NewCall(palletIndex uint8, callIndex uint8, fields AlreadyEncoded) Call {
 	}
 }
 
-func (this *Call) Decode(decoder *Decoder) error {
+func (c *Call) Decode(decoder *Decoder) error {
 	// Call Index
-	if err := decoder.Decode(&this.PalletIndex); err != nil {
+	if err := decoder.Decode(&c.PalletIndex); err != nil {
 		return err
 	}
-	if err := decoder.Decode(&this.CallIndex); err != nil {
+	if err := decoder.Decode(&c.CallIndex); err != nil {
 		return err
 	}
 
 	// Call Data
 	dataBytes := decoder.NextBytes(decoder.RemainingLength())
-	this.Fields = AlreadyEncoded{Value: Hex.ToHex(dataBytes)}
+	c.Fields = AlreadyEncoded{Value: Hex.ToHex(dataBytes)}
 	return nil
 }
 
@@ -56,30 +56,30 @@ type Era struct {
 	Phase      uint64
 }
 
-func (this Era) ToHuman() string {
-	return this.String()
+func (e Era) ToHuman() string {
+	return e.String()
 }
 
-func (this Era) ToString() string {
-	return this.String()
+func (e Era) ToString() string {
+	return e.String()
 }
-func (this Era) String() string {
-	if this.IsImmortal {
+func (e Era) String() string {
+	if e.IsImmortal {
 		return fmt.Sprintf("Immortal")
 	}
 
-	return fmt.Sprintf("Mortal: {period: %v, phase: %v}", this.Period, this.Phase)
+	return fmt.Sprintf("Mortal: {period: %v, phase: %v}", e.Period, e.Phase)
 }
 
-func (this *Era) EncodeTo(dest *string) {
-	if this.IsImmortal {
+func (e *Era) EncodeTo(dest *string) {
+	if e.IsImmortal {
 		Encoder.EncodeTo(uint8(0), dest)
 		return
 	}
 
-	quantizeFactor := math.Max(float64(this.Period>>12), 1)
-	trailingZeros := bits.TrailingZeros16(uint16(this.Period))
-	encoded := uint16(float64(this.Phase)/quantizeFactor)<<4 | uint16(math.Min(15, math.Max(1, float64(trailingZeros-1))))
+	quantizeFactor := math.Max(float64(e.Period>>12), 1)
+	trailingZeros := bits.TrailingZeros16(uint16(e.Period))
+	encoded := uint16(float64(e.Phase)/quantizeFactor)<<4 | uint16(math.Min(15, math.Max(1, float64(trailingZeros-1))))
 
 	first := byte(encoded & 0xff)
 	second := byte(encoded >> 8)
@@ -88,8 +88,8 @@ func (this *Era) EncodeTo(dest *string) {
 	Encoder.EncodeTo(uint8(second), dest)
 }
 
-func (this *Era) Decode(decoder *Decoder) error {
-	*this = Era{}
+func (e *Era) Decode(decoder *Decoder) error {
+	*e = Era{}
 
 	first := uint8(0)
 	if err := decoder.Decode(&first); err != nil {
@@ -97,7 +97,7 @@ func (this *Era) Decode(decoder *Decoder) error {
 	}
 
 	if first == 0 {
-		this.IsImmortal = true
+		e.IsImmortal = true
 		return nil
 	}
 
@@ -111,9 +111,9 @@ func (this *Era) Decode(decoder *Decoder) error {
 	trailingZeros := uint16(encoded&0xF) + 1 // Lower 4 bits + 1
 	quantizedPhase := encoded >> 4           // Upper 12 bits
 
-	quantizeFactor := math.Max(float64(this.Period>>12), 1)
-	this.Phase = uint64(float64(quantizedPhase) * quantizeFactor)
-	this.Period = uint64(uint16(1 << trailingZeros))
+	quantizeFactor := math.Max(float64(e.Period>>12), 1)
+	e.Phase = uint64(float64(quantizedPhase) * quantizeFactor)
+	e.Period = uint64(uint16(1 << trailingZeros))
 
 	return nil
 }
@@ -152,11 +152,11 @@ type UnsignedPayload struct {
 	Additional Additional
 }
 
-func (this UnsignedPayload) Encode() UnsignedEncodedPayload {
+func (u UnsignedPayload) Encode() UnsignedEncodedPayload {
 	return UnsignedEncodedPayload{
-		Call:       AlreadyEncoded{Value: Encoder.Encode(this.Call)},
-		Extra:      AlreadyEncoded{Value: Encoder.Encode(this.Extra)},
-		Additional: AlreadyEncoded{Value: Encoder.Encode(this.Additional)},
+		Call:       AlreadyEncoded{Value: Encoder.Encode(u.Call)},
+		Extra:      AlreadyEncoded{Value: Encoder.Encode(u.Extra)},
+		Additional: AlreadyEncoded{Value: Encoder.Encode(u.Additional)},
 	}
 }
 
@@ -166,11 +166,11 @@ type UnsignedEncodedPayload struct {
 	Additional AlreadyEncoded
 }
 
-func (this *UnsignedEncodedPayload) Sign(signer subkey.KeyPair) ([]byte, error) {
+func (ue *UnsignedEncodedPayload) Sign(signer subkey.KeyPair) ([]byte, error) {
 	data := ""
-	Encoder.EncodeTo(this.Call, &data)
-	Encoder.EncodeTo(this.Extra, &data)
-	Encoder.EncodeTo(this.Additional, &data)
+	Encoder.EncodeTo(ue.Call, &data)
+	Encoder.EncodeTo(ue.Extra, &data)
+	Encoder.EncodeTo(ue.Additional, &data)
 
 	decodedData := utiles.HexToBytes(data)
 
