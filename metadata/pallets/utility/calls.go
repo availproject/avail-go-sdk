@@ -12,28 +12,28 @@ type CallBatch struct {
 	Calls []prim.Call
 }
 
-func (this CallBatch) PalletIndex() uint8 {
+func (c CallBatch) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallBatch) PalletName() string {
+func (c CallBatch) PalletName() string {
 	return PalletName
 }
 
-func (this CallBatch) CallIndex() uint8 {
+func (c CallBatch) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallBatch) CallName() string {
+func (c CallBatch) CallName() string {
 	return "batch"
 }
 
-func (this *CallBatch) AddCall(value prim.Call) {
-	this.Calls = append(this.Calls, value)
+func (c *CallBatch) AddCall(value prim.Call) {
+	c.Calls = append(c.Calls, value)
 }
 
-func (this *CallBatch) AddPayload(value metadata.Payload) {
-	this.Calls = append(this.Calls, value.Call)
+func (c *CallBatch) AddPayload(value metadata.Payload) {
+	c.Calls = append(c.Calls, value.Call)
 }
 
 // Send a call through an indexed pseudonym of the sender.
@@ -50,19 +50,19 @@ type CallAsDerivate struct {
 	Call  prim.Call
 }
 
-func (this CallAsDerivate) PalletIndex() uint8 {
+func (c CallAsDerivate) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallAsDerivate) PalletName() string {
+func (c CallAsDerivate) PalletName() string {
 	return PalletName
 }
 
-func (this CallAsDerivate) CallIndex() uint8 {
+func (c CallAsDerivate) CallIndex() uint8 {
 	return 1
 }
 
-func (this CallAsDerivate) CallName() string {
+func (c CallAsDerivate) CallName() string {
 	return "AsDerivate"
 }
 
@@ -74,19 +74,19 @@ type CallBatchAll struct {
 	Calls []prim.Call
 }
 
-func (this CallBatchAll) PalletIndex() uint8 {
+func (c CallBatchAll) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallBatchAll) PalletName() string {
+func (c CallBatchAll) PalletName() string {
 	return PalletName
 }
 
-func (this CallBatchAll) CallIndex() uint8 {
+func (c CallBatchAll) CallIndex() uint8 {
 	return 2
 }
 
-func (this CallBatchAll) CallName() string {
+func (c CallBatchAll) CallName() string {
 	return "BatchAll"
 }
 
@@ -98,18 +98,18 @@ type CallForceBatch struct {
 	Calls []prim.Call
 }
 
-func (this CallForceBatch) PalletIndex() uint8 {
+func (c CallForceBatch) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallForceBatch) PalletName() string {
+func (c CallForceBatch) PalletName() string {
 	return PalletName
 }
 
-func (this CallForceBatch) CallIndex() uint8 {
+func (c CallForceBatch) CallIndex() uint8 {
 	return 4
 }
 
-func (this CallForceBatch) CallName() string {
+func (c CallForceBatch) CallName() string {
 	return "ForceBatch"
 }

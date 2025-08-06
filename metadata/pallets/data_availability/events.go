@@ -11,19 +11,19 @@ type EventApplicationKeyCreated struct {
 	Id    uint32 `scale:"compact"`
 }
 
-func (this EventApplicationKeyCreated) PalletIndex() uint8 {
+func (eakc EventApplicationKeyCreated) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventApplicationKeyCreated) PalletName() string {
+func (eakc EventApplicationKeyCreated) PalletName() string {
 	return PalletName
 }
 
-func (this EventApplicationKeyCreated) EventIndex() uint8 {
+func (eakc EventApplicationKeyCreated) EventIndex() uint8 {
 	return 0
 }
 
-func (this EventApplicationKeyCreated) EventName() string {
+func (eakc EventApplicationKeyCreated) EventName() string {
 	return "ApplicationKeyCreated"
 }
 
@@ -33,18 +33,18 @@ type EventDataSubmitted struct {
 	DataHash prim.H256
 }
 
-func (this EventDataSubmitted) PalletIndex() uint8 {
+func (eds EventDataSubmitted) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this EventDataSubmitted) PalletName() string {
+func (eds EventDataSubmitted) PalletName() string {
 	return PalletName
 }
 
-func (this EventDataSubmitted) EventIndex() uint8 {
+func (eds EventDataSubmitted) EventIndex() uint8 {
 	return 1
 }
 
-func (this EventDataSubmitted) EventName() string {
+func (eds EventDataSubmitted) EventName() string {
 	return "DataSubmitted"
 }

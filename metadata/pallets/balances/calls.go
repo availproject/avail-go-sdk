@@ -19,19 +19,19 @@ type CallTransferAlowDeath struct {
 	Value uint128.Uint128 `scale:"compact"`
 }
 
-func (this CallTransferAlowDeath) PalletIndex() uint8 {
+func (ctad CallTransferAlowDeath) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallTransferAlowDeath) PalletName() string {
+func (ctad CallTransferAlowDeath) PalletName() string {
 	return PalletName
 }
 
-func (this CallTransferAlowDeath) CallIndex() uint8 {
+func (ctad CallTransferAlowDeath) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallTransferAlowDeath) CallName() string {
+func (ctad CallTransferAlowDeath) CallName() string {
 	return "transfer_allow_death"
 }
 
@@ -43,19 +43,19 @@ type CallForceTransfer struct {
 	Value  metadata.Balance `scale:"compact"`
 }
 
-func (this CallForceTransfer) PalletIndex() uint8 {
+func (cft CallForceTransfer) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallForceTransfer) PalletName() string {
+func (cft CallForceTransfer) PalletName() string {
 	return PalletName
 }
 
-func (this CallForceTransfer) CallIndex() uint8 {
+func (cft CallForceTransfer) CallIndex() uint8 {
 	return 2
 }
 
-func (this CallForceTransfer) CallName() string {
+func (cft CallForceTransfer) CallName() string {
 	return "force_transfer"
 }
 
@@ -66,19 +66,19 @@ type CallTransferKeepAlive struct {
 	Value metadata.Balance `scale:"compact"`
 }
 
-func (this CallTransferKeepAlive) PalletIndex() uint8 {
+func (ctka CallTransferKeepAlive) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallTransferKeepAlive) PalletName() string {
+func (ctka CallTransferKeepAlive) PalletName() string {
 	return PalletName
 }
 
-func (this CallTransferKeepAlive) CallIndex() uint8 {
+func (ctka CallTransferKeepAlive) CallIndex() uint8 {
 	return 3
 }
 
-func (this CallTransferKeepAlive) CallName() string {
+func (ctka CallTransferKeepAlive) CallName() string {
 	return "transfer_keep_alive"
 }
 
@@ -92,18 +92,18 @@ type CallTransferAll struct {
 	KeepAlive bool
 }
 
-func (this CallTransferAll) PalletIndex() uint8 {
+func (cta CallTransferAll) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallTransferAll) PalletName() string {
+func (cta CallTransferAll) PalletName() string {
 	return PalletName
 }
 
-func (this CallTransferAll) CallIndex() uint8 {
+func (cta CallTransferAll) CallIndex() uint8 {
 	return 4
 }
 
-func (this CallTransferAll) CallName() string {
+func (cta CallTransferAll) CallName() string {
 	return "transfer_all"
 }

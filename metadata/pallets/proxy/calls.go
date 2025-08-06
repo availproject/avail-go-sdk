@@ -20,19 +20,19 @@ type CallProxy struct {
 	Call           prim.Call
 }
 
-func (this CallProxy) PalletIndex() uint8 {
+func (cp CallProxy) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallProxy) PalletName() string {
+func (cp CallProxy) PalletName() string {
 	return PalletName
 }
 
-func (this CallProxy) CallIndex() uint8 {
+func (cp CallProxy) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallProxy) CallName() string {
+func (cp CallProxy) CallName() string {
 	return "proxy"
 }
 
@@ -51,19 +51,19 @@ type CallAddProxy struct {
 	Delay     uint32
 }
 
-func (this CallAddProxy) PalletIndex() uint8 {
+func (cap CallAddProxy) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallAddProxy) PalletName() string {
+func (cap CallAddProxy) PalletName() string {
 	return PalletName
 }
 
-func (this CallAddProxy) CallIndex() uint8 {
+func (cap CallAddProxy) CallIndex() uint8 {
 	return 1
 }
 
-func (this CallAddProxy) CallName() string {
+func (cap CallAddProxy) CallName() string {
 	return "add_proxy"
 }
 
@@ -81,19 +81,19 @@ type CallRemoveProxy struct {
 	Delay     uint32
 }
 
-func (this CallRemoveProxy) PalletIndex() uint8 {
+func (crp CallRemoveProxy) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallRemoveProxy) PalletName() string {
+func (crp CallRemoveProxy) PalletName() string {
 	return PalletName
 }
 
-func (this CallRemoveProxy) CallIndex() uint8 {
+func (crp CallRemoveProxy) CallIndex() uint8 {
 	return 2
 }
 
-func (this CallRemoveProxy) CallName() string {
+func (crp CallRemoveProxy) CallName() string {
 	return "remove_proxy"
 }
 
@@ -105,19 +105,19 @@ func (this CallRemoveProxy) CallName() string {
 // the unreserved fees will be inaccessible. **All access to this account will be lost.**
 type CallRemoveProxies struct{}
 
-func (this CallRemoveProxies) PalletIndex() uint8 {
+func (crps CallRemoveProxies) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallRemoveProxies) PalletName() string {
+func (crps CallRemoveProxies) PalletName() string {
 	return PalletName
 }
 
-func (this CallRemoveProxies) CallIndex() uint8 {
+func (crps CallRemoveProxies) CallIndex() uint8 {
 	return 3
 }
 
-func (this CallRemoveProxies) CallName() string {
+func (crps CallRemoveProxies) CallName() string {
 	return "remove_proxies"
 }
 
@@ -145,19 +145,19 @@ type CallCreatePure struct {
 	Index     uint16
 }
 
-func (this CallCreatePure) PalletIndex() uint8 {
+func (ccp CallCreatePure) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallCreatePure) PalletName() string {
+func (ccp CallCreatePure) PalletName() string {
 	return PalletName
 }
 
-func (this CallCreatePure) CallIndex() uint8 {
+func (ccp CallCreatePure) CallIndex() uint8 {
 	return 4
 }
 
-func (this CallCreatePure) CallName() string {
+func (ccp CallCreatePure) CallName() string {
 	return "create_pure"
 }
 
@@ -185,19 +185,19 @@ type CallKillPure struct {
 	ExtIndex  uint32 `scale:"compact"`
 }
 
-func (this CallKillPure) PalletIndex() uint8 {
+func (ckp CallKillPure) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallKillPure) PalletName() string {
+func (ckp CallKillPure) PalletName() string {
 	return PalletName
 }
 
-func (this CallKillPure) CallIndex() uint8 {
+func (ckp CallKillPure) CallIndex() uint8 {
 	return 5
 }
 
-func (this CallKillPure) CallName() string {
+func (ckp CallKillPure) CallName() string {
 	return "kill_pure"
 }
 
@@ -221,19 +221,19 @@ type CallAnnounce struct {
 	CallHash prim.H256
 }
 
-func (this CallAnnounce) PalletIndex() uint8 {
+func (ca CallAnnounce) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallAnnounce) PalletName() string {
+func (ca CallAnnounce) PalletName() string {
 	return PalletName
 }
 
-func (this CallAnnounce) CallIndex() uint8 {
+func (ca CallAnnounce) CallIndex() uint8 {
 	return 6
 }
 
-func (this CallAnnounce) CallName() string {
+func (ca CallAnnounce) CallName() string {
 	return "announce"
 }
 
@@ -252,19 +252,19 @@ type CallRemoveAnnouncement struct {
 	CallHash prim.H256
 }
 
-func (this CallRemoveAnnouncement) PalletIndex() uint8 {
+func (cra CallRemoveAnnouncement) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallRemoveAnnouncement) PalletName() string {
+func (cra CallRemoveAnnouncement) PalletName() string {
 	return PalletName
 }
 
-func (this CallRemoveAnnouncement) CallIndex() uint8 {
+func (cra CallRemoveAnnouncement) CallIndex() uint8 {
 	return 7
 }
 
-func (this CallRemoveAnnouncement) CallName() string {
+func (cra CallRemoveAnnouncement) CallName() string {
 	return "remove_announcement"
 }
 
@@ -283,19 +283,19 @@ type CallRejectAnnouncement struct {
 	CallHash prim.H256
 }
 
-func (this CallRejectAnnouncement) PalletIndex() uint8 {
+func (creja CallRejectAnnouncement) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallRejectAnnouncement) PalletName() string {
+func (creja CallRejectAnnouncement) PalletName() string {
 	return PalletName
 }
 
-func (this CallRejectAnnouncement) CallIndex() uint8 {
+func (creja CallRejectAnnouncement) CallIndex() uint8 {
 	return 8
 }
 
-func (this CallRejectAnnouncement) CallName() string {
+func (creja CallRejectAnnouncement) CallName() string {
 	return "reject_announcement"
 }
 
@@ -317,18 +317,18 @@ type CallProxyAnnounced struct {
 	Call           prim.Call
 }
 
-func (this CallProxyAnnounced) PalletIndex() uint8 {
+func (cpa CallProxyAnnounced) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallProxyAnnounced) PalletName() string {
+func (cpa CallProxyAnnounced) PalletName() string {
 	return PalletName
 }
 
-func (this CallProxyAnnounced) CallIndex() uint8 {
+func (cpa CallProxyAnnounced) CallIndex() uint8 {
 	return 9
 }
 
-func (this CallProxyAnnounced) CallName() string {
+func (cpa CallProxyAnnounced) CallName() string {
 	return "proxy_announced"
 }

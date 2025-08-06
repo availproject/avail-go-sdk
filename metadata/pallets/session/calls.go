@@ -12,19 +12,19 @@ type CallSetKeys struct {
 	Proof []byte
 }
 
-func (this CallSetKeys) PalletIndex() uint8 {
+func (csk CallSetKeys) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetKeys) PalletName() string {
+func (csk CallSetKeys) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetKeys) CallIndex() uint8 {
+func (csk CallSetKeys) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallSetKeys) CallName() string {
+func (csk CallSetKeys) CallName() string {
 	return "set_keys"
 }
 
@@ -38,18 +38,18 @@ func (this CallSetKeys) CallName() string {
 // usually means being a stash account).
 type CallPurgeKeys struct{}
 
-func (this CallPurgeKeys) PalletIndex() uint8 {
+func (cpk CallPurgeKeys) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallPurgeKeys) PalletName() string {
+func (cpk CallPurgeKeys) PalletName() string {
 	return PalletName
 }
 
-func (this CallPurgeKeys) CallIndex() uint8 {
+func (cpk CallPurgeKeys) CallIndex() uint8 {
 	return 1
 }
 
-func (this CallPurgeKeys) CallName() string {
+func (cpk CallPurgeKeys) CallName() string {
 	return "purge_keys"
 }

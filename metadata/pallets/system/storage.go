@@ -17,25 +17,25 @@ type StorageAccount struct {
 	AccountData AccountData
 }
 
-func (this *StorageAccount) PalletName() string {
+func (sa *StorageAccount) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageAccount) StorageName() string {
+func (sa *StorageAccount) StorageName() string {
 	return "Account"
 }
 
-func (this *StorageAccount) MapKeyHasher() uint8 {
+func (sa *StorageAccount) MapKeyHasher() uint8 {
 	return Blake2_128ConcatHasher
 }
 
-func (this *StorageAccount) Fetch(blockStorage interfaces.BlockStorageT, key StorageAccountKey) (StorageAccountEntry, error) {
-	val, err := GenericMapFetch[StorageAccount](blockStorage, key, this)
+func (sa *StorageAccount) Fetch(blockStorage interfaces.BlockStorageT, key StorageAccountKey) (StorageAccountEntry, error) {
+	val, err := GenericMapFetch[StorageAccount](blockStorage, key, sa)
 	return val.Unwrap(), err
 }
 
-func (this *StorageAccount) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageAccountEntry, error) {
-	return GenericMapKeysFetch[StorageAccount, StorageAccountKey](blockStorage, this)
+func (sa *StorageAccount) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageAccountEntry, error) {
+	return GenericMapKeysFetch[StorageAccount, StorageAccountKey](blockStorage, sa)
 }
 
 //
@@ -49,24 +49,24 @@ type StorageBlockHash struct {
 	Value prim.H256
 }
 
-func (this *StorageBlockHash) PalletName() string {
+func (sbh *StorageBlockHash) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageBlockHash) StorageName() string {
+func (sbh *StorageBlockHash) StorageName() string {
 	return "BlockHash"
 }
 
-func (this *StorageBlockHash) MapKeyHasher() uint8 {
+func (sbh *StorageBlockHash) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageBlockHash) Fetch(blockStorage interfaces.BlockStorageT, key StorageBlockHashKey) (prim.Option[StorageBlockHashEntry], error) {
-	return GenericMapFetch[StorageBlockHash](blockStorage, key, this)
+func (sbh *StorageBlockHash) Fetch(blockStorage interfaces.BlockStorageT, key StorageBlockHashKey) (prim.Option[StorageBlockHashEntry], error) {
+	return GenericMapFetch[StorageBlockHash](blockStorage, key, sbh)
 }
 
-func (this *StorageBlockHash) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageBlockHashEntry, error) {
-	return GenericMapKeysFetch[StorageBlockHash, StorageBlockHashKey](blockStorage, this)
+func (sbh *StorageBlockHash) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageBlockHashEntry, error) {
+	return GenericMapKeysFetch[StorageBlockHash, StorageBlockHashKey](blockStorage, sbh)
 }
 
 //
@@ -79,16 +79,16 @@ type StorageBlockWeight struct {
 	Mandatory   Weight
 }
 
-func (this *StorageBlockWeight) PalletName() string {
+func (sbw *StorageBlockWeight) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageBlockWeight) StorageName() string {
+func (sbw *StorageBlockWeight) StorageName() string {
 	return "BlockWeight"
 }
 
-func (this *StorageBlockWeight) Fetch(blockStorage interfaces.BlockStorageT) (StorageBlockWeight, error) {
-	return GenericFetchDefault[StorageBlockWeight](blockStorage, this)
+func (sbw *StorageBlockWeight) Fetch(blockStorage interfaces.BlockStorageT) (StorageBlockWeight, error) {
+	return GenericFetchDefault[StorageBlockWeight](blockStorage, sbw)
 }
 
 //
@@ -102,16 +102,16 @@ type StorageDynamicBlockLength struct {
 	ChunkSize uint32 `scale:"compact"`
 }
 
-func (this *StorageDynamicBlockLength) PalletName() string {
+func (sdbl *StorageDynamicBlockLength) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageDynamicBlockLength) StorageName() string {
+func (sdbl *StorageDynamicBlockLength) StorageName() string {
 	return "DynamicBlockLength"
 }
 
-func (this *StorageDynamicBlockLength) Fetch(blockStorage interfaces.BlockStorageT) (StorageDynamicBlockLength, error) {
-	val, err := GenericFetch[StorageDynamicBlockLength](blockStorage, this)
+func (sdbl *StorageDynamicBlockLength) Fetch(blockStorage interfaces.BlockStorageT) (StorageDynamicBlockLength, error) {
+	val, err := GenericFetch[StorageDynamicBlockLength](blockStorage, sdbl)
 
 	// TODO Fallback might not be correct.
 	// Fallback: 0x00003c0000005000000050000104010480
@@ -125,16 +125,16 @@ func (this *StorageDynamicBlockLength) Fetch(blockStorage interfaces.BlockStorag
 type StorageEventCountValue = uint32
 type StorageEventCount struct{}
 
-func (this *StorageEventCount) PalletName() string {
+func (sec *StorageEventCount) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageEventCount) StorageName() string {
+func (sec *StorageEventCount) StorageName() string {
 	return "EventCount"
 }
 
-func (this *StorageEventCount) Fetch(blockStorage interfaces.BlockStorageT) (StorageEventCountValue, error) {
-	return GenericFetchDefault[StorageEventCountValue](blockStorage, this)
+func (sec *StorageEventCount) Fetch(blockStorage interfaces.BlockStorageT) (StorageEventCountValue, error) {
+	return GenericFetchDefault[StorageEventCountValue](blockStorage, sec)
 }
 
 //
@@ -144,16 +144,16 @@ func (this *StorageEventCount) Fetch(blockStorage interfaces.BlockStorageT) (Sto
 type StorageExtrinsicCountValue = uint32
 type StorageExtrinsicCount struct{}
 
-func (this *StorageExtrinsicCount) PalletName() string {
+func (sec *StorageExtrinsicCount) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageExtrinsicCount) StorageName() string {
+func (sec *StorageExtrinsicCount) StorageName() string {
 	return "ExtrinsicCount"
 }
 
-func (this *StorageExtrinsicCount) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageExtrinsicCountValue], error) {
-	return GenericFetch[StorageExtrinsicCountValue](blockStorage, this)
+func (sec *StorageExtrinsicCount) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageExtrinsicCountValue], error) {
+	return GenericFetch[StorageExtrinsicCountValue](blockStorage, sec)
 }
 
 //
@@ -163,16 +163,16 @@ func (this *StorageExtrinsicCount) Fetch(blockStorage interfaces.BlockStorageT) 
 type StorageNumberValue = uint32
 type StorageNumber struct{}
 
-func (this *StorageNumber) PalletName() string {
+func (sn *StorageNumber) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageNumber) StorageName() string {
+func (sn *StorageNumber) StorageName() string {
 	return "Number"
 }
 
-func (this *StorageNumber) Fetch(blockStorage interfaces.BlockStorageT) (StorageNumberValue, error) {
-	return GenericFetchDefault[StorageNumberValue](blockStorage, this)
+func (sn *StorageNumber) Fetch(blockStorage interfaces.BlockStorageT) (StorageNumberValue, error) {
+	return GenericFetchDefault[StorageNumberValue](blockStorage, sn)
 }
 
 //
@@ -182,14 +182,14 @@ func (this *StorageNumber) Fetch(blockStorage interfaces.BlockStorageT) (Storage
 type StorageParentHashValue = prim.H256
 type StorageParentHash struct{}
 
-func (this *StorageParentHash) PalletName() string {
+func (sph *StorageParentHash) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageParentHash) StorageName() string {
+func (sph *StorageParentHash) StorageName() string {
 	return "ParentHash"
 }
 
-func (this *StorageParentHash) Fetch(blockStorage interfaces.BlockStorageT) (StorageParentHashValue, error) {
-	return GenericFetchDefault[StorageParentHashValue](blockStorage, this)
+func (sph *StorageParentHash) Fetch(blockStorage interfaces.BlockStorageT) (StorageParentHashValue, error) {
+	return GenericFetchDefault[StorageParentHashValue](blockStorage, sph)
 }

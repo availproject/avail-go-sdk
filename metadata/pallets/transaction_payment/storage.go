@@ -8,16 +8,16 @@ import (
 type StorageNextFeeMultiplierValue = Balance
 type StorageNextFeeMultiplier struct{}
 
-func (this *StorageNextFeeMultiplier) PalletName() string {
+func (snfm *StorageNextFeeMultiplier) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageNextFeeMultiplier) StorageName() string {
+func (snfm *StorageNextFeeMultiplier) StorageName() string {
 	return "NextFeeMultiplier"
 }
 
-func (this *StorageNextFeeMultiplier) Fetch(blockStorage interfaces.BlockStorageT) (StorageNextFeeMultiplierValue, error) {
-	val, err := GenericFetch[StorageNextFeeMultiplierValue](blockStorage, this)
+func (snfm *StorageNextFeeMultiplier) Fetch(blockStorage interfaces.BlockStorageT) (StorageNextFeeMultiplierValue, error) {
+	val, err := GenericFetch[StorageNextFeeMultiplierValue](blockStorage, snfm)
 	if err != nil {
 		return StorageNextFeeMultiplierValue{}, err
 	}

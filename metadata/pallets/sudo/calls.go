@@ -9,19 +9,19 @@ type CallSudo struct {
 	Call prim.Call
 }
 
-func (this CallSudo) PalletIndex() uint8 {
+func (cs CallSudo) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSudo) PalletName() string {
+func (cs CallSudo) PalletName() string {
 	return PalletName
 }
 
-func (this CallSudo) CallIndex() uint8 {
+func (cs CallSudo) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallSudo) CallName() string {
+func (cs CallSudo) CallName() string {
 	return "sudo"
 }
 
@@ -34,19 +34,19 @@ type CallSudoUncheckedWeight struct {
 	Call prim.Call
 }
 
-func (this CallSudoUncheckedWeight) PalletIndex() uint8 {
+func (csuw CallSudoUncheckedWeight) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSudoUncheckedWeight) PalletName() string {
+func (csuw CallSudoUncheckedWeight) PalletName() string {
 	return PalletName
 }
 
-func (this CallSudoUncheckedWeight) CallIndex() uint8 {
+func (csuw CallSudoUncheckedWeight) CallIndex() uint8 {
 	return 1
 }
 
-func (this CallSudoUncheckedWeight) CallName() string {
+func (csuw CallSudoUncheckedWeight) CallName() string {
 	return "sudo_unchecked_weight"
 }
 
@@ -59,18 +59,18 @@ type CallSudoAs struct {
 	Call prim.Call
 }
 
-func (this CallSudoAs) PalletIndex() uint8 {
+func (csa CallSudoAs) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSudoAs) PalletName() string {
+func (csa CallSudoAs) PalletName() string {
 	return PalletName
 }
 
-func (this CallSudoAs) CallIndex() uint8 {
+func (csa CallSudoAs) CallIndex() uint8 {
 	return 3
 }
 
-func (this CallSudoAs) CallName() string {
+func (csa CallSudoAs) CallName() string {
 	return "sudo_as"
 }

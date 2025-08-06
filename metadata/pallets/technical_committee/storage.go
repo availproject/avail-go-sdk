@@ -9,16 +9,16 @@ import (
 type StorageMembersValue = []prim.AccountId
 type StorageMembers struct{}
 
-func (this *StorageMembers) PalletName() string {
+func (sm *StorageMembers) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageMembers) StorageName() string {
+func (sm *StorageMembers) StorageName() string {
 	return "Members"
 }
 
-func (this *StorageMembers) Fetch(blockStorage interfaces.BlockStorageT) (StorageMembersValue, error) {
-	val, err := GenericFetch[StorageMembersValue](blockStorage, this)
+func (sm *StorageMembers) Fetch(blockStorage interfaces.BlockStorageT) (StorageMembersValue, error) {
+	val, err := GenericFetch[StorageMembersValue](blockStorage, sm)
 	return val.UnwrapOr(StorageMembersValue{}), err
 }
 
@@ -29,16 +29,16 @@ func (this *StorageMembers) Fetch(blockStorage interfaces.BlockStorageT) (Storag
 type StoragePrimeValue = prim.AccountId
 type StoragePrime struct{}
 
-func (this *StoragePrime) PalletName() string {
+func (sp *StoragePrime) PalletName() string {
 	return PalletName
 }
 
-func (this *StoragePrime) StorageName() string {
+func (sp *StoragePrime) StorageName() string {
 	return "Prime"
 }
 
-func (this *StoragePrime) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StoragePrimeValue], error) {
-	return GenericFetch[StoragePrimeValue](blockStorage, this)
+func (sp *StoragePrime) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StoragePrimeValue], error) {
+	return GenericFetch[StoragePrimeValue](blockStorage, sp)
 }
 
 //
@@ -48,16 +48,16 @@ func (this *StoragePrime) Fetch(blockStorage interfaces.BlockStorageT) (prim.Opt
 type StorageProposalCountValue = uint32
 type StorageProposalCount struct{}
 
-func (this *StorageProposalCount) PalletName() string {
+func (spc *StorageProposalCount) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageProposalCount) StorageName() string {
+func (spc *StorageProposalCount) StorageName() string {
 	return "ProposalCount"
 }
 
-func (this *StorageProposalCount) Fetch(blockStorage interfaces.BlockStorageT) (StorageProposalCountValue, error) {
-	return GenericFetchDefault[StorageProposalCountValue](blockStorage, this)
+func (spc *StorageProposalCount) Fetch(blockStorage interfaces.BlockStorageT) (StorageProposalCountValue, error) {
+	return GenericFetchDefault[StorageProposalCountValue](blockStorage, spc)
 }
 
 //
@@ -67,14 +67,14 @@ func (this *StorageProposalCount) Fetch(blockStorage interfaces.BlockStorageT) (
 type StorageProposalsValue = []prim.H256
 type StorageProposals struct{}
 
-func (this *StorageProposals) PalletName() string {
+func (sp *StorageProposals) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageProposals) StorageName() string {
+func (sp *StorageProposals) StorageName() string {
 	return "Proposals"
 }
 
-func (this *StorageProposals) Fetch(blockStorage interfaces.BlockStorageT) (StorageProposalsValue, error) {
-	return GenericFetchDefault[StorageProposalsValue](blockStorage, this)
+func (sp *StorageProposals) Fetch(blockStorage interfaces.BlockStorageT) (StorageProposalsValue, error) {
+	return GenericFetchDefault[StorageProposalsValue](blockStorage, sp)
 }

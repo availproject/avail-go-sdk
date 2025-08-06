@@ -13,19 +13,19 @@ type CallFulfillCall struct {
 	Slot       uint64 `scale:"compact"`
 }
 
-func (this CallFulfillCall) PalletIndex() uint8 {
+func (cfc CallFulfillCall) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallFulfillCall) PalletName() string {
+func (cfc CallFulfillCall) PalletName() string {
 	return PalletName
 }
 
-func (this CallFulfillCall) CallIndex() uint8 {
+func (cfc CallFulfillCall) CallIndex() uint8 {
 	return 0
 }
 
-func (this CallFulfillCall) CallName() string {
+func (cfc CallFulfillCall) CallName() string {
 	return "fulfill_call"
 }
 
@@ -36,19 +36,19 @@ type CallExecute struct {
 	StorageProof []byte
 }
 
-func (this CallExecute) PalletIndex() uint8 {
+func (ce CallExecute) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallExecute) PalletName() string {
+func (ce CallExecute) PalletName() string {
 	return PalletName
 }
 
-func (this CallExecute) CallIndex() uint8 {
+func (ce CallExecute) CallIndex() uint8 {
 	return 1
 }
 
-func (this CallExecute) CallName() string {
+func (ce CallExecute) CallName() string {
 	return "execute"
 }
 
@@ -57,19 +57,19 @@ type CallSourceChainFroze struct {
 	Frozen        bool
 }
 
-func (this CallSourceChainFroze) PalletIndex() uint8 {
+func (cscf CallSourceChainFroze) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSourceChainFroze) PalletName() string {
+func (cscf CallSourceChainFroze) PalletName() string {
 	return PalletName
 }
 
-func (this CallSourceChainFroze) CallIndex() uint8 {
+func (cscf CallSourceChainFroze) CallIndex() uint8 {
 	return 2
 }
 
-func (this CallSourceChainFroze) CallName() string {
+func (cscf CallSourceChainFroze) CallName() string {
 	return "source_chain_froze"
 }
 
@@ -82,19 +82,19 @@ type CallSendMessage struct {
 	Domain  uint32 `scale:"compact"`
 }
 
-func (this CallSendMessage) PalletIndex() uint8 {
+func (csm CallSendMessage) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSendMessage) PalletName() string {
+func (csm CallSendMessage) PalletName() string {
 	return PalletName
 }
 
-func (this CallSendMessage) CallIndex() uint8 {
+func (csm CallSendMessage) CallIndex() uint8 {
 	return 3
 }
 
-func (this CallSendMessage) CallName() string {
+func (csm CallSendMessage) CallName() string {
 	return "send_message"
 }
 
@@ -103,19 +103,19 @@ type CallSetPoseidonHash struct {
 	PoseidonHash []byte
 }
 
-func (this CallSetPoseidonHash) PalletIndex() uint8 {
+func (csph CallSetPoseidonHash) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetPoseidonHash) PalletName() string {
+func (csph CallSetPoseidonHash) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetPoseidonHash) CallIndex() uint8 {
+func (csph CallSetPoseidonHash) CallIndex() uint8 {
 	return 4
 }
 
-func (this CallSetPoseidonHash) CallName() string {
+func (csph CallSetPoseidonHash) CallName() string {
 	return "set_poseidon_hash"
 }
 
@@ -124,19 +124,19 @@ type CallSetBroadcaster struct {
 	Broadcaster       prim.H256
 }
 
-func (this CallSetBroadcaster) PalletIndex() uint8 {
+func (csb CallSetBroadcaster) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetBroadcaster) PalletName() string {
+func (csb CallSetBroadcaster) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetBroadcaster) CallIndex() uint8 {
+func (csb CallSetBroadcaster) CallIndex() uint8 {
 	return 5
 }
 
-func (this CallSetBroadcaster) CallName() string {
+func (csb CallSetBroadcaster) CallName() string {
 	return "set_broadcaster"
 }
 
@@ -144,19 +144,19 @@ type CallSetWhitelistedDomains struct {
 	Value []uint32
 }
 
-func (this CallSetWhitelistedDomains) PalletIndex() uint8 {
+func (cswd CallSetWhitelistedDomains) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetWhitelistedDomains) PalletName() string {
+func (cswd CallSetWhitelistedDomains) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetWhitelistedDomains) CallIndex() uint8 {
+func (cswd CallSetWhitelistedDomains) CallIndex() uint8 {
 	return 6
 }
 
-func (this CallSetWhitelistedDomains) CallName() string {
+func (cswd CallSetWhitelistedDomains) CallName() string {
 	return "set_whitelisted_domains"
 }
 
@@ -164,19 +164,19 @@ type CallSetConfiguration struct {
 	Value metadata.VectorConfiguration
 }
 
-func (this CallSetConfiguration) PalletIndex() uint8 {
+func (csc CallSetConfiguration) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetConfiguration) PalletName() string {
+func (csc CallSetConfiguration) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetConfiguration) CallIndex() uint8 {
+func (csc CallSetConfiguration) CallIndex() uint8 {
 	return 7
 }
 
-func (this CallSetConfiguration) CallName() string {
+func (csc CallSetConfiguration) CallName() string {
 	return "set_configuration"
 }
 
@@ -184,19 +184,19 @@ type CallSetFunctionsIds struct {
 	Value prim.Option[metadata.Tuple2[prim.H256, prim.H256]]
 }
 
-func (this CallSetFunctionsIds) PalletIndex() uint8 {
+func (csfi CallSetFunctionsIds) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetFunctionsIds) PalletName() string {
+func (csfi CallSetFunctionsIds) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetFunctionsIds) CallIndex() uint8 {
+func (csfi CallSetFunctionsIds) CallIndex() uint8 {
 	return 8
 }
 
-func (this CallSetFunctionsIds) CallName() string {
+func (csfi CallSetFunctionsIds) CallName() string {
 	return "set_function_ids"
 }
 
@@ -204,19 +204,19 @@ type CallSetStepVerificationKey struct {
 	Value prim.Option[[]byte]
 }
 
-func (this CallSetStepVerificationKey) PalletIndex() uint8 {
+func (cssvk CallSetStepVerificationKey) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetStepVerificationKey) PalletName() string {
+func (cssvk CallSetStepVerificationKey) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetStepVerificationKey) CallIndex() uint8 {
+func (cssvk CallSetStepVerificationKey) CallIndex() uint8 {
 	return 9
 }
 
-func (this CallSetStepVerificationKey) CallName() string {
+func (cssvk CallSetStepVerificationKey) CallName() string {
 	return "set_step_verification_key"
 }
 
@@ -224,19 +224,19 @@ type CallSetRotateVerificationKey struct {
 	Value prim.Option[[]byte]
 }
 
-func (this CallSetRotateVerificationKey) PalletIndex() uint8 {
+func (csrvk CallSetRotateVerificationKey) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetRotateVerificationKey) PalletName() string {
+func (csrvk CallSetRotateVerificationKey) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetRotateVerificationKey) CallIndex() uint8 {
+func (csrvk CallSetRotateVerificationKey) CallIndex() uint8 {
 	return 10
 }
 
-func (this CallSetRotateVerificationKey) CallName() string {
+func (csrvk CallSetRotateVerificationKey) CallName() string {
 	return "set_rotate_verification_key"
 }
 
@@ -244,19 +244,19 @@ type CallFailedSendMessageTxs struct {
 	FailedTxs []uint32 `scale:"compact"`
 }
 
-func (this CallFailedSendMessageTxs) PalletIndex() uint8 {
+func (cfsmt CallFailedSendMessageTxs) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallFailedSendMessageTxs) PalletName() string {
+func (cfsmt CallFailedSendMessageTxs) PalletName() string {
 	return PalletName
 }
 
-func (this CallFailedSendMessageTxs) CallIndex() uint8 {
+func (cfsmt CallFailedSendMessageTxs) CallIndex() uint8 {
 	return 11
 }
 
-func (this CallFailedSendMessageTxs) CallName() string {
+func (cfsmt CallFailedSendMessageTxs) CallName() string {
 	return "failed_send_message_txs"
 }
 
@@ -264,19 +264,19 @@ type CallSetUpdater struct {
 	Updater prim.H256
 }
 
-func (this CallSetUpdater) PalletIndex() uint8 {
+func (csu CallSetUpdater) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetUpdater) PalletName() string {
+func (csu CallSetUpdater) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetUpdater) CallIndex() uint8 {
+func (csu CallSetUpdater) CallIndex() uint8 {
 	return 12
 }
 
-func (this CallSetUpdater) CallName() string {
+func (csu CallSetUpdater) CallName() string {
 	return "set_updater"
 }
 
@@ -285,19 +285,19 @@ type CallFulfill struct {
 	PublicValues []byte
 }
 
-func (this CallFulfill) PalletIndex() uint8 {
+func (cf CallFulfill) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallFulfill) PalletName() string {
+func (cf CallFulfill) PalletName() string {
 	return PalletName
 }
 
-func (this CallFulfill) CallIndex() uint8 {
+func (cf CallFulfill) CallIndex() uint8 {
 	return 13
 }
 
-func (this CallFulfill) CallName() string {
+func (cf CallFulfill) CallName() string {
 	return "fulfill"
 }
 
@@ -305,19 +305,19 @@ type CallSetSp1VerificationKey struct {
 	Sp1Vk prim.H256
 }
 
-func (this CallSetSp1VerificationKey) PalletIndex() uint8 {
+func (c CallSetSp1VerificationKey) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetSp1VerificationKey) PalletName() string {
+func (c CallSetSp1VerificationKey) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetSp1VerificationKey) CallIndex() uint8 {
+func (c CallSetSp1VerificationKey) CallIndex() uint8 {
 	return 14
 }
 
-func (this CallSetSp1VerificationKey) CallName() string {
+func (c CallSetSp1VerificationKey) CallName() string {
 	return "set_sp1_verification_key"
 }
 
@@ -326,19 +326,19 @@ type CallSetSyncCommitteeHash struct {
 	Hash   prim.H256
 }
 
-func (this CallSetSyncCommitteeHash) PalletIndex() uint8 {
+func (csch CallSetSyncCommitteeHash) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallSetSyncCommitteeHash) PalletName() string {
+func (csch CallSetSyncCommitteeHash) PalletName() string {
 	return PalletName
 }
 
-func (this CallSetSyncCommitteeHash) CallIndex() uint8 {
+func (csch CallSetSyncCommitteeHash) CallIndex() uint8 {
 	return 15
 }
 
-func (this CallSetSyncCommitteeHash) CallName() string {
+func (csch CallSetSyncCommitteeHash) CallName() string {
 	return "set_sync_committee_hash"
 }
 
@@ -346,19 +346,19 @@ type CallEnableMock struct {
 	Value bool
 }
 
-func (this CallEnableMock) PalletIndex() uint8 {
+func (cem CallEnableMock) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallEnableMock) PalletName() string {
+func (cem CallEnableMock) PalletName() string {
 	return PalletName
 }
 
-func (this CallEnableMock) CallIndex() uint8 {
+func (cem CallEnableMock) CallIndex() uint8 {
 	return 16
 }
 
-func (this CallEnableMock) CallName() string {
+func (cem CallEnableMock) CallName() string {
 	return "enable_mock"
 }
 
@@ -366,18 +366,18 @@ type CallMockFulfill struct {
 	PublicValues []byte
 }
 
-func (this CallMockFulfill) PalletIndex() uint8 {
+func (cmf CallMockFulfill) PalletIndex() uint8 {
 	return PalletIndex
 }
 
-func (this CallMockFulfill) PalletName() string {
+func (cmf CallMockFulfill) PalletName() string {
 	return PalletName
 }
 
-func (this CallMockFulfill) CallIndex() uint8 {
+func (cmf CallMockFulfill) CallIndex() uint8 {
 	return 17
 }
 
-func (this CallMockFulfill) CallName() string {
+func (cmf CallMockFulfill) CallName() string {
 	return "mock_fulfill"
 }

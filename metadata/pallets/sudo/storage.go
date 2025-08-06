@@ -9,14 +9,14 @@ import (
 type StorageKeyValue = prim.AccountId
 type StorageKey struct{}
 
-func (this *StorageKey) PalletName() string {
+func (sk *StorageKey) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageKey) StorageName() string {
+func (sk *StorageKey) StorageName() string {
 	return "Key"
 }
 
-func (this *StorageKey) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageKeyValue], error) {
-	return GenericFetch[StorageKeyValue](blockStorage, this)
+func (sk *StorageKey) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageKeyValue], error) {
+	return GenericFetch[StorageKeyValue](blockStorage, sk)
 }

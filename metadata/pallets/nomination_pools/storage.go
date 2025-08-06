@@ -19,24 +19,24 @@ type StorageBondedPools struct {
 	State         PoolState
 }
 
-func (this *StorageBondedPools) PalletName() string {
+func (sbp *StorageBondedPools) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageBondedPools) StorageName() string {
+func (sbp *StorageBondedPools) StorageName() string {
 	return "BondedPools"
 }
 
-func (this *StorageBondedPools) MapKeyHasher() uint8 {
+func (sbp *StorageBondedPools) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageBondedPools) Fetch(blockStorage interfaces.BlockStorageT, key StorageBondedPoolsKey) (prim.Option[StorageBondedPoolsEntry], error) {
-	return GenericMapFetch[StorageBondedPools](blockStorage, key, this)
+func (sbp *StorageBondedPools) Fetch(blockStorage interfaces.BlockStorageT, key StorageBondedPoolsKey) (prim.Option[StorageBondedPoolsEntry], error) {
+	return GenericMapFetch[StorageBondedPools](blockStorage, key, sbp)
 }
 
-func (this *StorageBondedPools) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageBondedPoolsEntry, error) {
-	return GenericMapKeysFetch[StorageBondedPools, StorageBondedPoolsKey](blockStorage, this)
+func (sbp *StorageBondedPools) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageBondedPoolsEntry, error) {
+	return GenericMapKeysFetch[StorageBondedPools, StorageBondedPoolsKey](blockStorage, sbp)
 }
 
 //
@@ -55,25 +55,25 @@ type StorageClaimPermissions struct {
 	State         PoolState
 }
 
-func (this *StorageClaimPermissions) PalletName() string {
+func (scp *StorageClaimPermissions) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageClaimPermissions) StorageName() string {
+func (scp *StorageClaimPermissions) StorageName() string {
 	return "ClaimPermissions"
 }
 
-func (this *StorageClaimPermissions) MapKeyHasher() uint8 {
+func (scp *StorageClaimPermissions) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageClaimPermissions) Fetch(blockStorage interfaces.BlockStorageT, key StorageClaimPermissionsKey) (StorageClaimPermissionsEntry, error) {
-	val, err := GenericMapFetch[StorageClaimPermissionsValue](blockStorage, key, this)
+func (scp *StorageClaimPermissions) Fetch(blockStorage interfaces.BlockStorageT, key StorageClaimPermissionsKey) (StorageClaimPermissionsEntry, error) {
+	val, err := GenericMapFetch[StorageClaimPermissionsValue](blockStorage, key, scp)
 	return val.Unwrap(), err
 }
 
-func (this *StorageClaimPermissions) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageClaimPermissionsEntry, error) {
-	return GenericMapKeysFetch[StorageClaimPermissionsValue, StorageClaimPermissionsKey](blockStorage, this)
+func (scp *StorageClaimPermissions) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageClaimPermissionsEntry, error) {
+	return GenericMapKeysFetch[StorageClaimPermissionsValue, StorageClaimPermissionsKey](blockStorage, scp)
 }
 
 //
@@ -83,16 +83,16 @@ func (this *StorageClaimPermissions) FetchAll(blockStorage interfaces.BlockStora
 type StorageCounterForBondedPoolsValue = uint32
 type StorageCounterForBondedPools struct{}
 
-func (this *StorageCounterForBondedPools) PalletName() string {
+func (scfbp *StorageCounterForBondedPools) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageCounterForBondedPools) StorageName() string {
+func (scfbp *StorageCounterForBondedPools) StorageName() string {
 	return "CounterForBondedPools"
 }
 
-func (this *StorageCounterForBondedPools) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForBondedPoolsValue, error) {
-	return GenericFetchDefault[StorageCounterForBondedPoolsValue](blockStorage, this)
+func (scfbp *StorageCounterForBondedPools) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForBondedPoolsValue, error) {
+	return GenericFetchDefault[StorageCounterForBondedPoolsValue](blockStorage, scfbp)
 }
 
 //
@@ -102,16 +102,16 @@ func (this *StorageCounterForBondedPools) Fetch(blockStorage interfaces.BlockSto
 type StorageCounterForMetadataValue = uint32
 type StorageCounterForMetadata struct{}
 
-func (this *StorageCounterForMetadata) PalletName() string {
+func (scfm *StorageCounterForMetadata) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageCounterForMetadata) StorageName() string {
+func (scfm *StorageCounterForMetadata) StorageName() string {
 	return "CounterForMetadata"
 }
 
-func (this *StorageCounterForMetadata) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForMetadataValue, error) {
-	return GenericFetchDefault[StorageCounterForMetadataValue](blockStorage, this)
+func (scfm *StorageCounterForMetadata) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForMetadataValue, error) {
+	return GenericFetchDefault[StorageCounterForMetadataValue](blockStorage, scfm)
 }
 
 //
@@ -121,16 +121,16 @@ func (this *StorageCounterForMetadata) Fetch(blockStorage interfaces.BlockStorag
 type StorageCounterForPoolMembersValue = uint32
 type StorageCounterForPoolMembers struct{}
 
-func (this *StorageCounterForPoolMembers) PalletName() string {
+func (scfpm *StorageCounterForPoolMembers) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageCounterForPoolMembers) StorageName() string {
+func (scfpm *StorageCounterForPoolMembers) StorageName() string {
 	return "CounterForPoolMembers"
 }
 
-func (this *StorageCounterForPoolMembers) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForPoolMembersValue, error) {
-	return GenericFetchDefault[StorageCounterForPoolMembersValue](blockStorage, this)
+func (scfpm *StorageCounterForPoolMembers) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForPoolMembersValue, error) {
+	return GenericFetchDefault[StorageCounterForPoolMembersValue](blockStorage, scfpm)
 }
 
 //
@@ -140,16 +140,16 @@ func (this *StorageCounterForPoolMembers) Fetch(blockStorage interfaces.BlockSto
 type StorageCounterForReversePoolIdLookupValue = uint32
 type StorageCounterForReversePoolIdLookup struct{}
 
-func (this *StorageCounterForReversePoolIdLookup) PalletName() string {
+func (scfrpil *StorageCounterForReversePoolIdLookup) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageCounterForReversePoolIdLookup) StorageName() string {
+func (scfrpil *StorageCounterForReversePoolIdLookup) StorageName() string {
 	return "CounterForReversePoolIdLookup"
 }
 
-func (this *StorageCounterForReversePoolIdLookup) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForReversePoolIdLookupValue, error) {
-	return GenericFetchDefault[StorageCounterForReversePoolIdLookupValue](blockStorage, this)
+func (scfrpil *StorageCounterForReversePoolIdLookup) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForReversePoolIdLookupValue, error) {
+	return GenericFetchDefault[StorageCounterForReversePoolIdLookupValue](blockStorage, scfrpil)
 }
 
 //
@@ -159,16 +159,16 @@ func (this *StorageCounterForReversePoolIdLookup) Fetch(blockStorage interfaces.
 type StorageCounterForRewardPoolsValue = uint32
 type StorageCounterForRewardPools struct{}
 
-func (this *StorageCounterForRewardPools) PalletName() string {
+func (scfrp *StorageCounterForRewardPools) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageCounterForRewardPools) StorageName() string {
+func (scfrp *StorageCounterForRewardPools) StorageName() string {
 	return "CounterForRewardPools"
 }
 
-func (this *StorageCounterForRewardPools) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForRewardPoolsValue, error) {
-	return GenericFetchDefault[StorageCounterForRewardPoolsValue](blockStorage, this)
+func (scfrp *StorageCounterForRewardPools) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForRewardPoolsValue, error) {
+	return GenericFetchDefault[StorageCounterForRewardPoolsValue](blockStorage, scfrp)
 }
 
 //
@@ -178,16 +178,16 @@ func (this *StorageCounterForRewardPools) Fetch(blockStorage interfaces.BlockSto
 type StorageCounterForSubPoolsStorageValue = uint32
 type StorageCounterForSubPoolsStorage struct{}
 
-func (this *StorageCounterForSubPoolsStorage) PalletName() string {
+func (scfsps *StorageCounterForSubPoolsStorage) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageCounterForSubPoolsStorage) StorageName() string {
+func (scfsps *StorageCounterForSubPoolsStorage) StorageName() string {
 	return "CounterForSubPoolsStorage"
 }
 
-func (this *StorageCounterForSubPoolsStorage) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForSubPoolsStorageValue, error) {
-	return GenericFetchDefault[StorageCounterForSubPoolsStorageValue](blockStorage, this)
+func (scfsps *StorageCounterForSubPoolsStorage) Fetch(blockStorage interfaces.BlockStorageT) (StorageCounterForSubPoolsStorageValue, error) {
+	return GenericFetchDefault[StorageCounterForSubPoolsStorageValue](blockStorage, scfsps)
 }
 
 //
@@ -197,16 +197,16 @@ func (this *StorageCounterForSubPoolsStorage) Fetch(blockStorage interfaces.Bloc
 type StorageGlobalMaxCommissionValue = Perbill
 type StorageGlobalMaxCommission struct{}
 
-func (this *StorageGlobalMaxCommission) PalletName() string {
+func (sgmc *StorageGlobalMaxCommission) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageGlobalMaxCommission) StorageName() string {
+func (sgmc *StorageGlobalMaxCommission) StorageName() string {
 	return "GlobalMaxCommission"
 }
 
-func (this *StorageGlobalMaxCommission) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageGlobalMaxCommissionValue], error) {
-	return GenericFetch[StorageGlobalMaxCommissionValue](blockStorage, this)
+func (sgmc *StorageGlobalMaxCommission) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageGlobalMaxCommissionValue], error) {
+	return GenericFetch[StorageGlobalMaxCommissionValue](blockStorage, sgmc)
 }
 
 //
@@ -216,16 +216,16 @@ func (this *StorageGlobalMaxCommission) Fetch(blockStorage interfaces.BlockStora
 type StorageLastPoolIdValue = uint32
 type StorageLastPoolId struct{}
 
-func (this *StorageLastPoolId) PalletName() string {
+func (slp *StorageLastPoolId) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageLastPoolId) StorageName() string {
+func (slp *StorageLastPoolId) StorageName() string {
 	return "LastPoolId"
 }
 
-func (this *StorageLastPoolId) Fetch(blockStorage interfaces.BlockStorageT) (StorageLastPoolIdValue, error) {
-	return GenericFetchDefault[StorageLastPoolIdValue](blockStorage, this)
+func (slp *StorageLastPoolId) Fetch(blockStorage interfaces.BlockStorageT) (StorageLastPoolIdValue, error) {
+	return GenericFetchDefault[StorageLastPoolIdValue](blockStorage, slp)
 }
 
 //
@@ -235,16 +235,16 @@ func (this *StorageLastPoolId) Fetch(blockStorage interfaces.BlockStorageT) (Sto
 type StorageMaxPoolMembersValue = uint32
 type StorageMaxPoolMembers struct{}
 
-func (this *StorageMaxPoolMembers) PalletName() string {
+func (smpm *StorageMaxPoolMembers) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageMaxPoolMembers) StorageName() string {
+func (smpm *StorageMaxPoolMembers) StorageName() string {
 	return "MaxPoolMembers"
 }
 
-func (this *StorageMaxPoolMembers) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageMaxPoolMembersValue], error) {
-	return GenericFetch[StorageMaxPoolMembersValue](blockStorage, this)
+func (smpm *StorageMaxPoolMembers) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageMaxPoolMembersValue], error) {
+	return GenericFetch[StorageMaxPoolMembersValue](blockStorage, smpm)
 }
 
 //
@@ -254,16 +254,16 @@ func (this *StorageMaxPoolMembers) Fetch(blockStorage interfaces.BlockStorageT) 
 type StorageMaxPoolMembersPerPoolValue = uint32
 type StorageMaxPoolMembersPerPool struct{}
 
-func (this *StorageMaxPoolMembersPerPool) PalletName() string {
+func (smpmpp *StorageMaxPoolMembersPerPool) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageMaxPoolMembersPerPool) StorageName() string {
+func (smpmpp *StorageMaxPoolMembersPerPool) StorageName() string {
 	return "MaxPoolMembersPerPool"
 }
 
-func (this *StorageMaxPoolMembersPerPool) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageMaxPoolMembersPerPoolValue], error) {
-	return GenericFetch[StorageMaxPoolMembersPerPoolValue](blockStorage, this)
+func (smpmpp *StorageMaxPoolMembersPerPool) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageMaxPoolMembersPerPoolValue], error) {
+	return GenericFetch[StorageMaxPoolMembersPerPoolValue](blockStorage, smpmpp)
 }
 
 //
@@ -273,16 +273,16 @@ func (this *StorageMaxPoolMembersPerPool) Fetch(blockStorage interfaces.BlockSto
 type StorageMaxPoolsValue = uint32
 type StorageMaxPools struct{}
 
-func (this *StorageMaxPools) PalletName() string {
+func (smp *StorageMaxPools) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageMaxPools) StorageName() string {
+func (smp *StorageMaxPools) StorageName() string {
 	return "MaxPools"
 }
 
-func (this *StorageMaxPools) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageMaxPoolsValue], error) {
-	return GenericFetch[StorageMaxPoolsValue](blockStorage, this)
+func (smp *StorageMaxPools) Fetch(blockStorage interfaces.BlockStorageT) (prim.Option[StorageMaxPoolsValue], error) {
+	return GenericFetch[StorageMaxPoolsValue](blockStorage, smp)
 }
 
 //
@@ -295,25 +295,25 @@ type StorageMetadataEntry = StorageEntry[StorageMetadataKey, StorageMetadataValu
 
 type StorageMetadata struct{}
 
-func (this *StorageMetadata) PalletName() string {
+func (sm *StorageMetadata) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageMetadata) StorageName() string {
+func (sm *StorageMetadata) StorageName() string {
 	return "Metadata"
 }
 
-func (this *StorageMetadata) MapKeyHasher() uint8 {
+func (sm *StorageMetadata) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageMetadata) Fetch(blockStorage interfaces.BlockStorageT, key StorageMetadataKey) (StorageMetadataEntry, error) {
-	val, err := GenericMapFetch[StorageMetadataValue](blockStorage, key, this)
+func (sm *StorageMetadata) Fetch(blockStorage interfaces.BlockStorageT, key StorageMetadataKey) (StorageMetadataEntry, error) {
+	val, err := GenericMapFetch[StorageMetadataValue](blockStorage, key, sm)
 	return val.Unwrap(), err
 }
 
-func (this *StorageMetadata) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageMetadataEntry, error) {
-	return GenericMapKeysFetch[StorageMetadataValue, StorageMetadataKey](blockStorage, this)
+func (sm *StorageMetadata) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageMetadataEntry, error) {
+	return GenericMapKeysFetch[StorageMetadataValue, StorageMetadataKey](blockStorage, sm)
 }
 
 //
@@ -323,16 +323,16 @@ func (this *StorageMetadata) FetchAll(blockStorage interfaces.BlockStorageT) ([]
 type StorageMinCreateBondValue = Balance
 type StorageMinCreateBond struct{}
 
-func (this *StorageMinCreateBond) PalletName() string {
+func (smcb *StorageMinCreateBond) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageMinCreateBond) StorageName() string {
+func (smcb *StorageMinCreateBond) StorageName() string {
 	return "MinCreateBond"
 }
 
-func (this *StorageMinCreateBond) Fetch(blockStorage interfaces.BlockStorageT) (StorageMinCreateBondValue, error) {
-	return GenericFetchDefault[StorageMinCreateBondValue](blockStorage, this)
+func (smcb *StorageMinCreateBond) Fetch(blockStorage interfaces.BlockStorageT) (StorageMinCreateBondValue, error) {
+	return GenericFetchDefault[StorageMinCreateBondValue](blockStorage, smcb)
 }
 
 //
@@ -342,16 +342,16 @@ func (this *StorageMinCreateBond) Fetch(blockStorage interfaces.BlockStorageT) (
 type StorageMinJoinBondValue = Balance
 type StorageMinJoinBond struct{}
 
-func (this *StorageMinJoinBond) PalletName() string {
+func (smjb *StorageMinJoinBond) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageMinJoinBond) StorageName() string {
+func (smjb *StorageMinJoinBond) StorageName() string {
 	return "MinJoinBond"
 }
 
-func (this *StorageMinJoinBond) Fetch(blockStorage interfaces.BlockStorageT) (StorageMinJoinBondValue, error) {
-	return GenericFetchDefault[StorageMinJoinBondValue](blockStorage, this)
+func (smjb *StorageMinJoinBond) Fetch(blockStorage interfaces.BlockStorageT) (StorageMinJoinBondValue, error) {
+	return GenericFetchDefault[StorageMinJoinBondValue](blockStorage, smjb)
 }
 
 //
@@ -368,24 +368,24 @@ type StoragePoolMembers struct {
 	UnbondingEras            []Tuple2[uint32, uint128.Uint128]
 }
 
-func (this *StoragePoolMembers) PalletName() string {
+func (spm *StoragePoolMembers) PalletName() string {
 	return PalletName
 }
 
-func (this *StoragePoolMembers) StorageName() string {
+func (spm *StoragePoolMembers) StorageName() string {
 	return "PoolMembers"
 }
 
-func (this *StoragePoolMembers) MapKeyHasher() uint8 {
+func (spm *StoragePoolMembers) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StoragePoolMembers) Fetch(blockStorage interfaces.BlockStorageT, key StoragePoolMembersKey) (prim.Option[StoragePoolMembersEntry], error) {
-	return GenericMapFetch[StoragePoolMembers](blockStorage, key, this)
+func (spm *StoragePoolMembers) Fetch(blockStorage interfaces.BlockStorageT, key StoragePoolMembersKey) (prim.Option[StoragePoolMembersEntry], error) {
+	return GenericMapFetch[StoragePoolMembers](blockStorage, key, spm)
 }
 
-func (this *StoragePoolMembers) FetchAll(blockStorage interfaces.BlockStorageT) ([]StoragePoolMembersEntry, error) {
-	return GenericMapKeysFetch[StoragePoolMembers, StoragePoolMembersKey](blockStorage, this)
+func (spm *StoragePoolMembers) FetchAll(blockStorage interfaces.BlockStorageT) ([]StoragePoolMembersEntry, error) {
+	return GenericMapKeysFetch[StoragePoolMembers, StoragePoolMembersKey](blockStorage, spm)
 }
 
 //
@@ -398,24 +398,24 @@ type StorageReversePoolIdLookupEntry = StorageEntry[StorageReversePoolIdLookupKe
 
 type StorageReversePoolIdLookup struct{}
 
-func (this *StorageReversePoolIdLookup) PalletName() string {
+func (srpil *StorageReversePoolIdLookup) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageReversePoolIdLookup) StorageName() string {
+func (srpil *StorageReversePoolIdLookup) StorageName() string {
 	return "ReversePoolIdLookup"
 }
 
-func (this *StorageReversePoolIdLookup) MapKeyHasher() uint8 {
+func (srpil *StorageReversePoolIdLookup) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageReversePoolIdLookup) Fetch(blockStorage interfaces.BlockStorageT, key StorageReversePoolIdLookupKey) (prim.Option[StorageReversePoolIdLookupEntry], error) {
-	return GenericMapFetch[StorageReversePoolIdLookupValue](blockStorage, key, this)
+func (srpil *StorageReversePoolIdLookup) Fetch(blockStorage interfaces.BlockStorageT, key StorageReversePoolIdLookupKey) (prim.Option[StorageReversePoolIdLookupEntry], error) {
+	return GenericMapFetch[StorageReversePoolIdLookupValue](blockStorage, key, srpil)
 }
 
-func (this *StorageReversePoolIdLookup) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageReversePoolIdLookupEntry, error) {
-	return GenericMapKeysFetch[StorageReversePoolIdLookupValue, StorageReversePoolIdLookupKey](blockStorage, this)
+func (srpil *StorageReversePoolIdLookup) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageReversePoolIdLookupEntry, error) {
+	return GenericMapKeysFetch[StorageReversePoolIdLookupValue, StorageReversePoolIdLookupKey](blockStorage, srpil)
 }
 
 //
@@ -433,24 +433,24 @@ type StorageRewardPools struct {
 	TotalCommissionClaimed    Balance
 }
 
-func (this *StorageRewardPools) PalletName() string {
+func (srp *StorageRewardPools) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageRewardPools) StorageName() string {
+func (srp *StorageRewardPools) StorageName() string {
 	return "RewardPools"
 }
 
-func (this *StorageRewardPools) MapKeyHasher() uint8 {
+func (srp *StorageRewardPools) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageRewardPools) Fetch(blockStorage interfaces.BlockStorageT, key StorageRewardPoolsKey) (prim.Option[StorageRewardPoolsEntry], error) {
-	return GenericMapFetch[StorageRewardPools](blockStorage, key, this)
+func (srp *StorageRewardPools) Fetch(blockStorage interfaces.BlockStorageT, key StorageRewardPoolsKey) (prim.Option[StorageRewardPoolsEntry], error) {
+	return GenericMapFetch[StorageRewardPools](blockStorage, key, srp)
 }
 
-func (this *StorageRewardPools) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageRewardPoolsEntry, error) {
-	return GenericMapKeysFetch[StorageRewardPools, StorageRewardPoolsKey](blockStorage, this)
+func (srp *StorageRewardPools) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageRewardPoolsEntry, error) {
+	return GenericMapKeysFetch[StorageRewardPools, StorageRewardPoolsKey](blockStorage, srp)
 }
 
 //
@@ -470,24 +470,24 @@ type UnbondPool struct {
 	Balance Balance
 }
 
-func (this *StorageSubPoolsStorage) PalletName() string {
+func (ssps *StorageSubPoolsStorage) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageSubPoolsStorage) StorageName() string {
+func (ssps *StorageSubPoolsStorage) StorageName() string {
 	return "SubPoolsStorage"
 }
 
-func (this *StorageSubPoolsStorage) MapKeyHasher() uint8 {
+func (ssps *StorageSubPoolsStorage) MapKeyHasher() uint8 {
 	return Twox64ConcatHasher
 }
 
-func (this *StorageSubPoolsStorage) Fetch(blockStorage interfaces.BlockStorageT, key StorageSubPoolsStorageKey) (prim.Option[StorageSubPoolsStorageEntry], error) {
-	return GenericMapFetch[StorageSubPoolsStorage](blockStorage, key, this)
+func (ssps *StorageSubPoolsStorage) Fetch(blockStorage interfaces.BlockStorageT, key StorageSubPoolsStorageKey) (prim.Option[StorageSubPoolsStorageEntry], error) {
+	return GenericMapFetch[StorageSubPoolsStorage](blockStorage, key, ssps)
 }
 
-func (this *StorageSubPoolsStorage) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageSubPoolsStorageEntry, error) {
-	return GenericMapKeysFetch[StorageSubPoolsStorage, StorageSubPoolsStorageKey](blockStorage, this)
+func (ssps *StorageSubPoolsStorage) FetchAll(blockStorage interfaces.BlockStorageT) ([]StorageSubPoolsStorageEntry, error) {
+	return GenericMapKeysFetch[StorageSubPoolsStorage, StorageSubPoolsStorageKey](blockStorage, ssps)
 }
 
 //
@@ -497,14 +497,14 @@ func (this *StorageSubPoolsStorage) FetchAll(blockStorage interfaces.BlockStorag
 type StorageTotalValueLockedValue = uint128.Uint128
 type StorageTotalValueLocked struct{}
 
-func (this *StorageTotalValueLocked) PalletName() string {
+func (stvl *StorageTotalValueLocked) PalletName() string {
 	return PalletName
 }
 
-func (this *StorageTotalValueLocked) StorageName() string {
+func (stvl *StorageTotalValueLocked) StorageName() string {
 	return "TotalValueLocked"
 }
 
-func (this *StorageTotalValueLocked) Fetch(blockStorage interfaces.BlockStorageT) (StorageTotalValueLockedValue, error) {
-	return GenericFetchDefault[StorageTotalValueLockedValue](blockStorage, this)
+func (stvl *StorageTotalValueLocked) Fetch(blockStorage interfaces.BlockStorageT) (StorageTotalValueLockedValue, error) {
+	return GenericFetchDefault[StorageTotalValueLockedValue](blockStorage, stvl)
 }

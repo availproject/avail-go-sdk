@@ -18,10 +18,10 @@ func NewPayload(call primitives.Call, palletName string, callName string) Payloa
 	}
 }
 
-func (this *Payload) PalletName() string {
-	return this.palletName
+func (p *Payload) PalletName() string {
+	return p.palletName
 }
 
-func (this *Payload) CallName() string {
-	return this.callName
+func (p *Payload) CallName() string {
+	return p.callName
 }
