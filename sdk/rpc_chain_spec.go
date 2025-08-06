@@ -8,9 +8,9 @@ type chainSpecRPC struct {
 	client *Client
 }
 
-func (this *chainSpecRPC) V1GenesisHash() (prim.H256, error) {
+func (c *chainSpecRPC) V1GenesisHash() (prim.H256, error) {
 	params := RPCParams{}
-	value, err := this.client.RequestWithRetry("chainSpec_v1_genesisHash", params.Build())
+	value, err := c.client.RequestWithRetry("chainSpec_v1_genesisHash", params.Build())
 	if err != nil {
 		return prim.H256{}, err
 	}

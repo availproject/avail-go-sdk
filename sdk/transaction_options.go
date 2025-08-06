@@ -23,27 +23,27 @@ func NewTransactionOptions() TransactionOptions {
 	}
 }
 
-func (this TransactionOptions) WithAppId(value uint32) TransactionOptions {
-	this.AppId = prim.Some(value)
-	return this
+func (t TransactionOptions) WithAppId(value uint32) TransactionOptions {
+	t.AppId = prim.Some(value)
+	return t
 }
 
-func (this TransactionOptions) WithNonce(value uint32) TransactionOptions {
-	this.Nonce = prim.Some(value)
-	return this
+func (t TransactionOptions) WithNonce(value uint32) TransactionOptions {
+	t.Nonce = prim.Some(value)
+	return t
 }
 
-func (this TransactionOptions) WithMortality(value uint32) TransactionOptions {
-	this.Mortality = prim.Some(value)
-	return this
+func (t TransactionOptions) WithMortality(value uint32) TransactionOptions {
+	t.Mortality = prim.Some(value)
+	return t
 }
 
-func (this TransactionOptions) WithTip(value metadata.Balance) TransactionOptions {
-	this.Tip = prim.Some(value)
-	return this
+func (t TransactionOptions) WithTip(value metadata.Balance) TransactionOptions {
+	t.Tip = prim.Some(value)
+	return t
 }
 
-func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress string) (prim.Extra, prim.Additional, uint32, error) {
+func (t *TransactionOptions) ToPrimitive(client *Client, accountAddress string) (prim.Extra, prim.Additional, uint32, error) {
 	forkHash, err := client.Rpc.Chain.GetFinalizedHead()
 	if err != nil {
 		return prim.Extra{}, prim.Additional{}, 0, err
@@ -62,17 +62,17 @@ func (this *TransactionOptions) ToPrimitive(client *Client, accountAddress strin
 	}
 
 	extra := prim.Extra{}
-	extra.AppId = this.AppId.UnwrapOr(uint32(0))
-	extra.Tip = this.Tip.UnwrapOr(metadata.Balance{Value: uint128.Zero}).Value
-	if this.Nonce.IsNone() {
+	extra.AppId = t.AppId.UnwrapOr(uint32(0))
+	extra.Tip = t.Tip.UnwrapOr(metadata.Balance{Value: uint128.Zero}).Value
+	if t.Nonce.IsNone() {
 		extra.Nonce, err = client.Rpc.System.AccountNextIndex(accountAddress)
 		if err != nil {
 			return prim.Extra{}, prim.Additional{}, 0, err
 		}
 	} else {
-		extra.Nonce = this.Nonce.Unwrap()
+		extra.Nonce = t.Nonce.Unwrap()
 	}
-	extra.Era = prim.NewEra(uint64(this.Mortality.UnwrapOr(32)), uint64(forkBlockNumber))
+	extra.Era = prim.NewEra(uint64(t.Mortality.UnwrapOr(32)), uint64(forkBlockNumber))
 
 	return extra, additional, forkBlockNumber, nil
 }

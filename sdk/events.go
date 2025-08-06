@@ -45,17 +45,17 @@ func NewEvents(eventBytes []byte, metadata *meta.Metadata) (Events, error) {
 	return events, nil
 }
 
-func (this *Events) Decode() (EventRecords, error) {
+func (e *Events) Decode() (EventRecords, error) {
 	result := EventRecords{}
 	position := 0
 
-	if this.eventCount == 0 {
+	if e.eventCount == 0 {
 		return EventRecords{}, nil
 	}
 
-	decoder := prim.NewDecoder(this.eventBytes, int(this.startIdx))
+	decoder := prim.NewDecoder(e.eventBytes, int(e.startIdx))
 	for {
-		eventRecord, err := NewEventRecord(&decoder, uint32(position), this.metadata)
+		eventRecord, err := NewEventRecord(&decoder, uint32(position), e.metadata)
 		if err != nil {
 			return EventRecords{}, err
 		}
@@ -63,7 +63,7 @@ func (this *Events) Decode() (EventRecords, error) {
 		result = append(result, eventRecord)
 		position += 1
 
-		if position == int(this.eventCount) {
+		if position == int(e.eventCount) {
 			break
 		}
 	}
@@ -81,8 +81,8 @@ type EventPhase struct {
 	ApplyExtrinsic prim.Option[uint32]
 }
 
-func (this *EventPhase) ToString() string {
-	switch this.VariantIndex {
+func (e *EventPhase) ToString() string {
+	switch e.VariantIndex {
 	case 0:
 		return "ApplyExtrinsic"
 	case 1:
@@ -141,12 +141,12 @@ type EventRecord struct {
 	Topics   []prim.H256
 }
 
-func (this *EventRecord) TxIndex() prim.Option[uint32] {
-	if this.Phase.ApplyExtrinsic.IsNone() {
+func (e *EventRecord) TxIndex() prim.Option[uint32] {
+	if e.Phase.ApplyExtrinsic.IsNone() {
 		return prim.None[uint32]()
 	}
 
-	return prim.Some(this.Phase.ApplyExtrinsic.Unwrap())
+	return prim.Some(e.Phase.ApplyExtrinsic.Unwrap())
 }
 
 func NewEventRecord(decoder *prim.Decoder, position uint32, metadata *meta.Metadata) (EventRecord, error) {

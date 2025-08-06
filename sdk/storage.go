@@ -9,14 +9,14 @@ type BlockStorage struct {
 	at     primitives.H256
 }
 
-func (this *BlockStorage) Fetch(storageEntryKey string) (primitives.Option[string], error) {
-	return this.client.Rpc.State.GetStorage(storageEntryKey, primitives.Some(this.at))
+func (b *BlockStorage) Fetch(storageEntryKey string) (primitives.Option[string], error) {
+	return b.client.Rpc.State.GetStorage(storageEntryKey, primitives.Some(b.at))
 }
 
-func (this *BlockStorage) FetchKeys(storageEntryKey string) ([]string, error) {
-	return this.client.Rpc.State.GetKeys(storageEntryKey, primitives.Some(this.at))
+func (b *BlockStorage) FetchKeys(storageEntryKey string) ([]string, error) {
+	return b.client.Rpc.State.GetKeys(storageEntryKey, primitives.Some(b.at))
 }
 
-func (this *BlockStorage) FetchKeysPaged(storageEntryKey string, count uint32, startKey primitives.Option[string]) ([]string, error) {
-	return this.client.Rpc.State.GetKeysPaged(storageEntryKey, count, startKey, primitives.Some(this.at))
+func (b *BlockStorage) FetchKeysPaged(storageEntryKey string, count uint32, startKey primitives.Option[string]) ([]string, error) {
+	return b.client.Rpc.State.GetKeysPaged(storageEntryKey, count, startKey, primitives.Some(b.at))
 }

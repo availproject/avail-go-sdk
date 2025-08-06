@@ -35,19 +35,19 @@ type RPCParams struct {
 	Values []string
 }
 
-func (this *RPCParams) Add(value string) {
-	this.Values = append(this.Values, value)
+func (r *RPCParams) Add(value string) {
+	r.Values = append(r.Values, value)
 }
 
-func (this *RPCParams) AddBool(value bool) {
+func (r *RPCParams) AddBool(value bool) {
 	if value == true {
-		this.Add("true")
+		r.Add("true")
 	} else {
-		this.Add("false")
+		r.Add("false")
 	}
 }
 
-func (this *RPCParams) AddByteSlice(value []byte) {
+func (r *RPCParams) AddByteSlice(value []byte) {
 	if len(value) == 0 {
 		return
 	}
@@ -63,26 +63,26 @@ func (this *RPCParams) AddByteSlice(value []byte) {
 
 	res = res + "]"
 
-	this.Values = append(this.Values, res)
+	r.Values = append(r.Values, res)
 }
 
-func (this *RPCParams) AddH256(value prim.H256) {
-	this.Add(value.ToRpcParam())
+func (r *RPCParams) AddH256(value prim.H256) {
+	r.Add(value.ToRpcParam())
 }
 
-func (this *RPCParams) AddUint32(value uint32) {
-	this.Add(strconv.FormatUint(uint64(value), 10))
+func (r *RPCParams) AddUint32(value uint32) {
+	r.Add(strconv.FormatUint(uint64(value), 10))
 }
 
-func (this *RPCParams) Build() string {
-	length := len(this.Values)
+func (r *RPCParams) Build() string {
+	length := len(r.Values)
 	if length == 0 {
 		return "[]"
 	}
 
 	result := "["
 	for i := 0; i < length; i++ {
-		result += this.Values[i]
+		result += r.Values[i]
 		if i < (length - 1) {
 			result += ", "
 		}

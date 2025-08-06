@@ -10,7 +10,7 @@ type systemRPC struct {
 	client *Client
 }
 
-func (this *systemRPC) AccountNextIndex(address string) (uint32, error) {
+func (s *systemRPC) AccountNextIndex(address string) (uint32, error) {
 	if len(address) < 1 {
 		return uint32(0), errors.New("Address needs to have a length of > 0")
 	}
@@ -26,7 +26,7 @@ func (this *systemRPC) AccountNextIndex(address string) (uint32, error) {
 	params := RPCParams{}
 	params.Add(address)
 
-	value, err := this.client.RequestWithRetry("system_accountNextIndex", params.Build())
+	value, err := s.client.RequestWithRetry("system_accountNextIndex", params.Build())
 
 	if err != nil {
 		return uint32(0), err
@@ -39,19 +39,19 @@ func (this *systemRPC) AccountNextIndex(address string) (uint32, error) {
 	return uint32(parsedValue), nil
 }
 
-func (this *systemRPC) Chain() (string, error) {
+func (s *systemRPC) Chain() (string, error) {
 	params := RPCParams{}
-	return this.client.RequestWithRetry("system_chain", params.Build())
+	return s.client.RequestWithRetry("system_chain", params.Build())
 }
 
-func (this *systemRPC) ChainType() (string, error) {
+func (s *systemRPC) ChainType() (string, error) {
 	params := RPCParams{}
-	return this.client.RequestWithRetry("system_chainType", params.Build())
+	return s.client.RequestWithRetry("system_chainType", params.Build())
 }
 
-func (this *systemRPC) Health() (RpcSystemHealth, error) {
+func (s *systemRPC) Health() (RpcSystemHealth, error) {
 	params := RPCParams{}
-	val, err := this.client.RequestWithRetry("system_health", params.Build())
+	val, err := s.client.RequestWithRetry("system_health", params.Build())
 	if err != nil {
 		return RpcSystemHealth{}, err
 	}
@@ -85,19 +85,19 @@ type RpcSystemHealth struct {
 	ShouldHavePeers bool
 }
 
-func (this *systemRPC) LocalPeerId() (string, error) {
+func (s *systemRPC) LocalPeerId() (string, error) {
 	params := RPCParams{}
-	return this.client.RequestWithRetry("system_localPeerId", params.Build())
+	return s.client.RequestWithRetry("system_localPeerId", params.Build())
 }
 
-func (this *systemRPC) Name() (string, error) {
+func (s *systemRPC) Name() (string, error) {
 	params := RPCParams{}
-	return this.client.RequestWithRetry("system_name", params.Build())
+	return s.client.RequestWithRetry("system_name", params.Build())
 }
 
-func (this *systemRPC) NodeRoles() ([]string, error) {
+func (s *systemRPC) NodeRoles() ([]string, error) {
 	params := RPCParams{}
-	val, err := this.client.RequestWithRetry("system_nodeRoles", params.Build())
+	val, err := s.client.RequestWithRetry("system_nodeRoles", params.Build())
 	if err != nil {
 		return []string{}, err
 	}
@@ -115,9 +115,9 @@ func (this *systemRPC) NodeRoles() ([]string, error) {
 	return res, nil
 }
 
-func (this *systemRPC) Properties() (RpcSystemChainProperties, error) {
+func (s *systemRPC) Properties() (RpcSystemChainProperties, error) {
 	params := RPCParams{}
-	val, err := this.client.RequestWithRetry("system_properties", params.Build())
+	val, err := s.client.RequestWithRetry("system_properties", params.Build())
 	if err != nil {
 		return RpcSystemChainProperties{}, err
 	}
@@ -158,9 +158,9 @@ type RpcSystemChainProperties struct {
 	TokenSymbol   string
 }
 
-func (this *systemRPC) SyncState() (RpcSystemSyncState, error) {
+func (s *systemRPC) SyncState() (RpcSystemSyncState, error) {
 	params := RPCParams{}
-	val, err := this.client.RequestWithRetry("system_syncState", params.Build())
+	val, err := s.client.RequestWithRetry("system_syncState", params.Build())
 	if err != nil {
 		return RpcSystemSyncState{}, err
 	}
@@ -194,8 +194,8 @@ type RpcSystemSyncState struct {
 	HighestBlock  uint32
 }
 
-func (this *systemRPC) Version() (string, error) {
+func (s *systemRPC) Version() (string, error) {
 	params := RPCParams{}
-	val, err := this.client.RequestWithRetry("system_version", params.Build())
+	val, err := s.client.RequestWithRetry("system_version", params.Build())
 	return val, err
 }

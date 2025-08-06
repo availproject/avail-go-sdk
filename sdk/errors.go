@@ -8,8 +8,8 @@ type SDKError struct {
 	Message string
 }
 
-func (this SDKError) Error() string {
-	return fmt.Sprintf(`Code: %v; Meaning: %v; Message: %v`, this.Code, this.Meaning, this.Message)
+func (e SDKError) Error() string {
+	return fmt.Sprintf(`Code: %v; Meaning: %v; Message: %v`, e.Code, e.Meaning, e.Message)
 }
 
 var ErrorCode000 = SDKError{Code: 0, Meaning: "Failed to send request to Node. Node might be offline", Message: ""}

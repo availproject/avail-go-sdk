@@ -12,12 +12,12 @@ type transactionRPC struct {
 	client *Client
 }
 
-func (this *transactionRPC) State(txHash primitives.H256, finalized bool) ([]metadata.TransactionState, error) {
+func (tr *transactionRPC) State(txHash primitives.H256, finalized bool) ([]metadata.TransactionState, error) {
 	params := RPCParams{}
 	params.Add(txHash.ToRpcParam())
 	params.AddBool(finalized)
 
-	value, err := this.client.RequestWithRetry("transaction_state", params.Build())
+	value, err := tr.client.RequestWithRetry("transaction_state", params.Build())
 	if err != nil {
 		return []metadata.TransactionState{}, err
 	}

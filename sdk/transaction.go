@@ -23,16 +23,16 @@ func NewTransaction(client *Client, payload metadata.Payload) Transaction {
 	}
 }
 
-func (this *Transaction) CallToHex() string {
-	return "0x" + prim.Encoder.Encode(this.Payload.Call)
+func (t *Transaction) CallToHex() string {
+	return "0x" + prim.Encoder.Encode(t.Payload.Call)
 }
 
-func (this *Transaction) ToHex(account subkey.KeyPair, options TransactionOptions) (string, error) {
-	extra, additional, _, err := options.ToPrimitive(this.client, account.SS58Address(42))
+func (t *Transaction) ToHex(account subkey.KeyPair, options TransactionOptions) (string, error) {
+	extra, additional, _, err := options.ToPrimitive(t.client, account.SS58Address(42))
 	if err != nil {
 		return "", err
 	}
-	tx, err := prim.CreateSigned(this.Payload.Call, extra, additional, account)
+	tx, err := prim.CreateSigned(t.Payload.Call, extra, additional, account)
 	if err != nil {
 		return "", err
 	}
@@ -45,8 +45,8 @@ func (this *Transaction) ToHex(account subkey.KeyPair, options TransactionOption
 // There is no guarantee that the transaction was executed at all. It might have been
 // dropped or discarded for various reasons. The caller is responsible for querying future
 // blocks in order to determine the execution status of that transaction.
-func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOptions) (prim.H256, error) {
-	return TransactionSignAndSend(this.client, account, this.Payload, options)
+func (t *Transaction) Execute(account subkey.KeyPair, options TransactionOptions) (prim.H256, error) {
+	return TransactionSignAndSend(t.client, account, t.Payload, options)
 }
 
 // Transaction will be signed, sent, and watched
@@ -54,8 +54,8 @@ func (this *Transaction) Execute(account subkey.KeyPair, options TransactionOpti
 // for 2 more times using the same nonce and app id.
 //
 // Waits for finalization to finalize the transaction.
-func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Finalization, options)
+func (t *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
+	return TransactionSignSendWatch(t.client, account, t.Payload, Finalization, options)
 }
 
 // Transaction will be signed, sent, and watched
@@ -64,34 +64,34 @@ func (this *Transaction) ExecuteAndWatchFinalization(account subkey.KeyPair, opt
 //
 // Waits for transaction inclusion. Most of the time you would want to call `ExecuteAndWatchFinalization` as
 // inclusion doesn't mean that the transaction will be in the canonical chain.
-func (this *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
-	return TransactionSignSendWatch(this.client, account, this.Payload, Inclusion, options)
+func (t *Transaction) ExecuteAndWatchInclusion(account subkey.KeyPair, options TransactionOptions) (TransactionDetails, error) {
+	return TransactionSignSendWatch(t.client, account, t.Payload, Inclusion, options)
 }
 
-func (this *Transaction) PaymentQueryInfo(account subkey.KeyPair, options TransactionOptions) (metadata.RuntimeDispatchInfo, error) {
-	val, err := this.ToHex(account, options)
+func (t *Transaction) PaymentQueryInfo(account subkey.KeyPair, options TransactionOptions) (metadata.RuntimeDispatchInfo, error) {
+	val, err := t.ToHex(account, options)
 	if err != nil {
 		return metadata.RuntimeDispatchInfo{}, err
 	}
 
-	return this.client.Call.TransactionPaymentApi_queryInfo(val, prim.None[prim.H256]())
+	return t.client.Call.TransactionPaymentApi_queryInfo(val, prim.None[prim.H256]())
 }
 
-func (this *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options TransactionOptions) (metadata.FeeDetails, error) {
-	val, err := this.ToHex(account, options)
+func (t *Transaction) PaymentQueryFeeDetails(account subkey.KeyPair, options TransactionOptions) (metadata.FeeDetails, error) {
+	val, err := t.ToHex(account, options)
 	if err != nil {
 		return metadata.FeeDetails{}, err
 	}
 
-	return this.client.Call.TransactionPaymentApi_queryFeeDetails(val, prim.None[prim.H256]())
+	return t.client.Call.TransactionPaymentApi_queryFeeDetails(val, prim.None[prim.H256]())
 }
 
-func (this *Transaction) PaymentQueryCallInfo() (metadata.RuntimeDispatchInfo, error) {
-	return this.client.Call.TransactionPaymentCallApi_queryCallInfo(this.CallToHex(), prim.None[prim.H256]())
+func (t *Transaction) PaymentQueryCallInfo() (metadata.RuntimeDispatchInfo, error) {
+	return t.client.Call.TransactionPaymentCallApi_queryCallInfo(t.CallToHex(), prim.None[prim.H256]())
 }
 
-func (this *Transaction) PaymentQueryCallFeeDetails() (metadata.FeeDetails, error) {
-	return this.client.Call.TransactionPaymentCallApi_queryCallFeeDetails(this.CallToHex(), prim.None[prim.H256]())
+func (t *Transaction) PaymentQueryCallFeeDetails() (metadata.FeeDetails, error) {
+	return t.client.Call.TransactionPaymentCallApi_queryCallFeeDetails(t.CallToHex(), prim.None[prim.H256]())
 }
 
 type TransactionDetails struct {
@@ -106,8 +106,8 @@ type TransactionDetails struct {
 // Returns None if there was no way to determine the
 // success status of a transaction. Otherwise it returns
 // true or false.
-func (this *TransactionDetails) IsSuccessful() prim.Option[bool] {
-	events := this.Events.Unwrap()
+func (t *TransactionDetails) IsSuccessful() prim.Option[bool] {
+	events := t.Events.Unwrap()
 
 	extFailedEvent := syPallet.EventExtrinsicFailed{}
 	extSuccessEvent := syPallet.EventExtrinsicSuccess{}
