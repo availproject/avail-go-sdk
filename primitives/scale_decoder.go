@@ -44,6 +44,15 @@ func (this *Decoder) slice(value reflect.Value) error {
 		return err
 	}
 
+	// Guard against a declared length larger than the remaining input before
+	// allocating. Every SCALE element occupies at least one byte, so a slice of
+	// len.Value elements requires at least len.Value bytes; a crafted compact
+	// length (up to ~4.29e9) would otherwise trigger a huge up-front allocation
+	// (out-of-memory / makeslice panic) from only a few bytes of input.
+	if !this.HasAtLeastRemainingBytes(int(len.Value)) {
+		return fmt.Errorf("declared slice length %d exceeds %d remaining byte(s)", len.Value, this.RemainingLength())
+	}
+
 	elemType := value.Type().Elem()
 	newSlice := reflect.MakeSlice(value.Type(), int(len.Value), int(len.Value))
 
